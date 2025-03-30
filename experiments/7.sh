@@ -37,7 +37,7 @@ llamafactory-cli train experiments/7.yaml \
 > experiments/logs/7_train.log  2>&1
 
 echo "Begin Merge"
-llamafactory-cli export experiments/debug_merge.yaml \
+llamafactory-cli export experiments/7_merge.yaml \
 > experiments/logs/7_merge.log  2>&1
 
 echo "Begin Inference"
