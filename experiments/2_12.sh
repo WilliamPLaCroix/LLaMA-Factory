@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # rename gpus
-source /nethome/wlacroix/LLaMA-Factory/experiments_sarubi/rename_gpus.sh
+source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
 #conda create -p /nethome/wlacroix/miniconda3/envs/llama_factory_v2 python=3.10
@@ -15,8 +15,8 @@ cd /nethome/wlacroix/LLaMA-Factory
 #conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
 
 # run misc. stuff
-# Debugging: Check CUDA details
-echo "=== CUDA Debugging Information ==="
+# 2_12ging: Check CUDA details
+echo "=== CUDA 2_12ging Information ==="
 nvcc --version
 nvidia-smi
 echo "CUDA_HOME: $CUDA_HOME"
@@ -32,9 +32,17 @@ echo "Starting Main Experiment Workflow!"
 ##Lora fine-tuning example already given: examples/train_lora/llama3_lora_sft.yaml
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
+echo "Begin Training"
+llamafactory-cli train experiments/2_12.yaml \
+> experiments/logs/2_12_train.log  2>&1
 
-llamafactory-cli eval experiments_sarubi/eval_11_loss.yaml \
-> experiments_sarubi/logs/eval_11_loss.log  2>&1
+echo "Begin Merge"
+llamafactory-cli export experiments/2_12_merge.yaml \
+> experiments/logs/2_12_merge.log  2>&1
+
+echo "Begin Inference"
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_12" --save_path "/scratch/wlacroix/.cache/llama_factory/2_12" --template llama3 --dataset wikilarge_grade_3_test \
+> experiments/logs/2_12_infer.log  2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \

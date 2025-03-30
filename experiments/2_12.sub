@@ -3,7 +3,7 @@
 
 universe                = vanilla
 initialdir              = /nethome/wlacroix/LLaMA-Factory/
-executable              = /nethome/wlacroix/LLaMA-Factory/experiments_sarubi/train_6_8_loss.sh
+executable              = /nethome/wlacroix/LLaMA-Factory/experiments/2_12.sh
 output                  = /scratch/wlacroix/logs/run.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.$(ClusterId).err
 log                     = /scratch/wlacroix/logs/log/run.$(ClusterId).log
@@ -12,7 +12,7 @@ log                     = /scratch/wlacroix/logs/log/run.$(ClusterId).log
 #when_to_transfer_output = ON_EXIT
 request_GPUs            = 1
 request_CPUs            = 10
-request_memory          = 50G
+request_memory          = 100G
 getenv                  = True
 requirements            = (GPUs_GlobalMemoryMb >= 64000)
 #64000
