@@ -34,14 +34,14 @@ overwrite_output_dir: true
 per_device_train_batch_size: 32
 gradient_accumulation_steps: 8
 learning_rate: 1.0e-4
-num_train_epochs: 20
+num_train_epochs: 10
 lr_scheduler_type: cosine
 bf16: true
 ddp_timeout: 180000000
 
 ### eval
 do_eval: true
-eval_dataset: wikilarge_grade_2_validate, wikilarge_grade_12_validate
+eval_dataset: wikilarge_grade_2_12_validate
 per_device_eval_batch_size: 32
 eval_strategy: steps
 eval_steps: 100
@@ -51,6 +51,6 @@ predict_with_generate: false
 save_strategy: steps
 save_total_limit: 1
 load_best_model_at_end: True
-metric_for_best_model: "eval_2_12_adapter_sari"
+metric_for_best_model: "eval_wikilarge_grade_2_12_validate_sari"
 greater_is_better: true  # Higher SARI is better
 

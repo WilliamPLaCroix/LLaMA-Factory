@@ -15,8 +15,8 @@ cd /nethome/wlacroix/LLaMA-Factory
 #conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
 
 # run misc. stuff
-# 2_12ging: Check CUDA details
-echo "=== CUDA 2_12ging Information ==="
+# Debugging: Check CUDA details
+echo "=== CUDA Debugging Information ==="
 nvcc --version
 nvidia-smi
 echo "CUDA_HOME: $CUDA_HOME"
