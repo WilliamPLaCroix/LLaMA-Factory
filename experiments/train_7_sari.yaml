@@ -1,0 +1,55 @@
+### model
+#model_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
+#model_name_or_path: /project/models/HF/meta-llama/Meta-Llama-3-8B-Instruct
+model_name_or_path: /scratch/common_models/Llama-3.2-3B
+#adapter_name_or_path: /scratch/wlacroix/.cache/llama_factory/wikilarge_grade_7
+trust_remote_code: true
+seed: 42
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all
+lora_dropout: 0.1
+
+### dataset
+dataset: wikilarge_grade_7
+template: llama3
+cutoff_len: 4096
+#max_samples: 1000
+overwrite_cache: true
+preprocessing_num_workers: 16
+train_on_prompt: false
+
+### output
+output_dir: /scratch/wlacroix/.cache/llama_factory/wikilarge_grades_7_sari_model
+logging_steps: 10
+save_steps: 100
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 32
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 10
+lr_scheduler_type: cosine
+bf16: true
+ddp_timeout: 180000000
+
+### eval
+do_eval: true
+eval_dataset: wikilarge_grade_7_validate
+per_device_eval_batch_size: 32
+eval_strategy: steps
+eval_steps: 100
+predict_with_generate: false
+
+#if you want to save best model:
+save_strategy: steps
+save_total_limit: 1
+load_best_model_at_end: True
+metric_for_best_model: "wikilarge_grade_7_validate_sari"
+greater_is_better: true  # Higher SARI is better
+
