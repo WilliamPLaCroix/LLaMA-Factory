@@ -43,6 +43,9 @@ if is_nltk_available():
 if is_rouge_available():
     from rouge_chinese import Rouge  # type: ignore
 
+from evaluate import load
+sari = load("sari")
+
 
 def eval_logit_processor(logits: "torch.Tensor", labels: "torch.Tensor") -> "torch.Tensor":
     r"""Compute the token with the largest likelihood to reduce memory footprint."""
@@ -98,22 +101,24 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
 
-        self.score_dict = {"rouge-1": [], "rouge-2": [], "rouge-l": [], "bleu-4": []}
+        self.score_dict = {"rouge-1": [], "rouge-2": [], "rouge-l": [], "bleu-4": [], "sari": []}
         return result
 
     def __post_init__(self):
         self._dump()
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
-        preds, labels = numpify(eval_preds.predictions), numpify(eval_preds.label_ids)
+        preds, labels, inputs = numpify(eval_preds.predictions), numpify(eval_preds.label_ids), numpify(eval_preds.inputs)
 
         preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
+        inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
 
         decoded_preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
+        decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
-        for pred, label in zip(decoded_preds, decoded_labels):
+        for pred, label, input in zip(decoded_preds, decoded_labels, decoded_inputs):
             hypothesis = list(jieba.cut(pred))
             reference = list(jieba.cut(label))
 
@@ -129,6 +134,9 @@ class ComputeSimilarity:
 
             bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
             self.score_dict["bleu-4"].append(round(bleu_score * 100, 4))
+            
+            sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
+            self.score_dict["sari"].append(round(sari_score['sari'], 2))
 
         if compute_result:
             return self._dump()
