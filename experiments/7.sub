@@ -3,7 +3,7 @@
 
 universe                = vanilla
 initialdir              = /nethome/wlacroix/LLaMA-Factory/
-executable              = /nethome/wlacroix/LLaMA-Factory/experiments/debug.sh
+executable              = /nethome/wlacroix/LLaMA-Factory/experiments/7.sh
 output                  = /scratch/wlacroix/logs/run.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.$(ClusterId).err
 log                     = /scratch/wlacroix/logs/log/run.$(ClusterId).log
