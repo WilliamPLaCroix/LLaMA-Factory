@@ -24,7 +24,7 @@ preprocessing_num_workers: 16
 train_on_prompt: false
 
 ### output
-output_dir: /scratch/wlacroix/.cache/llama_factory/debug
+output_dir: /scratch/wlacroix/.cache/llama_factory/debug_adapter
 logging_steps: 10
 save_steps: 100
 plot_loss: true
