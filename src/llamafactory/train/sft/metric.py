@@ -118,7 +118,7 @@ class ComputeSimilarity:
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
-        for pred, label, input in zip(decoded_preds, decoded_labels, decoded_inputs):
+        for pred, label, source in zip(decoded_preds, decoded_labels, decoded_inputs):
             hypothesis = list(jieba.cut(pred))
             reference = list(jieba.cut(label))
 
