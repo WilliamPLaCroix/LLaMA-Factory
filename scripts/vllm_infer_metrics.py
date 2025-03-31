@@ -37,10 +37,10 @@ perplexity = load("perplexity", module_type="metric")
 from readability import Readability
 
 import nltk
-nltk.download('punkt_tab')
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
+#nltk.download('punkt_tab')
+#nltk.download('punkt')
+#nltk.download('wordnet')
+#nltk.download('omw-1.4')
 
 def vllm_infer(
     model_name_or_path: str,
@@ -53,11 +53,11 @@ def vllm_infer(
     vllm_config: str = "{}",
     save_name: str = "generated_predictions.jsonl",
     save_path: str = "./",
-    temperature: float = 0.95,
-    top_p: float = 0.7,
-    top_k: int = 50,
+    temperature: float = 0.5,
+    top_p: float = 0.9,
+    top_k: int = 40,
     max_new_tokens: int = 1024,
-    repetition_penalty: float = 1.0,
+    repetition_penalty: float = 1.1,
     skip_special_tokens: bool = True,
     seed: Optional[int] = None,
     pipeline_parallel_size: int = 1,
@@ -141,6 +141,7 @@ def vllm_infer(
         "pipeline_parallel_size": pipeline_parallel_size,
         "disable_log_stats": True,
         "enable_lora": model_args.adapter_name_or_path is not None,
+        #"gpu_memory_utilization": 0.5,
     }
     if template_obj.mm_plugin.__class__.__name__ != "BasePlugin":
         engine_args["limit_mm_per_prompt"] = {"image": 4, "video": 2}
@@ -176,7 +177,20 @@ def vllm_infer(
     print("*" * 70)
 
     # need to free up memory...? model -> cpu, call perplexity, which includes model -> gpu
-    
+    import torch
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+
+    allocated_memory = torch.cuda.memory_allocated(device) / (1024**2) # Convert to MB
+    reserved_memory = torch.cuda.memory_reserved(device) / (1024**2) # Convert to MB
+    max_reserved_memory = torch.cuda.max_memory_reserved(device) / (1024**2) # Convert to MB
+
+    print(f"Allocated memory: {allocated_memory:.2f} MB")
+    print(f"Reserved memory: {reserved_memory:.2f} MB")
+    print(f"Max reserved memory: {max_reserved_memory:.2f} MB")    
 
     perplexity_results = perplexity.compute(predictions=labels, model_id=model_name_or_path)
     print("model perplexity results:", perplexity_results["mean_perplexity"])

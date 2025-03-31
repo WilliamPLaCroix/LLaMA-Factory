@@ -48,11 +48,15 @@ def run_sft(
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
-    tokenizer.padding_side = "left" # use left-padding in generation
+    tokenizer.padding_side = 'right' # padding to right (otherwise SFTTrainer shows warning)
 
     dataset_module = get_dataset(template, model_args, data_args, training_args, stage="sft", **tokenizer_module)
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
 
+    # change the padding tokenizer value
+    model.config.pad_token_id = tokenizer.pad_token_id # updating model config
+    model.generation_config.pad_token_id = tokenizer.pad_token_id
+    
     if getattr(model, "is_quantized", False) and not training_args.do_train:
         setattr(model, "_hf_peft_config_loaded", True)  # hack here: make model compatible with prediction
 
