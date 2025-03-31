@@ -41,7 +41,10 @@ llamafactory-cli export experiments/2_12_merge.yaml \
 > experiments/logs/2_12_merge.log  2>&1
 
 echo "Begin Inference"
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_12" --save_path "/scratch/wlacroix/.cache/llama_factory/2_12" --template llama3 --dataset wikilarge_grade_3_test \
+#export CUDA_LAUNCH_BLOCKING=1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --save_path "/scratch/wlacroix/.cache/llama_factory/2_12" --template llama3 --dataset wikilarge_grade_3_test\
+> experiments/logs/2_12_infer.log  2>&1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_12" --save_path "/scratch/wlacroix/.cache/llama_factory/2_12" --template llama3 --dataset wikilarge_grade_3_test\
 > experiments/logs/2_12_infer.log  2>&1
 
 #or if you encounter error:
