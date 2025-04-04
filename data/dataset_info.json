@@ -4,15 +4,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"response": "output",
-	"system": "system"
-    }
-  },
-  "wiki_large_alpaca": {
-    "hf_hub_url": "williamplacroix/wikilarge_alpaca_json",
-    "columns": {
-	"prompt": "instruction",
-	"query": "input",
 	"response": "output"
     }
   },
@@ -21,7 +12,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -30,7 +20,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -39,7 +28,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -48,7 +36,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -57,7 +44,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -66,7 +52,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -75,7 +60,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -84,7 +68,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -93,7 +76,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -102,7 +84,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -111,16 +92,7 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
-    }
-  },
-  "wiki_large_alpaca": {
-    "hf_hub_url": "williamplacroix/wikilarge_alpaca_json",
-    "columns": {
-	"prompt": "instruction",
-	"query": "input",
-	"response": "output"
     }
   },
   "wikilarge_grade_2_validate": {
@@ -129,7 +101,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -139,7 +110,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -149,7 +119,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -159,7 +128,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -169,7 +137,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -179,7 +146,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -189,7 +155,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -199,7 +164,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -209,7 +173,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -219,7 +182,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -229,7 +191,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -239,7 +200,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -249,7 +209,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -259,7 +218,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -269,7 +227,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -279,7 +236,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -289,7 +245,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -299,7 +254,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -309,7 +263,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -319,7 +272,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -329,7 +281,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -339,7 +290,6 @@
     "columns": {
       "prompt": "instruction",
       "query": "input",
-      "system": "system",
       "response": "output"
     }
   },
@@ -349,7 +299,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -359,7 +308,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -369,7 +317,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -379,7 +326,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -389,7 +335,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -399,7 +344,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -409,7 +353,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -419,7 +362,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -429,7 +371,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -439,7 +380,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -449,7 +389,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   },
@@ -459,7 +398,6 @@
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
-	"system": "system",
 	"response": "output"
     }
   }
