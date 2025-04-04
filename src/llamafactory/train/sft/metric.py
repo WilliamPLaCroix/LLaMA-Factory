@@ -113,6 +113,8 @@ class ComputeSimilarity:
         preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
+        
+        self.tokenizer.padding_side = "left"
 
         decoded_preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)

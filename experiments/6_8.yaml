@@ -7,6 +7,7 @@ trust_remote_code: true
 seed: 42
 use_fast_tokenizer: true
 
+
 ### method
 stage: sft
 do_train: true
@@ -34,7 +35,7 @@ overwrite_output_dir: true
 per_device_train_batch_size: 32
 gradient_accumulation_steps: 8
 learning_rate: 1.0e-4
-num_train_epochs: 20
+num_train_epochs: 10
 lr_scheduler_type: cosine
 bf16: true
 ddp_timeout: 180000000

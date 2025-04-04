@@ -104,7 +104,7 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
     def evaluate(self, eval_dataset=None, ignore_keys=None, metric_key_prefix="eval", **kwargs):
         # Temporarily enable predict_with_generate for evaluation
         self.args.predict_with_generate = True
-        results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix)
+        results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
         # Restore original setting
         self.args.predict_with_generate = False
         return results

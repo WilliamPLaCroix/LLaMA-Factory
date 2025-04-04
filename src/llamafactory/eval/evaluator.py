@@ -62,7 +62,7 @@ class Evaluator:
     def __init__(self, args: Optional[dict[str, Any]] = None) -> None:
         self.model_args, self.data_args, self.eval_args, finetuning_args = get_eval_args(args)
         self.tokenizer = load_tokenizer(self.model_args)["tokenizer"]
-        self.tokenizer.padding_side = "right"  # avoid overflow issue in batched inference for llama2
+        self.tokenizer.padding_side = "left"  # avoid overflow issue in batched inference for llama2
         self.template = get_template_and_fix_tokenizer(self.tokenizer, self.data_args)
         self.model = load_model(self.tokenizer, self.model_args, finetuning_args)
         self.eval_template = get_eval_template(self.eval_args.lang)
