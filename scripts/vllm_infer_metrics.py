@@ -165,7 +165,8 @@ def vllm_infer(
 
     metrics = {k: round(float(np.mean(v)), 2) for k, v in score_dict.items()}
 
-    text = "\n\n".join(preds)
+    buffer = "-" * 70
+    text = f"\n{buffer}\n".join(preds)
     #text = "\n\n".join(labels)
     print(text)
     r = Readability(text)
