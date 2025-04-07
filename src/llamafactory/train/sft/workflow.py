@@ -83,7 +83,8 @@ def run_sft(
     if training_args.predict_with_generate:
         metric_module["compute_metrics"] = ComputeSimilarity(tokenizer=tokenizer)
     elif finetuning_args.compute_accuracy:
-        metric_module["compute_metrics"] = ComputeAccuracy()
+        #metric_module["compute_metrics"] = ComputeAccuracy()
+        metric_module["compute_metrics"] = ComputeSimilarity(tokenizer=tokenizer)
         metric_module["preprocess_logits_for_metrics"] = eval_logit_processor
 
     # Keyword arguments for `model.generate`
