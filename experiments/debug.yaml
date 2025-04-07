@@ -9,13 +9,15 @@ use_fast_tokenizer: true
 stage: sft
 do_train: true
 finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
 lora_target: all
-lora_dropout: 0.1
+lora_dropout: 0.05
 
 ### dataset
 dataset: debug
 template: llama3
-cutoff_len: 4096
+cutoff_len: 1024
 #max_samples: 1000
 overwrite_cache: true
 preprocessing_num_workers: 16
@@ -29,11 +31,12 @@ plot_loss: true
 overwrite_output_dir: true
 
 ### train
-per_device_train_batch_size: 32
-gradient_accumulation_steps: 8
+per_device_train_batch_size: 8
+gradient_accumulation_steps: 4
 learning_rate: 1.0e-4
 num_train_epochs: 20
 lr_scheduler_type: cosine
+warmup_ratio: 0.2
 bf16: true
 ddp_timeout: 180000000
 
@@ -47,8 +50,8 @@ predict_with_generate: false
 
 #if you want to save best model:
 save_strategy: steps
-save_total_limit: 1
+save_total_limit: 3
 load_best_model_at_end: True
-metric_for_best_model: "eval_debug_sari"
-greater_is_better: true  # Higher SARI is better
+metric_for_best_model: "eval_loss"
+greater_is_better: False  # Higher SARI is better
 
