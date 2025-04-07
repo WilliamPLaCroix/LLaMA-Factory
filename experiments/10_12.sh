@@ -33,17 +33,17 @@ echo "Starting Main Experiment Workflow!"
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
 echo "Begin Training"
-llamafactory-cli train experiments/10_12.yaml \
-> experiments/logs/10_12_train.log  2>&1
+llamafactory-cli train experiments/2_12.yaml \
+> experiments/logs/2_12_train.log  2>&1
 
 echo "Begin Merge"
-llamafactory-cli export experiments/10_12_merge.yaml \
-> experiments/logs/10_12_merge.log  2>&1
+llamafactory-cli export experiments/2_12_merge.yaml \
+> experiments/logs/2_12_merge.log  2>&1
 
 echo "Begin Inference"
 #export CUDA_LAUNCH_BLOCKING=1
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/10_12_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/10_12" --template llama3 --dataset wikilarge_grade_11_test --temperature 0 \
-> experiments/logs/10_12_infer.log  2>&1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_12_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/2_12" --template llama3 --dataset wikilarge_grade_7_test --temperature 0 \
+> experiments/logs/2_12_infer.log  2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
