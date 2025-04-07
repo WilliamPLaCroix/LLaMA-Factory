@@ -33,16 +33,16 @@ echo "Starting Main Experiment Workflow!"
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
 echo "Begin Training"
-llamafactory-cli train experiments/debug.yaml \
-> experiments/logs/debug_train.log  2>&1
+llamafactory-cli train experiments/3.yaml \
+> experiments/logs/3_train.log  2>&1
 
 echo "Begin Merge"
-llamafactory-cli export experiments/debug_merge.yaml \
-> experiments/logs/debug_merge.log  2>&1
+llamafactory-cli export experiments/3_merge.yaml \
+> experiments/logs/3_merge.log  2>&1
 
 echo "Begin Inference"
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/wlacroix/.cache/llama_factory/debug" --save_path "/scratch/wlacroix/.cache/llama_factory/debug" --template llama3 --dataset debug \
-> experiments/logs/debug_infer.log  2>&1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/wlacroix/.cache/llama_factory/3" --save_path "/scratch/wlacroix/.cache/llama_factory/3" --template llama3 --dataset wikilarge_grade_3_test --temperature 0 \
+> experiments/logs/3_infer.log  2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
