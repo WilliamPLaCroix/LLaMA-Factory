@@ -47,15 +47,14 @@ def run_sft(
 ):
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
-    tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
+    #tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
-    
     dataset_module = get_dataset(template, model_args, data_args, training_args, stage="sft", **tokenizer_module)
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
 
-    # change the padding tokenizer value
-    model.config.pad_token_id = tokenizer.pad_token_id # updating model config
-    model.generation_config.pad_token_id = tokenizer.pad_token_id
+    # # change the padding tokenizer value
+    # model.config.pad_token_id = tokenizer.pad_token_id # updating model config
+    # model.generation_config.pad_token_id = tokenizer.pad_token_id
     
     if getattr(model, "is_quantized", False) and not training_args.do_train:
         setattr(model, "_hf_peft_config_loaded", True)  # hack here: make model compatible with prediction
@@ -74,18 +73,18 @@ def run_sft(
     # Override the decoding parameters of Seq2SeqTrainer
     training_args.include_inputs_for_metrics = True
     training_args.include_for_metrics = ["inputs"]
-    training_args.padding_side = "left"
+    #training_args.padding_side = "left"
     training_args.generation_max_length = training_args.generation_max_length or data_args.cutoff_len
     training_args.generation_num_beams = data_args.eval_num_beams or training_args.generation_num_beams
     training_args.remove_unused_columns = False  # important for multimodal dataset
 
     # Metric utils
     metric_module = {}
-    #if training_args.predict_with_generate:
-    metric_module["compute_metrics"] = ComputeSimilarity(tokenizer=tokenizer)
-    #elif finetuning_args.compute_accuracy:
-    #    metric_module["compute_metrics"] = ComputeAccuracy()
-    #    metric_module["preprocess_logits_for_metrics"] = eval_logit_processor
+    if training_args.predict_with_generate:
+        metric_module["compute_metrics"] = ComputeSimilarity(tokenizer=tokenizer)
+    elif finetuning_args.compute_accuracy:
+       metric_module["compute_metrics"] = ComputeAccuracy()
+       metric_module["preprocess_logits_for_metrics"] = eval_logit_processor
 
     # Keyword arguments for `model.generate`
     gen_kwargs = generating_args.to_dict(obey_generation_config=True)
