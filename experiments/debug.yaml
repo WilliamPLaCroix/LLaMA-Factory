@@ -26,7 +26,7 @@ train_on_prompt: false
 ### output
 output_dir: /scratch/wlacroix/.cache/llama_factory/debug_adapter
 logging_steps: 10
-save_steps: 100
+save_steps: 10
 plot_loss: true
 overwrite_output_dir: true
 
@@ -45,7 +45,7 @@ do_eval: true
 eval_dataset: debug
 per_device_eval_batch_size: 32
 eval_strategy: steps
-eval_steps: 100
+eval_steps: 10
 predict_with_generate: false
 
 #if you want to save best model:
