@@ -59,7 +59,7 @@ def vllm_infer(
     max_new_tokens: int = 1024,
     repetition_penalty: float = 1.0,
     skip_special_tokens: bool = True,
-    seed: Optional[int] = None,
+    seed: Optional[int] = 42,
     pipeline_parallel_size: int = 1,
     image_max_pixels: int = 768 * 768,
     image_min_pixels: int = 32 * 32,
