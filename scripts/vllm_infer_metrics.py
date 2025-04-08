@@ -17,6 +17,8 @@ from typing import Optional
 
 import fire
 from transformers import Seq2SeqTrainingArguments
+from peft import PeftModel, PeftConfig
+from transformers import LlamaTokenizer, LlamaForCausalLM
 
 from llamafactory.data import get_dataset, get_template_and_fix_tokenizer
 from llamafactory.extras.constants import IGNORE_INDEX
@@ -63,6 +65,7 @@ def vllm_infer(
     pipeline_parallel_size: int = 1,
     image_max_pixels: int = 768 * 768,
     image_min_pixels: int = 32 * 32,
+    grade: int = 7
 ):
     r"""Perform batch generation using vLLM engine, which supports tensor parallelism.
 
@@ -150,12 +153,15 @@ def vllm_infer(
         engine_args.update(model_args.vllm_config)
 
     score_dict = {"easse_sari": [], "sari": [], "perplexity": [], "fkgl": []}
-    model = LLM(**engine_args)
 
-    results = model.generate(inputs, sampling_params, lora_request=lora_request)
+    results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
     preds = [result.outputs[0].text for result in results]
+    
+    system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
+    sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
+    
     with open(f"{save_path}/{save_name}", "w", encoding="utf-8") as f:
-        for text, pred, label in zip(prompts, preds, labels):
+        for text, pred, label in zip(sources, preds, labels):
             sari_score = sari.compute(sources=[text], predictions=[pred], references=[[label]])
             score_dict["sari"].append(sari_score['sari'])
             f.write(json.dumps({"prompt": text, "predict": pred, "label": label}, ensure_ascii=False) + "\n")
@@ -166,11 +172,15 @@ def vllm_infer(
 
     metrics = {k: round(float(np.mean(v)), 2) for k, v in score_dict.items()}
 
+    for _, (p, inp, out, lbl, src) in enumerate(zip(prompts, inputs, preds, labels, sources)):
+        print(f"Prompt: {p}")
+        print(f"Source: {src}")
+        print(f"Input: {inp}")
+        print(f"Pred: {out}")
+        print(f"Label: {lbl}")
+        print("-" * 80)
+
     text = f" ".join(preds)
-    buffer = "-" * 100
-    log_text = f"\n\n{buffer}\n\n".join(preds)
-    #text = "\n\n".join(labels)
-    print(log_text)
     r = Readability(text)
     fk = r.flesch_kincaid()
     metrics["fkgl"] = fk.grade_level
@@ -194,6 +204,27 @@ def vllm_infer(
     print(f"Allocated memory: {allocated_memory:.2f} MB")
     print(f"Reserved memory: {reserved_memory:.2f} MB")
     print(f"Max reserved memory: {max_reserved_memory:.2f} MB")    
+    
+    print("Attempting to load model+adapter")
+
+    #if adapter_name_or_path is not None:
+    #    config = PeftConfig.from_pretrained(adapter_name_or_path)
+      
+    
+    model = LlamaForCausalLM.from_pretrained(
+        model_name_or_path,
+        torch_dtype='auto',
+        device_map='auto',
+        offload_folder="offload", offload_state_dict = True
+        )
+    
+    print("Base model loaded...")
+
+    # Load the Lora model
+    if adapter_name_or_path is not None: 
+        model = PeftModel.from_pretrained(model, adapter_name_or_path)
+    
+        print("Adapter successfully loaded!")
 
     perplexity_results = perplexity.compute(predictions=labels, model=model, tokenizer=tokenizer)
     print("model perplexity results:", perplexity_results["mean_perplexity"])
