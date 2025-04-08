@@ -150,8 +150,9 @@ def vllm_infer(
         engine_args.update(model_args.vllm_config)
 
     score_dict = {"easse_sari": [], "sari": [], "perplexity": [], "fkgl": []}
+    model = LLM(**engine_args)
 
-    results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
+    results = model.generate(inputs, sampling_params, lora_request=lora_request)
     preds = [result.outputs[0].text for result in results]
     with open(f"{save_path}/{save_name}", "w", encoding="utf-8") as f:
         for text, pred, label in zip(prompts, preds, labels):
@@ -194,7 +195,7 @@ def vllm_infer(
     print(f"Reserved memory: {reserved_memory:.2f} MB")
     print(f"Max reserved memory: {max_reserved_memory:.2f} MB")    
 
-    perplexity_results = perplexity.compute(predictions=labels, model_id=model_name_or_path)
+    perplexity_results = perplexity.compute(predictions=labels, model=model, tokenizer=tokenizer)
     print("model perplexity results:", perplexity_results["mean_perplexity"])
     metrics["perplexity"] = round(perplexity_results["mean_perplexity"], 2)
 
