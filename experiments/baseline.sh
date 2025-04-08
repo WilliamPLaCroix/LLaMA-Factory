@@ -1,18 +1,11 @@
 #!/bin/bash
 
-# rename gpus
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
-
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
-#conda create -p /nethome/wlacroix/miniconda3/envs/llama_factory_v2 python=3.10
 echo "Current conda environment: $CONDA_DEFAULT_ENV"
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
-
 cd /nethome/wlacroix/LLaMA-Factory
-#pip install -e ".[torch,metrics,deepspeed,vllm,bitsandbytes]"
-
-#conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
 
 # Debugging: Check CUDA details
 echo "=== CUDA Debugging Information ==="
@@ -23,7 +16,6 @@ echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
 echo "HOSTNAME: $HOSTNAME"
 which python
-#python -m pip list
 
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
