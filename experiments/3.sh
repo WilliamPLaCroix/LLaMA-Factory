@@ -41,7 +41,7 @@ echo "Starting Main Experiment Workflow!"
 # > experiments/logs/3_merge.log  2>&1
 
 echo "Begin Inference"
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/3_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/3" --template llama3 --dataset wikilarge_grade_3_test --temperature 0 \
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/3_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/3" --template llama3 --dataset wikilarge_grade_3_test --temperature 0 --grade 3\
 > experiments/logs/3_infer.log  2>&1
 
 # echo "Begin Inference"
