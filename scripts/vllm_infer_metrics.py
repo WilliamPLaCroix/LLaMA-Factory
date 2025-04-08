@@ -165,10 +165,11 @@ def vllm_infer(
 
     metrics = {k: round(float(np.mean(v)), 2) for k, v in score_dict.items()}
 
+    text = f" ".join(preds)
     buffer = "-" * 100
-    text = f"\n\n{buffer}\n\n".join(preds)
+    log_text = f"\n\n{buffer}\n\n".join(preds)
     #text = "\n\n".join(labels)
-    print(text)
+    print(log_text)
     r = Readability(text)
     fk = r.flesch_kincaid()
     metrics["fkgl"] = fk.grade_level

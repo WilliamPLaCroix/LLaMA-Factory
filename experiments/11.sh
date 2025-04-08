@@ -32,13 +32,13 @@ echo "Starting Main Experiment Workflow!"
 ##Lora fine-tuning example already given: examples/train_lora/llama3_lora_sft.yaml
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
-echo "Begin Training"
-llamafactory-cli train experiments/11.yaml \
-> experiments/logs/11_train.log  2>&1
+# echo "Begin Training"
+# llamafactory-cli train experiments/11.yaml \
+# > experiments/logs/11_train.log  2>&1
 
-echo "Begin Merge"
-llamafactory-cli export experiments/11_merge.yaml \
-> experiments/logs/11_merge.log  2>&1
+# echo "Begin Merge"
+# llamafactory-cli export experiments/11_merge.yaml \
+# > experiments/logs/11_merge.log  2>&1
 
 echo "Begin Inference"
 python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/11_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/11" --template llama3 --dataset wikilarge_grade_11_test --temperature 0 \

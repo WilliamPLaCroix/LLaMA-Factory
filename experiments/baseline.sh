@@ -14,7 +14,6 @@ cd /nethome/wlacroix/LLaMA-Factory
 
 #conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
 
-# run misc. stuff
 # Debugging: Check CUDA details
 echo "=== CUDA Debugging Information ==="
 nvcc --version
@@ -26,24 +25,20 @@ echo "HOSTNAME: $HOSTNAME"
 which python
 #python -m pip list
 
-
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
-##Lora fine-tuning example already given: examples/train_lora/llama3_lora_sft.yaml
-#Supervised Fine-Tuning cmd:
-#llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
-# echo "Begin Training"
-# llamafactory-cli train experiments/2_4.yaml \
-# > experiments/logs/2_4_train.log  2>&1
 
-# echo "Begin Merge"
-# llamafactory-cli export experiments/2_4_merge.yaml \
-# > experiments/logs/2_4_merge.log  2>&1
+echo "Begin Training"
+llamafactory-cli train experiments/baseline.yaml \
+> experiments/logs/baseline_train.log  2>&1
+
+echo "Begin Merge"
+llamafactory-cli export experiments/baseline_merge.yaml \
+> experiments/logs/baseline_merge.log  2>&1
 
 echo "Begin Inference"
-#export CUDA_LAUNCH_BLOCKING=1
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_4_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/2_4" --template llama3 --dataset wikilarge_grade_3_test --temperature 0 \
-> experiments/logs/2_4_infer.log  2>&1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/baseline_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/baseline" --template llama3 --dataset wikilarge_grade_7_test --temperature 0 \
+> experiments/logs/baseline_infer.log  2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \

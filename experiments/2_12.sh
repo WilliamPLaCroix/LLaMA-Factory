@@ -32,13 +32,13 @@ echo "Starting Main Experiment Workflow!"
 ##Lora fine-tuning example already given: examples/train_lora/llama3_lora_sft.yaml
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
-echo "Begin Training"
-llamafactory-cli train experiments/2_12.yaml \
-> experiments/logs/2_12_train.log  2>&1
+# echo "Begin Training"
+# llamafactory-cli train experiments/2_12.yaml \
+# > experiments/logs/2_12_train.log  2>&1
 
-echo "Begin Merge"
-llamafactory-cli export experiments/2_12_merge.yaml \
-> experiments/logs/2_12_merge.log  2>&1
+# echo "Begin Merge"
+# llamafactory-cli export experiments/2_12_merge.yaml \
+# > experiments/logs/2_12_merge.log  2>&1
 
 echo "Begin Inference"
 #export CUDA_LAUNCH_BLOCKING=1
