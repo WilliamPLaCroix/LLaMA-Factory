@@ -124,6 +124,16 @@ class ComputeSimilarity:
             hypothesis = list(jieba.cut(pred))
             reference = list(jieba.cut(label))
 
+            source = source[91:].split("\n")[0][:-9]
+            
+            print("-" * 80)
+            print("Source:", source)
+            print("-")
+            print("Prediction:", pred)
+            print("-")
+            print("Label:", label)
+            print("-" * 80)
+
             if len(" ".join(hypothesis).split()) == 0 or len(" ".join(reference).split()) == 0:
                 result = {"rouge-1": {"f": 0.0}, "rouge-2": {"f": 0.0}, "rouge-l": {"f": 0.0}}
             else:
