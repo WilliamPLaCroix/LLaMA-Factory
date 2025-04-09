@@ -1,6 +1,6 @@
 {
   "augmented_tutor_data": {
-    "file_name": "/nethome/wlacroix/macmillan/data/augmented_tutor_data.json",
+    "file_name": "/nethome/wlacroix/macmillan/data/tutor_data/augmented_tutor_data.json",
     "columns": {
 	"prompt": "instruction",
 	"query": "input",
