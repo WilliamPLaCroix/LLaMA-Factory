@@ -1,4 +1,12 @@
 {
+  "augmented_tutor_data": {
+    "file_name": "/nethome/wlacroix/macmillan/data/augmented_tutor_data.json",
+    "columns": {
+	"prompt": "instruction",
+	"query": "input",
+	"response": "output"
+    }
+  },
   "debug": {
     "hf_hub_url": "williamplacroix/llamafactory_debug",
     "columns": {
