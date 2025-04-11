@@ -20,13 +20,13 @@ which python
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
 
-echo "Begin Training"
-llamafactory-cli train experiments/4_10.yaml \
-> experiments/logs/4_10_train.log  2>&1
+# echo "Begin Training"
+# llamafactory-cli train experiments/4_10.yaml \
+# > experiments/logs/4_10_train.log  2>&1
 
-echo "Begin Merge"
-llamafactory-cli export experiments/4_10_merge.yaml \
-> experiments/logs/4_10_merge.log  2>&1
+# echo "Begin Merge"
+# llamafactory-cli export experiments/4_10_merge.yaml \
+# > experiments/logs/4_10_merge.log  2>&1
 
 echo "Begin Inference"
 #export CUDA_LAUNCH_BLOCKING=1
