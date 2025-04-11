@@ -20,7 +20,7 @@ which python
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
 
-echo "Begin Training"
+# echo "Begin Training"
 # llamafactory-cli train experiments/3.yaml \
 # > experiments/logs/3_train.log  2>&1
 
