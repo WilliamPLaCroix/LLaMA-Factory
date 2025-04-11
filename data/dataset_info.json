@@ -1,5 +1,13 @@
 {
-  "augmented_tutor_data": {
+  "augmented_tutor_data_noMD": {
+    "file_name": "/nethome/wlacroix/macmillan/data/tutor_data/augmented_tutor_data_noMD.json",
+    "columns": {
+	"prompt": "instruction",
+	"query": "input",
+	"response": "output"
+    }
+  },
+    "augmented_tutor_data": {
     "file_name": "/nethome/wlacroix/macmillan/data/tutor_data/augmented_tutor_data.json",
     "columns": {
 	"prompt": "instruction",
