@@ -84,7 +84,6 @@ class ComputeSimilarity:
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
         with torch.no_grad():
-            self.score_dict = {"sari": []}
             eval_predictions = eval_preds.predictions[:, :-1, :].cpu().detach()
             predictions = eval_predictions.argmax(dim=-1)
             
