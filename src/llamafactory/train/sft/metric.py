@@ -51,39 +51,14 @@ import textstat
 import torch.nn as nn
 
 def compute_loss(logits, labels):
-    
-    #print("initial preds shape:", logits.shape)
-    #print("initial labels shape:", labels.shape)
-    #print(labels[0])  # should show -100 in some positions if padding was masked
-    #print((labels == -100).sum())  # should be > 0     
-    
-    #logits = logits[:, :-1, :]
-    #labels = labels[:, 1:]
 
     logits = torch.tensor(logits, dtype=torch.float32)
     logits = logits.view(-1, logits.size(-1))  # [batch_size * seq_len, vocab_size]
     labels = torch.tensor(labels, dtype=torch.long)
     labels = labels.view(-1)                   # [batch_size * seq_len]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-    
-    #print("final preds shape:", logits.shape)
-    #print("final labels shape:", labels.shape)
      
     return loss_fn(logits, labels)
-
-def eval_logit_processor(logits: "torch.Tensor", labels: "torch.Tensor") -> "torch.Tensor":
-    r"""Compute the token with the largest likelihood to reduce memory footprint."""
-    #if isinstance(logits, (list, tuple)):
-        #if logits[0].dim() == 3:  # (batch_size, seq_len, vocab_size)
-            #logits = logits[0]
-        #else:  # moe models have aux loss
-            #1logits = logits[1]
-
-    #if logits.ndim() != 3:
-        #raise ValueError("Cannot process the logits.")
-
-    return torch.argmax(logits, dim=-1)
-
 
 @dataclass
 class ComputeAccuracy:
@@ -135,16 +110,9 @@ class ComputeSimilarity:
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
 
-        #print("eval_preds:", eval_preds)
-        #print(eval_preds.__dict__)
-        #print("prediction shape:", eval_preds.predictions.shape, eval_preds.predictions)
-        
-        #print("Shape:", eval_preds.predictions.shape)
         eval_predictions = eval_preds.predictions[:, :-1, :]
         predictions = torch.tensor(eval_predictions).argmax(dim=-1)
         label_ids = eval_preds.label_ids[:, 1:]
-        #print("pred sample:", eval_predictions[0])
-        #print("label sample:", label_ids[0])
 
         preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs)
 
@@ -159,32 +127,7 @@ class ComputeSimilarity:
         decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
         for pred, label, source in zip(decoded_preds, decoded_labels, decoded_inputs):
-            hypothesis = list(jieba.cut(pred))
-            reference = list(jieba.cut(label))
-
             source = source[91:].split("\n")[0][:-9]
-            
-            #print("-" * 80)
-            #print("Source:", source)
-            #print("-")
-            #print("Prediction:", pred)
-            #print("-")
-            #print("Label:", label)
-            #print("-" * 80)
-
-            #if len(" ".join(hypothesis).split()) == 0 or len(" ".join(reference).split()) == 0:
-                #result = {"rouge-1": {"f": 0.0}, "rouge-2": {"f": 0.0}, "rouge-l": {"f": 0.0}}
-            #else:
-                #rouge = Rouge()
-                #scores = rouge.get_scores(" ".join(hypothesis), " ".join(reference))
-                #result = scores[0]
-
-            #for k, v in result.items():
-                #self.score_dict[k].append(round(v["f"] * 100, 4))
-
-            #bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
-            #self.score_dict["bleu-4"].append(round(bleu_score * 100, 4))
-            
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
         
@@ -200,7 +143,7 @@ class ComputeSimilarity:
         
         #print("preds shape:", eval_predictions.shape)
         #print("labels shape:", label_ids.shape)
-        loss = compute_loss(eval_predictions, label_ids)
+        loss = compute_loss(eval_predictions, label_ids).to("cpu")
         self.score_dict["loss"] = loss
         self.score_dict["perplexity"] = torch.exp(loss)
 
