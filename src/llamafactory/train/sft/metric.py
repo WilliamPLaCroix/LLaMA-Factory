@@ -58,7 +58,8 @@ def compute_loss(logits, labels):
     labels = labels.view(-1)                   # [batch_size * seq_len]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
      
-    return loss_fn(logits, labels)
+    return loss_fn(logits, labels).to("cpu")
+
 
 @dataclass
 class ComputeAccuracy:
@@ -130,20 +131,12 @@ class ComputeSimilarity:
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
-        
-        #print("Losses:", eval_preds.losses)
+
 
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         text = " ".join(decoded_preds)
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
-        #self.score_dict["loss"].append(compute_loss(eval_preds.predictions, eval_preds.label_ids))
-        #loss_fct = torch.nn.CrossEntropyLoss()
-        #logits = eval_preds.predictions
-        #loss = loss_fct(torch.tensor(logits, dtype=torch.float).view(-1, logits.size(-1)), torch.tensor(eval_preds.label_ids).view(-1))
-        
-        #print("preds shape:", eval_predictions.shape)
-        #print("labels shape:", label_ids.shape)
-        loss = compute_loss(eval_predictions, label_ids).to("cpu")
+        loss = compute_loss(eval_predictions, label_ids)
         self.score_dict["loss"] = loss
         self.score_dict["perplexity"] = torch.exp(loss)
 
