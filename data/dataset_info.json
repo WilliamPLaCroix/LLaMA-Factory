@@ -416,5 +416,14 @@
 	"query": "input",
 	"response": "output"
     }
+  },
+  "wikilarge_grade_3_11_validate": {
+    "hf_hub_url": "williamplacroix/wikilarge_grade3_11_alpaca",
+    "split": "validate",
+    "columns": {
+	"prompt": "instruction",
+	"query": "input",
+	"response": "output"
+    }
   }
 }
