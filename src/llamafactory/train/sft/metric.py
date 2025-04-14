@@ -96,10 +96,10 @@ class ComputeSimilarity:
         self._dump()
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
-        print("beginning of eval", torch.cuda.memory_summary())
+        #print("beginning of eval", torch.cuda.memory_summary())
         eval_predictions = eval_preds.predictions[:, :-1, :]
         #predictions = eval_predictions.argmax(dim=-1).cpu().detach()
-        predictions = torch.tensor(eval_predictions).argmax(dim=-1).cpu().detach()
+        predictions = eval_predictions.argmax(dim=-1).cpu().detach()
         
         label_ids = eval_preds.label_ids[:, 1:]
 
@@ -125,11 +125,13 @@ class ComputeSimilarity:
         text = " ".join(decoded_preds)
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
         #print("before compute loss", torch.cuda.memory_summary())
-        loss = compute_loss(eval_predictions, label_ids).to("cpu").item()
+        loss = compute_loss(eval_predictions, label_ids).cpu().detach().item()
         #print("after compute loss", torch.cuda.memory_summary())
         self.score_dict["loss"] = loss
         self.score_dict["perplexity"] = torch.exp(loss)
+        del eval_predictions, predictions, label_ids, preds, labels, inputs
+        del decoded_preds, decoded_labels, decoded_inputs
         torch.cuda.empty_cache()
-        print("after empty cache", torch.cuda.memory_summary())
+        #print("after empty cache", torch.cuda.memory_summary())
         if compute_result:
             return self._dump()
