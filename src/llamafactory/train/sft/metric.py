@@ -45,8 +45,10 @@ def compute_loss(logits, labels):
     labels = torch.tensor(labels, dtype=torch.long)
     labels = labels.view(-1)                   # [batch_size * seq_len]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-     
-    return loss_fn(logits, labels).to("cpu")
+    loss = loss_fn(logits, labels)
+    del logits, labels, loss_fn
+    torch.cuda.empty_cache()
+    return loss
 
 @dataclass
 class ComputeAccuracy:
@@ -122,7 +124,7 @@ class ComputeSimilarity:
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
         loss = compute_loss(eval_predictions, label_ids).to("cpu").item()
         self.score_dict["loss"] = loss
-        self.score_dict["perplexity"] = torch.exp(loss).to("cpu").item()
+        self.score_dict["perplexity"] = torch.exp(loss)
         torch.cuda.empty_cache()
         if compute_result:
             return self._dump()
