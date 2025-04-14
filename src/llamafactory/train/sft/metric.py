@@ -111,12 +111,17 @@ class ComputeSimilarity:
             loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
             self.score_dict["loss"] = loss_fn(eval_predictions.view(-1, eval_predictions.size(-1)), label_ids.view(-1)  ).cpu().detach().item()
             self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
-            del eval_predictions, predictions, label_ids, preds, labels, inputs
-            del decoded_preds, decoded_labels, decoded_inputs, loss_fn, loss
+
             print(torch.cuda.memory_summary())
 
             import gc
 
+            print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
+            print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
+
+            del eval_predictions, predictions, label_ids, preds, labels, inputs
+            del decoded_preds, decoded_labels, decoded_inputs, loss_fn
+            
             print("Before garbage collection:")
             for obj in gc.get_objects():
                 if torch.is_tensor(obj):
@@ -128,6 +133,14 @@ class ComputeSimilarity:
             for obj in gc.get_objects():
                 if torch.is_tensor(obj):
                     print(type(obj), obj.size(), obj.device)
+            torch.cuda.empty_cache()
+            
+            # Detach and delete tensors to free memory
+            del eval_predictions, predictions, label_ids, preds, labels, inputs
+            del decoded_preds, decoded_labels, decoded_inputs, loss_fn
 
+
+            print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
+            print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
             if compute_result:
                 return self._dump()
