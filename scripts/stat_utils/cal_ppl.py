@@ -21,6 +21,7 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import DataCollatorForLanguageModeling
+from peft import PeftModel, PeftConfig
 
 from llamafactory.data import MultiModalDataCollatorForSeq2Seq, get_dataset, get_template_and_fix_tokenizer
 from llamafactory.extras.constants import IGNORE_INDEX
@@ -54,8 +55,10 @@ class PairwiseDataCollatorWithPadding(MultiModalDataCollatorForSeq2Seq):
 
 def calculate_ppl(
     model_name_or_path: str,
+    adapter_name_or_path: str = None,
     save_name: str = "ppl.json",
-    batch_size: int = 4,
+    save_path: str = "./",
+    batch_size: int = 32,
     stage: Literal["pt", "sft", "rm"] = "sft",
     dataset: str = "alpaca_en_demo",
     dataset_dir: str = "data",
@@ -90,6 +93,12 @@ def calculate_ppl(
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
     trainset = get_dataset(template, model_args, data_args, training_args, stage, **tokenizer_module)["train_dataset"]
     model = load_model(tokenizer, model_args, finetuning_args, is_trainable=False)
+    print("Base model loaded...")
+
+    if adapter_name_or_path is not None:
+        model = PeftModel.from_pretrained(model, adapter_name_or_path)
+        print("Adapter successfully loaded!")
+
     if stage == "pt":
         data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
     elif stage == "sft":
@@ -123,12 +132,12 @@ def calculate_ppl(
             total_ppl += sentence_logps.exp().sum().item()
             perplexities.extend(sentence_logps.exp().tolist())
 
-    with open(save_name, "w", encoding="utf-8") as f:
+    with open(f"{save_path}/{save_name}", "w", encoding="utf-8") as f:
         json.dump(perplexities, f, indent=2)
 
     print(f"Average perplexity is {total_ppl / len(perplexities):.2f}")
-    print(f"Perplexities have been saved at {save_name}.")
-
+    print(f"Perplexities have been saved at {save_path}/{save_name}.")
+    return total_ppl / len(perplexities)
 
 if __name__ == "__main__":
     fire.Fire(calculate_ppl)

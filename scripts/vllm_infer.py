@@ -129,7 +129,9 @@ def vllm_infer(
         "pipeline_parallel_size": pipeline_parallel_size,
         "disable_log_stats": True,
         "enable_lora": model_args.adapter_name_or_path is not None,
-        "gpu_memory_utilization": 1,
+        #"gpu_memory_utilization": 0.5,
+        #"max_num_seqs": 2,
+
     }
     if template_obj.mm_plugin.__class__.__name__ != "BasePlugin":
         engine_args["limit_mm_per_prompt"] = {"image": 4, "video": 2}

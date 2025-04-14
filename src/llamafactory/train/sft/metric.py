@@ -46,17 +46,41 @@ if is_rouge_available():
 from evaluate import load
 sari = load("sari")
 
+import textstat
+
+import torch.nn as nn
+
+def compute_loss(logits, labels):
+    
+    #print("initial preds shape:", logits.shape)
+    #print("initial labels shape:", labels.shape)
+    #print(labels[0])  # should show -100 in some positions if padding was masked
+    #print((labels == -100).sum())  # should be > 0     
+    
+    #logits = logits[:, :-1, :]
+    #labels = labels[:, 1:]
+
+    logits = torch.tensor(logits, dtype=torch.float32)
+    logits = logits.view(-1, logits.size(-1))  # [batch_size * seq_len, vocab_size]
+    labels = torch.tensor(labels, dtype=torch.long)
+    labels = labels.view(-1)                   # [batch_size * seq_len]
+    loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
+    
+    #print("final preds shape:", logits.shape)
+    #print("final labels shape:", labels.shape)
+     
+    return loss_fn(logits, labels)
 
 def eval_logit_processor(logits: "torch.Tensor", labels: "torch.Tensor") -> "torch.Tensor":
     r"""Compute the token with the largest likelihood to reduce memory footprint."""
-    if isinstance(logits, (list, tuple)):
-        if logits[0].dim() == 3:  # (batch_size, seq_len, vocab_size)
-            logits = logits[0]
-        else:  # moe models have aux loss
-            logits = logits[1]
+    #if isinstance(logits, (list, tuple)):
+        #if logits[0].dim() == 3:  # (batch_size, seq_len, vocab_size)
+            #logits = logits[0]
+        #else:  # moe models have aux loss
+            #1logits = logits[1]
 
-    if logits.dim() != 3:
-        raise ValueError("Cannot process the logits.")
+    #if logits.ndim() != 3:
+        #raise ValueError("Cannot process the logits.")
 
     return torch.argmax(logits, dim=-1)
 
@@ -99,16 +123,30 @@ class ComputeSimilarity:
     def _dump(self) -> Optional[dict[str, float]]:
         result = None
         if hasattr(self, "score_dict"):
-            result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+            #result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+            result = self.score_dict
 
-        self.score_dict = {"rouge-1": [], "rouge-2": [], "rouge-l": [], "bleu-4": [], "sari": []}
+        self.score_dict = {"sari": [], "fkgl": []}
+        #self.score_dict = {"rouge-1": [], "rouge-2": [], "rouge-l": [], "bleu-4": [], "sari": [], "fkgl": []}
         return result
 
     def __post_init__(self):
         self._dump()
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
-        preds, labels, inputs = numpify(eval_preds.predictions), numpify(eval_preds.label_ids), numpify(eval_preds.inputs)
+
+        #print("eval_preds:", eval_preds)
+        #print(eval_preds.__dict__)
+        #print("prediction shape:", eval_preds.predictions.shape, eval_preds.predictions)
+        
+        #print("Shape:", eval_preds.predictions.shape)
+        eval_predictions = eval_preds.predictions[:, :-1, :]
+        predictions = torch.tensor(eval_predictions).argmax(dim=-1)
+        label_ids = eval_preds.label_ids[:, 1:]
+        #print("pred sample:", eval_predictions[0])
+        #print("label sample:", label_ids[0])
+
+        preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs)
 
         preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
@@ -126,29 +164,45 @@ class ComputeSimilarity:
 
             source = source[91:].split("\n")[0][:-9]
             
-            print("-" * 80)
-            print("Source:", source)
-            print("-")
-            print("Prediction:", pred)
-            print("-")
-            print("Label:", label)
-            print("-" * 80)
+            #print("-" * 80)
+            #print("Source:", source)
+            #print("-")
+            #print("Prediction:", pred)
+            #print("-")
+            #print("Label:", label)
+            #print("-" * 80)
 
-            if len(" ".join(hypothesis).split()) == 0 or len(" ".join(reference).split()) == 0:
-                result = {"rouge-1": {"f": 0.0}, "rouge-2": {"f": 0.0}, "rouge-l": {"f": 0.0}}
-            else:
-                rouge = Rouge()
-                scores = rouge.get_scores(" ".join(hypothesis), " ".join(reference))
-                result = scores[0]
+            #if len(" ".join(hypothesis).split()) == 0 or len(" ".join(reference).split()) == 0:
+                #result = {"rouge-1": {"f": 0.0}, "rouge-2": {"f": 0.0}, "rouge-l": {"f": 0.0}}
+            #else:
+                #rouge = Rouge()
+                #scores = rouge.get_scores(" ".join(hypothesis), " ".join(reference))
+                #result = scores[0]
 
-            for k, v in result.items():
-                self.score_dict[k].append(round(v["f"] * 100, 4))
+            #for k, v in result.items():
+                #self.score_dict[k].append(round(v["f"] * 100, 4))
 
-            bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
-            self.score_dict["bleu-4"].append(round(bleu_score * 100, 4))
+            #bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
+            #self.score_dict["bleu-4"].append(round(bleu_score * 100, 4))
             
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
+        
+        #print("Losses:", eval_preds.losses)
+
+        self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+        text = " ".join(decoded_preds)
+        self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
+        #self.score_dict["loss"].append(compute_loss(eval_preds.predictions, eval_preds.label_ids))
+        #loss_fct = torch.nn.CrossEntropyLoss()
+        #logits = eval_preds.predictions
+        #loss = loss_fct(torch.tensor(logits, dtype=torch.float).view(-1, logits.size(-1)), torch.tensor(eval_preds.label_ids).view(-1))
+        
+        #print("preds shape:", eval_predictions.shape)
+        #print("labels shape:", label_ids.shape)
+        loss = compute_loss(eval_predictions, label_ids)
+        self.score_dict["loss"] = loss
+        self.score_dict["perplexity"] = torch.exp(loss)
 
         if compute_result:
             return self._dump()

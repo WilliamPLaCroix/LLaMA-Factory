@@ -71,9 +71,11 @@ def run_sft(
     )
 
     # Override the decoding parameters of Seq2SeqTrainer
+    training_args.label_names = ["labels"]
+    #training_args.can_return_loss = True
+    #training_args.include_loss_for_metrics = True
     training_args.include_inputs_for_metrics = True
-    training_args.include_for_metrics = ["inputs"]
-    #training_args.padding_side = "left"
+    training_args.include_for_metrics = "inputs"
     training_args.generation_max_length = training_args.generation_max_length or data_args.cutoff_len
     training_args.generation_num_beams = data_args.eval_num_beams or training_args.generation_num_beams
     training_args.remove_unused_columns = False  # important for multimodal dataset
@@ -113,7 +115,7 @@ def run_sft(
         trainer.save_model()
         if finetuning_args.include_effective_tokens_per_second:
             train_result.metrics["effective_tokens_per_sec"] = calculate_tps(
-                dataset_module["train_dataset"], train_result.metrics, stage="sft"
+                    dataset_module["train_dataset"], train_result.metrics, stage="sft"
             )
 
         trainer.log_metrics("train", train_result.metrics)

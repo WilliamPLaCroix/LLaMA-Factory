@@ -27,7 +27,6 @@ from llamafactory.extras.packages import is_vllm_available
 from llamafactory.hparams import get_infer_args
 from llamafactory.model import load_tokenizer
 
-
 if is_vllm_available():
     from vllm import LLM, SamplingParams
     from vllm.lora.request import LoRARequest
@@ -35,8 +34,10 @@ if is_vllm_available():
 import numpy as np
 from evaluate import load
 sari = load("sari")
-perplexity = load("perplexity", module_type="metric")
-from readability import Readability
+#perplexity = load("perplexity", module_type="metric")
+#from readability import Readability
+
+import textstat
 
 import nltk
 #nltk.download('punkt_tab')
@@ -167,7 +168,7 @@ def vllm_infer(
             f.write(json.dumps({"prompt": text, "predict": pred, "label": label}, ensure_ascii=False) + "\n")
 
     print("*" * 70)
-    print(f"{len(prompts)} generated results have been saved at {save_name}.")
+    print(f"{len(prompts)} generated results have been saved at {save_path}/{save_name}.")
     print("*" * 70)
 
     metrics = {k: round(float(np.mean(v)), 2) for k, v in score_dict.items()}
@@ -181,12 +182,11 @@ def vllm_infer(
         print("-" * 80)
 
     text = f" ".join(preds)
-    r = Readability(text)
-    fk = r.flesch_kincaid()
-    metrics["fkgl"] = fk.grade_level
-
+    metrics["fkgl"] = textstat.flesch_kincaid_grade(text)
+    
     print("*" * 70)
-    print("Readability results:", fk)
+    #print("Readability results:", fk)
+    print("Textstat FKGL:", metrics["fkgl"])
     print("*" * 70)
 
     # need to free up memory...? model -> cpu, call perplexity, which includes model -> gpu
@@ -211,24 +211,32 @@ def vllm_infer(
     #    config = PeftConfig.from_pretrained(adapter_name_or_path)
       
     
-    model = LlamaForCausalLM.from_pretrained(
-        model_name_or_path,
-        torch_dtype='auto',
-        device_map='auto',
-        offload_folder="offload", offload_state_dict = True
-        )
+    #model = LlamaForCausalLM.from_pretrained(
+        #model_name_or_path,
+        #torch_dtype='auto',
+        #device_map='auto',
+        #offload_folder="offload", offload_state_dict = True
+        #)
     
-    print("Base model loaded...")
+    #print("Base model loaded...")
 
     # Load the Lora model
-    if adapter_name_or_path is not None: 
-        model = PeftModel.from_pretrained(model, adapter_name_or_path)
+    #if adapter_name_or_path is not None: 
+        #model = PeftModel.from_pretrained(model, adapter_name_or_path)
     
-        print("Adapter successfully loaded!")
+        #print("Adapter successfully loaded!")
 
-    perplexity_results = perplexity.compute(predictions=labels, model=model, tokenizer=tokenizer)
-    print("model perplexity results:", perplexity_results["mean_perplexity"])
-    metrics["perplexity"] = round(perplexity_results["mean_perplexity"], 2)
+    #perplexity_results = perplexity.compute(predictions=labels, model=model, tokenizer=tokenizer)
+    from stat_utils.cal_ppl import calculate_ppl
+    
+    perplexity_results = calculate_ppl(model_name_or_path=model_name_or_path,
+                                        adapter_name_or_path=adapter_name_or_path,
+                                        save_path=save_path,
+                                        dataset=dataset,
+                                        template=template,
+                                        )
+    
+    metrics["perplexity"] = round(perplexity_results, 2)
 
     with open(f"{save_path}/metrics.json", "w", encoding="utf-8") as f:
         f.write(json.dumps({"sari": metrics["sari"], "perplexity": metrics["perplexity"], "fkgl": metrics["fkgl"]}))

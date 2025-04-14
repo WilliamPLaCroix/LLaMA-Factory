@@ -39,6 +39,8 @@ if TYPE_CHECKING:
 
     from ...hparams import FinetuningArguments
 
+from transformers.trainer_utils import PredictionOutput
+from torch.utils.data import DataLoader
 
 logger = logging.get_logger(__name__)
 
@@ -97,17 +99,37 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
         return super()._get_train_sampler()
 
     @override
+    def prediction_loop(
+        self,
+        dataloader: DataLoader,
+        description: str,
+        prediction_loss_only: Optional[bool] = None,
+        ignore_keys: Optional[list[str]] = None,
+        metric_key_prefix: str = "eval",
+        return_loss: bool = True,  # <-- Override default to ensure losses
+    ) -> PredictionOutput:
+        return super().prediction_loop(
+            dataloader=dataloader,
+            description=description,
+            prediction_loss_only=prediction_loss_only,
+            ignore_keys=ignore_keys,
+            metric_key_prefix=metric_key_prefix,
+            return_loss=return_loss  # <-- Force this to be True
+        )
+
+    @override
     def compute_loss(self, model, inputs, *args, **kwargs):
         return super().compute_loss(model, inputs, *args, **kwargs)
 
-    @override
-    def evaluate(self, eval_dataset=None, ignore_keys=None, metric_key_prefix="eval", **kwargs):
+    #@override
+    #def evaluate(self, eval_dataset=None, ignore_keys=None, metric_key_prefix="eval", **kwargs):
         # Temporarily enable predict_with_generate for evaluation
-        self.args.predict_with_generate = True
-        results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
+        #self.args.predict_with_generate = True
+        #pwg_t_results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
         # Restore original setting
-        self.args.predict_with_generate = False
-        return results
+        #self.args.predict_with_generate = False
+        #pwg_f_results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
+        #return pwg_t_results | pwg_f_results
 
     @override
     def prediction_step(
