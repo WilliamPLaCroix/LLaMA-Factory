@@ -40,9 +40,9 @@ import torch.nn as nn
 
 def compute_loss(logits, labels):
 
-    logits = torch.tensor(logits, dtype=torch.float32)
+    logits = torch.tensor(logits, dtype=torch.float32).cpu().detach()
     logits = logits.view(-1, logits.size(-1))  # [batch_size * seq_len, vocab_size]
-    labels = torch.tensor(labels, dtype=torch.long)
+    labels = torch.tensor(labels, dtype=torch.long).cpu().detach()
     labels = labels.view(-1)                   # [batch_size * seq_len]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
     loss = loss_fn(logits, labels)
@@ -98,33 +98,35 @@ class ComputeSimilarity:
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
         print("beginning of eval", torch.cuda.memory_summary())
         eval_predictions = eval_preds.predictions[:, :-1, :]
-        predictions = torch.tensor(eval_predictions).argmax(dim=-1)
+        #predictions = eval_predictions.argmax(dim=-1).cpu().detach()
+        predictions = torch.tensor(eval_predictions).argmax(dim=-1).cpu().detach()
+        
         label_ids = eval_preds.label_ids[:, 1:]
 
         preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs)
-        print("after numpify", torch.cuda.memory_summary())
+        #print("after numpify", torch.cuda.memory_summary())
         preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
         
         self.tokenizer.padding_side = "left"
-        print("after unmasking", torch.cuda.memory_summary())
+        #print("after unmasking", torch.cuda.memory_summary())
         decoded_preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
-        print("after decode", torch.cuda.memory_summary())
+        #print("after decode", torch.cuda.memory_summary())
         for pred, label, source in zip(decoded_preds, decoded_labels, decoded_inputs):
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
-        print("after SARI", torch.cuda.memory_summary())
+        #print("after SARI", torch.cuda.memory_summary())
 
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         text = " ".join(decoded_preds)
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
-        print("before compute loss", torch.cuda.memory_summary())
+        #print("before compute loss", torch.cuda.memory_summary())
         loss = compute_loss(eval_predictions, label_ids).to("cpu").item()
-        print("after compute loss", torch.cuda.memory_summary())
+        #print("after compute loss", torch.cuda.memory_summary())
         self.score_dict["loss"] = loss
         self.score_dict["perplexity"] = torch.exp(loss)
         torch.cuda.empty_cache()
