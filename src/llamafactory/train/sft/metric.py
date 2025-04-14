@@ -114,5 +114,20 @@ class ComputeSimilarity:
             del eval_predictions, predictions, label_ids, preds, labels, inputs
             del decoded_preds, decoded_labels, decoded_inputs, loss_fn, loss
             print(torch.cuda.memory_summary())
+
+            import gc
+
+            print("Before garbage collection:")
+            for obj in gc.get_objects():
+                if torch.is_tensor(obj):
+                    print(type(obj), obj.size(), obj.device)
+
+            gc.collect()
+
+            print("After garbage collection:")
+            for obj in gc.get_objects():
+                if torch.is_tensor(obj):
+                    print(type(obj), obj.size(), obj.device)
+
             if compute_result:
                 return self._dump()
