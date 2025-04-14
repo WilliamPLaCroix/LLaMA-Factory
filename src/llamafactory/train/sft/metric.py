@@ -85,45 +85,35 @@ class ComputeSimilarity:
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
         with torch.no_grad():
             self.score_dict = {"sari": []}
-            #print("beginning of eval", torch.cuda.memory_summary())
-            eval_predictions = eval_preds.predictions[:, :-1, :]
-            #predictions = eval_predictions.argmax(dim=-1).cpu().detach()
-            predictions = eval_predictions.argmax(dim=-1).cpu().detach()
+            eval_predictions = eval_preds.predictions[:, :-1, :].cpu().detach()
+            predictions = eval_predictions.argmax(dim=-1)
             
-            label_ids = eval_preds.label_ids[:, 1:]
+            label_ids = eval_preds.label_ids[:, 1:].cpu().detach()
 
-            preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs)
-            #print("after numpify", torch.cuda.memory_summary())
+            preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs).cpu().detach()
             preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
             labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
             inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
             
             self.tokenizer.padding_side = "left"
-            #print("after unmasking", torch.cuda.memory_summary())
             decoded_preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
             decoded_labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
             decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
-            #print("after decode", torch.cuda.memory_summary())
             for pred, label, source in zip(decoded_preds, decoded_labels, decoded_inputs):
                 source = source[91:].split("\n")[0][:-9]
                 sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
                 self.score_dict["sari"].append(round(sari_score['sari'], 2))
-            #print("after SARI", torch.cuda.memory_summary())
-
 
             self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+
             text = " ".join(decoded_preds)
             self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
-            #print("before compute loss", torch.cuda.memory_summary())
-            loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-            loss = loss_fn(eval_predictions.view(-1, eval_predictions.size(-1)), label_ids.view(-1)  ).cpu().detach().item()
 
-            #print("after compute loss", torch.cuda.memory_summary())
-            self.score_dict["loss"] = loss
-            self.score_dict["perplexity"] = math.exp(loss)
+            loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
+            self.score_dict["loss"] = loss_fn(eval_predictions.view(-1, eval_predictions.size(-1)), label_ids.view(-1)  ).cpu().detach().item()
+            self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
             del eval_predictions, predictions, label_ids, preds, labels, inputs
             del decoded_preds, decoded_labels, decoded_inputs, loss_fn, loss
             print(torch.cuda.memory_summary())
-            #print("after empty cache", torch.cuda.memory_summary())
             if compute_result:
                 return self._dump()
