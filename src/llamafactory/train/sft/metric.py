@@ -100,8 +100,8 @@ class ComputeSimilarity:
             decoded_inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
             for pred, label, source in zip(decoded_preds, decoded_labels, decoded_inputs):
                 source = source[91:].split("\n")[0][:-9]
-                sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
-                self.score_dict["sari"].append(round(sari_score['sari'], 2))
+                #sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
+                #self.score_dict["sari"].append(round(sari_score['sari'], 2))
 
             self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
 
@@ -121,7 +121,7 @@ class ComputeSimilarity:
 
             del eval_predictions, predictions, label_ids, preds, labels, inputs
             del decoded_preds, decoded_labels, decoded_inputs, loss_fn
-            
+
             print("Before garbage collection:")
             for obj in gc.get_objects():
                 if torch.is_tensor(obj):
