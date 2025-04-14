@@ -21,11 +21,9 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 import torch
-from transformers.utils import is_jieba_available, is_nltk_available
 
 from ...extras.constants import IGNORE_INDEX
 from ...extras.misc import numpify
-from ...extras.packages import is_rouge_available
 
 
 if TYPE_CHECKING:
@@ -37,12 +35,13 @@ sari = load("sari")
 import textstat
 
 import torch.nn as nn
+import math
 
 def compute_loss(logits, labels):
 
-    logits = torch.tensor(logits, dtype=torch.float32).cpu().detach()
+    #logits = torch.tensor(logits, dtype=torch.float32).cpu().detach()
     logits = logits.view(-1, logits.size(-1))  # [batch_size * seq_len, vocab_size]
-    labels = torch.tensor(labels, dtype=torch.long).cpu().detach()
+    #labels = torch.tensor(labels, dtype=torch.long).cpu().detach()
     labels = labels.view(-1)                   # [batch_size * seq_len]
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
     loss = loss_fn(logits, labels).cpu().detach().item()
@@ -96,6 +95,7 @@ class ComputeSimilarity:
         self._dump()
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
+        self.score_dict = {"sari": []}
         #print("beginning of eval", torch.cuda.memory_summary())
         eval_predictions = eval_preds.predictions[:, :-1, :]
         #predictions = eval_predictions.argmax(dim=-1).cpu().detach()
@@ -121,6 +121,7 @@ class ComputeSimilarity:
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
         #print("after SARI", torch.cuda.memory_summary())
 
+
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         text = " ".join(decoded_preds)
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
@@ -128,10 +129,10 @@ class ComputeSimilarity:
         loss = compute_loss(eval_predictions, label_ids)
         #print("after compute loss", torch.cuda.memory_summary())
         self.score_dict["loss"] = loss
-        self.score_dict["perplexity"] = torch.exp(loss)
+        self.score_dict["perplexity"] = math.exp(loss)
         del eval_predictions, predictions, label_ids, preds, labels, inputs
         del decoded_preds, decoded_labels, decoded_inputs
-        torch.cuda.empty_cache()
+
         #print("after empty cache", torch.cuda.memory_summary())
         if compute_result:
             return self._dump()
