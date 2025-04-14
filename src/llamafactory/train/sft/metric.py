@@ -86,10 +86,10 @@ class ComputeSimilarity:
         with torch.no_grad():
             eval_predictions = eval_preds.predictions[:, :-1, :].cpu().detach()
             predictions = eval_predictions.argmax(dim=-1)
-            
+            inputs = eval_preds.inputs.cpu().detach()
             label_ids = eval_preds.label_ids[:, 1:].cpu().detach()
 
-            preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs).cpu().detach()
+            preds, labels, inputs = numpify(predictions), numpify(label_ids), numpify(eval_preds.inputs)
             preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
             labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
             inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
@@ -119,9 +119,6 @@ class ComputeSimilarity:
             print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
             print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
 
-            del eval_predictions, predictions, label_ids, preds, labels, inputs
-            del decoded_preds, decoded_labels, decoded_inputs, loss_fn
-
             print("Before garbage collection:")
             for obj in gc.get_objects():
                 if torch.is_tensor(obj):
@@ -137,7 +134,7 @@ class ComputeSimilarity:
             
             # Detach and delete tensors to free memory
             del eval_predictions, predictions, label_ids, preds, labels, inputs
-            del decoded_preds, decoded_labels, decoded_inputs, loss_fn
+            del decoded_preds, decoded_labels, decoded_inputs, loss_fn, text, source
 
 
             print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
