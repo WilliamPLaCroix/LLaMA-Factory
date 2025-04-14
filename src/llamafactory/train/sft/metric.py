@@ -31,18 +31,6 @@ from ...extras.packages import is_rouge_available
 if TYPE_CHECKING:
     from transformers import EvalPrediction, PreTrainedTokenizer
 
-
-if is_jieba_available():
-    import jieba  # type: ignore
-
-
-if is_nltk_available():
-    from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu  # type: ignore
-
-
-if is_rouge_available():
-    from rouge_chinese import Rouge  # type: ignore
-
 from evaluate import load
 sari = load("sari")
 
@@ -59,7 +47,6 @@ def compute_loss(logits, labels):
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
      
     return loss_fn(logits, labels).to("cpu")
-
 
 @dataclass
 class ComputeAccuracy:
@@ -86,7 +73,6 @@ class ComputeAccuracy:
         if compute_result:
             return self._dump()
 
-
 @dataclass
 class ComputeSimilarity:
     r"""Compute text similarity scores and support `batch_eval_metrics`.
@@ -101,9 +87,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             #result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             result = self.score_dict
-
-        self.score_dict = {"sari": [], "fkgl": []}
-        #self.score_dict = {"rouge-1": [], "rouge-2": [], "rouge-l": [], "bleu-4": [], "sari": [], "fkgl": []}
+        self.score_dict = {"sari": []}
         return result
 
     def __post_init__(self):
@@ -136,9 +120,9 @@ class ComputeSimilarity:
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         text = " ".join(decoded_preds)
         self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(text)
-        loss = compute_loss(eval_predictions, label_ids)
+        loss = compute_loss(eval_predictions, label_ids).to("cpu").item()
         self.score_dict["loss"] = loss
-        self.score_dict["perplexity"] = torch.exp(loss)
-
+        self.score_dict["perplexity"] = torch.exp(loss).to("cpu").item()
+        torch.cuda.empty_cache()
         if compute_result:
             return self._dump()
