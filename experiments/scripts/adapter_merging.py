@@ -15,7 +15,9 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     # print all args
     print(f"model: {model}")
     print(f"adapters: {adapters}")
+    
     print(f"grades: {grades}")
+    grades = [str(grade) for grade in grades]
     assert len(adapters) == len(grades), "Adapters and grades must have the same length"
     if len(adapters) != len(weights):
         weights = [1.0] * len(adapters)
