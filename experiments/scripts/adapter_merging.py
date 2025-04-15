@@ -8,7 +8,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          adapters=None,
          grades=None,
          weights=[],
-         output="/scratch/wlacroix/.cache/llamafactory",
+         output="/scratch/wlacroix/.cache/llama_factory",
          merge_method="linear",
          density=0.5,
          ):
@@ -34,7 +34,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     for adapter_path, grade in zip(adapters[1:], grades[1:]):
         print("Loading adapter from:", adapter_path)
         _ = model.load_adapter(adapter_path, adapter_name=grade)
-    merged_adapter_name = "_merge_".join(grades)
+    merged_adapter_name = f'{"_merge_".join(grades)}_adapter'
     model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name)#, density=density)
     
     # clean up unused adapters
@@ -42,7 +42,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         model.delete_adapter(grade)
 
     model.set_adapter(merged_adapter_name)
-    model.save_pretrained(f"{output}/{merged_adapter_name}_adapter")
+    model.save_pretrained(f"{output}")
     print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
 
 if __name__ == "__main__":
