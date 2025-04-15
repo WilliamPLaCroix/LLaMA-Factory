@@ -48,14 +48,14 @@ def main(model="/scratch/common_models/Llama-3.2-3B-Instruct",
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Merge models and adapters")
-    parser.add_argument("--adapters", nargs="+", help="List of adapter paths", default=None, required=True)
-    parser.add_argument("--grades", nargs="+", help="List of adapter grades. len must match --adapters", default=None, required=True)
-    parser.add_argument("--model", type=str, help="Path to the model", default=None)
+    parser.add_argument("--adapters", nargs="+", help="List of adapter paths", required=True)
+    parser.add_argument("--grades", nargs="+", help="List of adapter grades. len must match --adapters", required=True)
+    parser.add_argument("--model", type=str, help="Path to the model")
     # add adapter weights as list
-    parser.add_argument("--weights", nargs="+", help="List of adapter weights", default=[])
-    parser.add_argument("--output", type=str, help="Output path for the merged model", default=None)
-    parser.add_argument("--merge_method", type=str, help="Method for merging", default=None)
+    parser.add_argument("--weights", nargs="+", help="List of adapter weights")
+    parser.add_argument("--output", type=str, help="Output path for the merged model")
+    parser.add_argument("--merge_method", type=str, help="Method for merging")
     # add density
-    parser.add_argument("--density", type=float, help="Density for merging", default=0.5)
+    parser.add_argument("--density", type=float, help="Density for merging")
     args = parser.parse_args()
     main(**vars(args))
