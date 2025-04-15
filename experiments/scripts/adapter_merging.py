@@ -1,13 +1,7 @@
 import argparse
 from transformers import AutoModelForCausalLM
 from transformers import AutoModelForCausalLM
-from peft import PeftModel, PeftConfig, LoraModel
-
-
-
-
-
-
+from peft import PeftModel
 
 def main(model="/scratch/common_models/Llama-3.2-3B-Instruct", 
          adapters=None,
