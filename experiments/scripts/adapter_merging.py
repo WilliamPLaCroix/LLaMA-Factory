@@ -26,9 +26,9 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     print(f"merge_method: {merge_method}")
     print(f"density: {density}")
 
-    print("Loading base model from:", adapter_path)
+    print("Loading base model from:", model)
     base_model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
-    print("Loading adapter from:", adapter_path)
+    print("Loading adapter from:", adapters[0])
     model = PeftModel.from_pretrained(base_model, adapters[0], adapter_name=grades[0])
 
     for adapter_path, grade in zip(adapters[1:], grades[1:]):
