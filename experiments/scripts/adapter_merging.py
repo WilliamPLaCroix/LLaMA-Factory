@@ -4,12 +4,12 @@ from transformers import AutoModelForCausalLM
 from peft import PeftModel
 import fire
 
-def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct", 
+def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          adapters=None,
          grades=None,
-         weights=[], 
-         output="/scratch/wlacroix/.cache/llamafactory", 
-         merge_method="linear", 
+         weights=[],
+         output="/scratch/wlacroix/.cache/llamafactory",
+         merge_method="linear",
          density=0.5,
          ):
     # print all args
@@ -35,7 +35,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         print("Loading adapter from:", adapter_path)
         _ = model.load_adapter(adapter_path, adapter_name=grade)
     merged_adapter_name = "_merge_".join(grades)
-    model.add_weighted_adapter(adapters=adapters, weights=weights, merge_method=merge_method, adapter_name=merged_adapter_name)#, density=density)
+    model.add_weighted_adapter(adapters=adapters, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name)#, density=density)
     
     # clean up unused adapters
     for grade in grades:
