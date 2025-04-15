@@ -84,14 +84,15 @@ class ComputeSimilarity:
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
         with torch.no_grad():
-            eval_predictions = eval_preds.predictions[:, :-1, :]
-            preds = eval_predictions.argmax(dim=-1).cpu().detach()
+            preds = eval_preds.predictions[:, :-1, :].cpu().detach()
             inputs = eval_preds.inputs.cpu().detach()
             labels = eval_preds.label_ids[:, 1:].cpu().detach()
 
             loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-            self.score_dict["loss"] = loss_fn(eval_predictions.view(-1, eval_predictions.size(-1)), labels.view(-1)  ).cpu().detach().item()
+            self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
             self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
+
+            preds = np.argmax(preds, axis=-1)
 
             preds, labels, inputs = numpify(preds), numpify(labels), numpify(inputs)
             preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
@@ -133,7 +134,7 @@ class ComputeSimilarity:
             torch.cuda.empty_cache()
             
             # Detach and delete tensors to free memory
-            del eval_predictions, preds, preds, labels, inputs
+            del preds, preds, labels, inputs
             del loss_fn, source
 
 
