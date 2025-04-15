@@ -12,7 +12,7 @@ from peft import PeftModel, PeftConfig, LoraModel
 def main(model="/scratch/common_models/Llama-3.2-3B-Instruct", 
          adapters=None,
          grades=None,
-         weights=None, 
+         weights=[], 
          output="/scratch/wlacroix/.cache/llamafactory", 
          merge_method="linear", 
          density=0.5,
