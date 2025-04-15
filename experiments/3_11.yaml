@@ -14,7 +14,7 @@ lora_target: all
 lora_dropout: 0.05
 
 ### dataset
-dataset: wikilarge_grade_3, wikilarge_grade_3
+dataset: wikilarge_grade_3, wikilarge_grade_11
 template: llama3
 cutoff_len: 1024
 #max_samples: 1000
