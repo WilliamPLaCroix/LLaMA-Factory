@@ -88,9 +88,9 @@ class ComputeSimilarity:
             inputs = eval_preds.inputs.cpu().detach()
             labels = eval_preds.label_ids[:, 1:].cpu().detach()
 
-            loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-            self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
-            self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
+            # loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
+            # self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
+            # self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
 
             preds = np.argmax(preds, axis=-1)
 
@@ -113,32 +113,32 @@ class ComputeSimilarity:
 
             self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(" ".join(preds))
 
-            print(torch.cuda.memory_summary())
+            # print(torch.cuda.memory_summary())
 
-            import gc
+            # import gc
 
-            print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
-            print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
+            # print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
+            # print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
 
-            print("Before garbage collection:")
-            for obj in gc.get_objects():
-                if torch.is_tensor(obj):
-                    print(type(obj), obj.size(), obj.device)
+            # print("Before garbage collection:")
+            # for obj in gc.get_objects():
+            #     if torch.is_tensor(obj):
+            #         print(type(obj), obj.size(), obj.device)
 
-            gc.collect()
+            # gc.collect()
 
-            print("After garbage collection:")
-            for obj in gc.get_objects():
-                if torch.is_tensor(obj):
-                    print(type(obj), obj.size(), obj.device)
-            torch.cuda.empty_cache()
+            # print("After garbage collection:")
+            # for obj in gc.get_objects():
+            #     if torch.is_tensor(obj):
+            #         print(type(obj), obj.size(), obj.device)
+            # torch.cuda.empty_cache()
             
-            # Detach and delete tensors to free memory
-            del preds, preds, labels, inputs
-            del loss_fn, source
+            # # Detach and delete tensors to free memory
+            # del preds, preds, labels, inputs
+            # del loss_fn, source
 
 
-            print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
-            print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
+            # print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
+            # print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
             if compute_result:
                 return self._dump()
