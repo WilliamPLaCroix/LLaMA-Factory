@@ -84,7 +84,7 @@ class ComputeSimilarity:
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
         with torch.no_grad():
-            preds = eval_preds.predictions[:, :-1, :]
+            preds = eval_preds.predictions#[:, :-1, :].cpu().detach()
             inputs = eval_preds.inputs.cpu().detach()
             labels = eval_preds.label_ids[:, 1:].cpu().detach()
 
@@ -92,7 +92,7 @@ class ComputeSimilarity:
             # self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
             # self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
 
-            preds = np.argmax(preds, axis=-1)
+            #preds = np.argmax(preds, axis=-1)
 
             preds, labels, inputs = numpify(preds), numpify(labels), numpify(inputs)
             preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)

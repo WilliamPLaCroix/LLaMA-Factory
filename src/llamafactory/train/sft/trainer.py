@@ -98,24 +98,24 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
 
         return super()._get_train_sampler()
 
-    @override
-    def prediction_loop(
-        self,
-        dataloader: DataLoader,
-        description: str,
-        prediction_loss_only: Optional[bool] = None,
-        ignore_keys: Optional[list[str]] = None,
-        metric_key_prefix: str = "eval",
-        return_loss: bool = True,  # <-- Override default to ensure losses
-    ) -> PredictionOutput:
-        return super().prediction_loop(
-            dataloader=dataloader,
-            description=description,
-            prediction_loss_only=prediction_loss_only,
-            ignore_keys=ignore_keys,
-            metric_key_prefix=metric_key_prefix,
-            return_loss=return_loss  # <-- Force this to be True
-        )
+    # @override
+    # def prediction_loop(
+    #     self,
+    #     dataloader: DataLoader,
+    #     description: str,
+    #     prediction_loss_only: Optional[bool] = None,
+    #     ignore_keys: Optional[list[str]] = None,
+    #     metric_key_prefix: str = "eval",
+    #     return_loss: bool = True,  # <-- Override default to ensure losses
+    # ) -> PredictionOutput:
+    #     return super().prediction_loop(
+    #         dataloader=dataloader,
+    #         description=description,
+    #         prediction_loss_only=prediction_loss_only,
+    #         ignore_keys=ignore_keys,
+    #         metric_key_prefix=metric_key_prefix,
+    #         return_loss=return_loss  # <-- Force this to be True
+    #     )
 
     @override
     def compute_loss(self, model, inputs, *args, **kwargs):
