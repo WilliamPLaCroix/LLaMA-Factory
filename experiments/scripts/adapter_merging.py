@@ -36,15 +36,15 @@ def main(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         _ = model.load_adapter(adapter_path, adapter_name=grade)
         print("Loading adapter from:", adapter_path)
     merged_adapter_name = "_merge_".join(grades)
-    model.add_weighted_adapter(adapters, weights, merge_method=merge_method, adapter_name=merged_adapter_name)#, density=density)
+    model.add_weighted_adapter(adapters=adapters, weight=weights, merge_method=merge_method, adapter_name=merged_adapter_name)#, density=density)
     
     # clean up unused adapters
     for grade in grades:
         model.delete_adapter(grade)
 
     model.set_adapter(merged_adapter_name)
-    model.save_pretrained(f"{output}/{merged_adapter_name}")
-    print(f"Saved merged adapter to {output}/{merged_adapter_name}")
+    model.save_pretrained(f"{output}/{merged_adapter_name}_adapter")
+    print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Merge models and adapters")
