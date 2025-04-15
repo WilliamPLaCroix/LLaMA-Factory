@@ -52,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("--grades", nargs="+", help="List of adapter grades. len must match --adapters", default=None, required=True)
     parser.add_argument("--model", type=str, help="Path to the model", default=None)
     # add adapter weights as list
-    parser.add_argument("--weights", nargs="+", help="List of adapter weights", default=None)
+    parser.add_argument("--weights", nargs="+", help="List of adapter weights", default=[])
     parser.add_argument("--output", type=str, help="Output path for the merged model", default=None)
     parser.add_argument("--merge_method", type=str, help="Method for merging", default=None)
     # add density
