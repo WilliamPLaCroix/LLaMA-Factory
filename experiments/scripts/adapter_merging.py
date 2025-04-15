@@ -2,8 +2,9 @@ import argparse
 from transformers import AutoModelForCausalLM
 from transformers import AutoModelForCausalLM
 from peft import PeftModel
+import fire
 
-def main(model="/scratch/common_models/Llama-3.2-3B-Instruct", 
+def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct", 
          adapters=None,
          grades=None,
          weights=[], 
@@ -41,15 +42,4 @@ def main(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Merge models and adapters")
-    parser.add_argument("--adapters", nargs="+", help="List of adapter paths", required=True)
-    parser.add_argument("--grades", nargs="+", help="List of adapter grades. len must match --adapters", required=True)
-    parser.add_argument("--model", type=str, help="Path to the model")
-    # add adapter weights as list
-    parser.add_argument("--weights", nargs="+", help="List of adapter weights")
-    parser.add_argument("--output", type=str, help="Output path for the merged model")
-    parser.add_argument("--merge_method", type=str, help="Method for merging")
-    # add density
-    parser.add_argument("--density", type=float, help="Density for merging")
-    args = parser.parse_args()
-    main(**vars(args))
+    fire.Fire(merge_adapters)
