@@ -76,7 +76,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             #result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             result = self.score_dict
-        self.score_dict = {"sari": [], "fkgl": [], "loss": [], "perplexity": []}
+        self.score_dict = {"sari": [], "fkgl": [], "fkgl-delta": [], "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -105,12 +105,14 @@ class ComputeSimilarity:
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
         for pred, label, source in zip(preds, labels, inputs):
+            print(source)
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-        #self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
+        fkgl = textstat.flesch_kincaid_grade(" ".join(preds))
+        self.score_dict["fkgl"].append(fkgl)
 
         # print(torch.cuda.memory_summary())
 
