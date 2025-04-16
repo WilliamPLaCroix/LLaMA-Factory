@@ -74,7 +74,7 @@ class ComputeSimilarity:
     def _dump(self) -> Optional[dict[str, float]]:
         result = None
         if hasattr(self, "score_dict"):
-            result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+            #result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             result = self.score_dict
         self.score_dict = {"sari": [], "fkgl": [], "loss": [], "perplexity": []}
         return result
@@ -107,9 +107,10 @@ class ComputeSimilarity:
         for pred, label, source in zip(preds, labels, inputs):
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
-            self.score_dict["sari"].append(round(sari_score['sari'], 2))
+            self.score_dict["sari"].append(sari_score['sari'], 2)
 
-        self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
+        self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+        #self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
 
         # print(torch.cuda.memory_summary())
 
