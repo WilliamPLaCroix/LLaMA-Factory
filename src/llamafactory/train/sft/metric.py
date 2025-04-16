@@ -107,7 +107,7 @@ class ComputeSimilarity:
         for pred, label, source in zip(preds, labels, inputs):
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
-            self.score_dict["sari"].append(sari_score['sari'], 2)
+            self.score_dict["sari"].append(sari_score['sari'])
 
         self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         #self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
