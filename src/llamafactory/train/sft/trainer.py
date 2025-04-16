@@ -128,8 +128,8 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
         pwg_t_results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
         # Restore original setting
         self.args.predict_with_generate = False
-        pwg_f_results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
-        return pwg_t_results | pwg_f_results
+        #pwg_f_results = super().evaluate(eval_dataset, ignore_keys, metric_key_prefix, **kwargs)
+        return pwg_t_results# | pwg_f_results
 
     @override
     def prediction_step(
