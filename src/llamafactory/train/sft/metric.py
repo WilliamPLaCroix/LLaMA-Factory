@@ -105,7 +105,9 @@ class ComputeSimilarity:
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
         for pred, label, source in zip(preds, labels, inputs):
-            print(source)
+            print("split1", source.split("\n")[0])
+            print("split2", source.split("\n")[1])
+            print("split3", source.split("\n")[2])
             source = source[91:].split("\n")[0][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
