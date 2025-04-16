@@ -29,22 +29,32 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     print("Loading base model from:", model)
     base_model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
     print("Loading adapter from:", adapters[0])
+    # time adapter loading
+    import time
+    start = time.time()
     model = PeftModel.from_pretrained(base_model, adapters[0], adapter_name=grades[0])
 
     for adapter_path, grade in zip(adapters[1:], grades[1:]):
         print("Loading adapter from:", adapter_path)
         _ = model.load_adapter(adapter_path, adapter_name=grade)
+    loaded = time.time() - start
     merged_adapter_name = f'{"_merge_".join(grades)}_adapter'
     if density is not None:
         model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name, density=density)
     else:
         model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name)#, density=density)
-    
+    merged = time.time() - start - loaded
     # clean up unused adapters
     for grade in grades:
         model.delete_adapter(grade)
 
     model.set_adapter(merged_adapter_name)
+    cleaned = time.time() - start - loaded - merged
+    total = time.time() - start
+    print(f"Loaded adapters in {loaded:.2f}s")
+    print(f"Merged adapters in {merged:.2f}s")
+    print(f"Cleaned up extra adapters in {cleaned:.2f}s")
+    print(f"Total time for adapter loading, merging, cleaning: {total:.2f}s")
     model.save_pretrained(f"{output}")
     print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
 
