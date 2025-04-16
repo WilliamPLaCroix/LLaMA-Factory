@@ -74,71 +74,71 @@ class ComputeSimilarity:
     def _dump(self) -> Optional[dict[str, float]]:
         result = None
         if hasattr(self, "score_dict"):
-            #result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+            result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             result = self.score_dict
-        self.score_dict = {"sari": []}
+        self.score_dict = {"sari": [], "fkgl": [], "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
         self._dump()
 
     def __call__(self, eval_preds: "EvalPrediction", compute_result: bool = True) -> Optional[dict[str, float]]:
-        with torch.no_grad():
-            preds = eval_preds.predictions#[:, :-1, :].cpu().detach()
-            inputs = eval_preds.inputs#.cpu().detach()
-            labels = eval_preds.label_ids#[:, 1:].cpu().detach()
+        # preds = eval_preds.predictions#[:, :-1, :].cpu().detach()
+        # inputs = eval_preds.inputs#.cpu().detach()
+        # labels = eval_preds.label_ids#[:, 1:].cpu().detach()
 
-            # loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
-            # self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
-            # self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
+        # loss_fn = nn.CrossEntropyLoss(ignore_index=-100, reduction="mean")
+        # self.score_dict["loss"] = loss_fn(preds.view(-1, preds.size(-1)), labels.view(-1)  ).cpu().detach().item()
+        # self.score_dict["perplexity"] = math.exp(self.score_dict["loss"])
 
-            #preds = np.argmax(preds, axis=-1)
+        #preds = np.argmax(preds, axis=-1)
 
-            preds, labels, inputs = numpify(preds), numpify(labels), numpify(inputs)
-            preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
-            labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
-            inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
-            
-            self.tokenizer.padding_side = "left"
-            preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
-            labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
-            inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
+        preds, labels, inputs = numpify(eval_preds.predictions), numpify(eval_preds.label_ids), numpify(eval_preds.inputs)
 
-            for pred, label, source in zip(preds, labels, inputs):
-                source = source[91:].split("\n")[0][:-9]
-                sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
-                self.score_dict["sari"].append(round(sari_score['sari'], 2))
+        preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
+        labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
+        inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
+        
+        self.tokenizer.padding_side = "left"
+        preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
+        labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
+        inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
-            self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+        for pred, label, source in zip(preds, labels, inputs):
+            source = source[91:].split("\n")[0][:-9]
+            sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
+            self.score_dict["sari"].append(round(sari_score['sari'], 2))
 
-            self.score_dict["fkgl"] = textstat.flesch_kincaid_grade(" ".join(preds))
+        self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
 
-            # print(torch.cuda.memory_summary())
+        self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
 
-            # import gc
+        # print(torch.cuda.memory_summary())
 
-            # print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
-            # print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
+        # import gc
 
-            # print("Before garbage collection:")
-            # for obj in gc.get_objects():
-            #     if torch.is_tensor(obj):
-            #         print(type(obj), obj.size(), obj.device)
+        # print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
+        # print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
 
-            # gc.collect()
+        # print("Before garbage collection:")
+        # for obj in gc.get_objects():
+        #     if torch.is_tensor(obj):
+        #         print(type(obj), obj.size(), obj.device)
 
-            # print("After garbage collection:")
-            # for obj in gc.get_objects():
-            #     if torch.is_tensor(obj):
-            #         print(type(obj), obj.size(), obj.device)
-            # torch.cuda.empty_cache()
-            
-            # # Detach and delete tensors to free memory
-            # del preds, preds, labels, inputs
-            # del loss_fn, source
+        # gc.collect()
+
+        # print("After garbage collection:")
+        # for obj in gc.get_objects():
+        #     if torch.is_tensor(obj):
+        #         print(type(obj), obj.size(), obj.device)
+        # torch.cuda.empty_cache()
+        
+        # # Detach and delete tensors to free memory
+        # del preds, preds, labels, inputs
+        # del loss_fn, source
 
 
-            # print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
-            # print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
-            if compute_result:
-                return self._dump()
+        # print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
+        # print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
+        if compute_result:
+            return self._dump()
