@@ -10,7 +10,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          weights=[],
          output="/scratch/wlacroix/.cache/llama_factory",
          merge_method="linear",
-         density=0.5,
+         density=None,
          ):
     # print all args
     print(f"model: {model}")
@@ -35,7 +35,10 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         print("Loading adapter from:", adapter_path)
         _ = model.load_adapter(adapter_path, adapter_name=grade)
     merged_adapter_name = f'{"_merge_".join(grades)}_adapter'
-    model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name)#, density=density)
+    if density is not None:
+        model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name, density=density)
+    else:
+        model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name)#, density=density)
     
     # clean up unused adapters
     for grade in grades:
