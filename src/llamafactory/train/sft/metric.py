@@ -75,7 +75,7 @@ class ComputeSimilarity:
         result = None
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-            result = self.score_dict
+            #result = self.score_dict
         self.score_dict = {"sari": [], "fkgl": [], "fkgl-delta": [], "loss": [], "perplexity": []}
         return result
 
@@ -109,9 +109,7 @@ class ComputeSimilarity:
             source = source.split("\n")
             grade = source[2].split(" ")[-1][:-1]
             grades.add(grade)
-            print("grade", grade)
             source = source[3][:-9]
-            print("group3", source)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
