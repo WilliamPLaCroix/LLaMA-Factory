@@ -104,9 +104,11 @@ class ComputeSimilarity:
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
+        grades = set()
         for pred, label, source in zip(preds, labels, inputs):
             source = source.split("\n")
-            grade = source.split(" ")[-1][:-1]
+            grade = source[2].split(" ")[-1][:-1]
+            grades.add(grade)
             print("grade", grade)
             source = source[3]
             print("group3", source)
@@ -116,6 +118,8 @@ class ComputeSimilarity:
         #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         fkgl = textstat.flesch_kincaid_grade(" ".join(preds))
         self.score_dict["fkgl"].append(fkgl)
+        target_grade = sum([int(grade) for grade in grades]) / len(grades)
+        self.score_dict["fkgl-delta"].append(abs(fkgl - target_grade))
 
         # print(torch.cuda.memory_summary())
 
