@@ -109,8 +109,6 @@ class ComputeSimilarity:
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(round(sari_score['sari'], 2))
 
-        self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-
         self.score_dict["fkgl"].append(textstat.flesch_kincaid_grade(" ".join(preds)))
 
         # print(torch.cuda.memory_summary())
