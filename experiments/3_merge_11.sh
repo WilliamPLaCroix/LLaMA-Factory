@@ -26,7 +26,7 @@ echo "Starting Main Experiment Workflow!"
 
 echo "Begin Merge"
 #llamafactory-cli export experiments/3_11_merge.yaml \
-python3 experiments/scripts/adapter_merging.py --adapters='["/scratch/wlacroix/.cache/llama_factory/3_adapter", "/scratch/wlacroix/.cache/llama_factory/11_adapter"]' --grades='[3, 11]' --weights='[1, 1]' --merge_method dare_ties --density 0.5 \
+python3 experiments/scripts/adapter_merging.py --adapters='["/scratch/wlacroix/.cache/llama_factory/3_adapter/checkpoint-6040", "/scratch/wlacroix/.cache/llama_factory/11_adapter/checkpoint-5100"]' --grades='[3, 11]' --weights='[1, 1]' --merge_method dare_ties --density 0.5 \
 > experiments/logs/3_merge_11_merge.log 2>&1
 
 echo "Begin Inference"
