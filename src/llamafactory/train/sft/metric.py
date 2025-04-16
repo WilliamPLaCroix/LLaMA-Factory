@@ -107,7 +107,7 @@ class ComputeSimilarity:
         grades = []
         for pred, label, source in zip(preds, labels, inputs):
             source = source.split("\n")
-            grade = source[2].split(" ")[-1][:-1]
+            grade = int(source[2].split(" ")[-1].strip('.'))
             grades.append(grade)
             source = source[3][:-9]
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
