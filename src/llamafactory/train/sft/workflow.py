@@ -47,7 +47,7 @@ def run_sft(
 ):
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
-    #tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
+    tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
     dataset_module = get_dataset(template, model_args, data_args, training_args, stage="sft", **tokenizer_module)
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
@@ -75,7 +75,7 @@ def run_sft(
     #training_args.can_return_loss = True
     #training_args.include_loss_for_metrics = True
     training_args.include_inputs_for_metrics = True
-    training_args.include_for_metrics = "inputs"
+    training_args.include_for_metrics = ["inputs"]
     training_args.generation_max_length = training_args.generation_max_length or data_args.cutoff_len
     training_args.generation_num_beams = data_args.eval_num_beams or training_args.generation_num_beams
     training_args.remove_unused_columns = False  # important for multimodal dataset
