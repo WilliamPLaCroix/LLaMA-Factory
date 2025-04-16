@@ -31,7 +31,7 @@ python3 experiments/scripts/adapter_merging.py --adapters='["/scratch/wlacroix/.
 
 echo "Begin Inference"
 python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/3_merge_11_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/3_merge_11_adapter" --template llama3 --dataset wikilarge_grade_7_test --temperature 0 --grade 7 \
-> experiments/logs/3_dareties_11_infer.log 2>&1
+> experiments/logs/3_dareties_11_late_infer.log 2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
