@@ -23,7 +23,7 @@ preprocessing_num_workers: 16
 train_on_prompt: False
 
 ### output
-output_dir: /scratch/wlacroix/.cache/llama_factory/2_4_adapter
+output_dir: /scratch/wlacroix/.cache/llama_factory/2_4_fkgl_adapter
 logging_steps: 10
 save_steps: 100
 plot_loss: true
@@ -33,7 +33,7 @@ overwrite_output_dir: true
 per_device_train_batch_size: 8
 gradient_accumulation_steps: 4
 learning_rate: 1.0e-4
-num_train_epochs: 20
+num_train_epochs: 30
 lr_scheduler_type: cosine
 warmup_ratio: 0.2
 bf16: True
@@ -51,6 +51,6 @@ predict_with_generate: False
 save_strategy: steps
 save_total_limit: 3
 load_best_model_at_end: True
-metric_for_best_model: "eval_wikilarge_grade_2_4_validate_sari"
-greater_is_better: True  # Higher SARI is better
+metric_for_best_model: "eval_wikilarge_grade_2_4_validate_fkgl-delta"
+greater_is_better: False  # Higher SARI is better
 
