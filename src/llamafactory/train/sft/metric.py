@@ -105,14 +105,15 @@ class ComputeSimilarity:
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
         for pred, label, source in zip(preds, labels, inputs):
-            print("split1", source.split("\n")[0])
-            print("split2", source.split("\n")[1])
-            print("split3", source.split("\n")[2])
-            source = source[91:].split("\n")[0][:-9]
+            source = source.split("\n")
+            grade = source.split(" ")[-1][:-1]
+            print("grade", grade)
+            source = source[3]
+            print("group3", source)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
-        self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
+        #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         fkgl = textstat.flesch_kincaid_grade(" ".join(preds))
         self.score_dict["fkgl"].append(fkgl)
 
