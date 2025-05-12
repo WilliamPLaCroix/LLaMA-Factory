@@ -14,7 +14,7 @@ lora_target: all
 lora_dropout: 0.05
 
 ### dataset
-dataset: wikilarge_grade_3
+dataset: wikilarge_grade_6
 template: llama3
 cutoff_len: 1024
 #max_samples: 1000
@@ -23,7 +23,7 @@ preprocessing_num_workers: 16
 train_on_prompt: False
 
 ### output
-output_dir: /scratch/wlacroix/.cache/llama_factory/3_adapter
+output_dir: /scratch/wlacroix/.cache/llama_factory/6_adapter
 logging_steps: 10
 save_steps: 100
 plot_loss: True
@@ -41,7 +41,7 @@ ddp_timeout: 180000000
 
 ### eval
 do_eval: True
-eval_dataset: wikilarge_grade_3_validate
+eval_dataset: wikilarge_grade_6_validate
 per_device_eval_batch_size: 32
 eval_strategy: steps
 eval_steps: 100
@@ -51,6 +51,6 @@ predict_with_generate: False
 save_strategy: steps
 save_total_limit: 3
 load_best_model_at_end: True
-metric_for_best_model: "eval_wikilarge_grade_3_validate_fkgl-delta"
+metric_for_best_model: "eval_wikilarge_grade_6_validate_fkgl-delta"
 greater_is_better: True  # Higher SARI is better
 
