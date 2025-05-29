@@ -1,4 +1,52 @@
 {
+  "cot_A": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "idk",
+    "system": "system"
+    }
+  },
+  "cot_A_con": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "idk",
+    "system": "constraint"
+    }
+  },
+  "cot_B": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "pls",
+    "system": "system"
+    }
+  },
+  "cot_B_con": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "pls",
+    "system": "constraint"
+    }
+  },
+  "cot_C": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "threat",
+    "system": "system"
+    }
+  },
+  "cot_C_con": {
+    "file_name": "williamplacroix/cot_eval",
+    "columns": {
+	"prompt": "question",
+	"query": "threat",
+    "system": "constraint"
+    }
+  },
   "augmented_tutor_data_noMD": {
     "file_name": "/nethome/wlacroix/macmillan/data/tutor_data/augmented_tutor_data_noMD.json",
     "columns": {
