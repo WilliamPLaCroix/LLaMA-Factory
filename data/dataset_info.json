@@ -1,6 +1,6 @@
 {
   "cot_A": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "idk",
@@ -8,7 +8,7 @@
     }
   },
   "cot_A_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "idk",
@@ -16,7 +16,7 @@
     }
   },
   "cot_B": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "pls",
@@ -24,7 +24,7 @@
     }
   },
   "cot_B_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "pls",
@@ -32,7 +32,7 @@
     }
   },
   "cot_C": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "threat",
@@ -40,7 +40,7 @@
     }
   },
   "cot_C_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval",
+    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
     "columns": {
 	"prompt": "question",
 	"query": "threat",
