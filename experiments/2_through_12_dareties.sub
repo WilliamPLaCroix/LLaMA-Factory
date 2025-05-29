@@ -3,7 +3,7 @@
 
 universe                = vanilla
 initialdir              = /nethome/wlacroix/LLaMA-Factory/
-executable              = /nethome/wlacroix/LLaMA-Factory/old_experiments/3_merge_11.sh
+executable              = /nethome/wlacroix/LLaMA-Factory/experiments/2_through_12_dareties.sh
 output                  = /scratch/wlacroix/logs/run.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.$(ClusterId).err
 log                     = /scratch/wlacroix/logs/log/run.$(ClusterId).log

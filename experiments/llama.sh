@@ -20,20 +20,20 @@ which python
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
 
-echo "Begin Training"
-#llamafactory-cli train experiments/11.yaml \
-#> experiments/logs/11_train.log  2>&1
+#echo "Begin Training"
+#llamafactory-cli train experiments/2.yaml \
+#> experiments/logs/2_train.log 2>&1
 
-echo "Begin Merge"
-llamafactory-cli export experiments/11_merge.yaml \
-> experiments/logs/11_merge.log  2>&1
+#echo "Begin Merge"
+#llamafactory-cli export experiments/2_merge.yaml \
+#> experiments/logs/2_merge.log 2>&1
 
 echo "Begin Inference"
-python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/11_adapter" --save_path "/scratch/wlacroix/.cache/llama_factory/11" --template llama3 --dataset wikilarge_grade_11_test --temperature 0 --grade 11 \
-> experiments/logs/11_infer.log  2>&1
+python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --save_path "/scratch/wlacroix/.cache/llama_factory/debug" --template llama3 --dataset wikilarge_grade_12_test --temperature 0 --grade 12 \
+> experiments/logs/llama_12_infer.log 2>&1
 
 #or if you encounter error:
 #FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
-#> PTA/experiments_sarubi/logs_lora_sft  2>&1
+#> PTA/experiments_sarubi/logs_lora_sft 2>&1
 
 echo "Main Experiment Workflow Completed!"
