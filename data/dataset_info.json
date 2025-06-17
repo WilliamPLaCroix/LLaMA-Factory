@@ -1,4 +1,12 @@
 {
+  "augmented_tutor_data_baseline": {
+    "file_name": "/nethome/wlacroix/macmillan/data_augmentation/augmented_data_llama33-70B_noMD.jsonl",
+    "columns": {
+	"prompt": "None",
+    "query": "prompt",
+	"response": "predict"
+    }
+  },
   "baseline_A_llama": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference/baseline_A.json",
     "columns": {
