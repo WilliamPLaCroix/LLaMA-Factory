@@ -6,6 +6,132 @@
 	"response": "predict"
     }
   },
+  "normal_A_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_llama_cot-A_predict"
+    }
+  },
+  "normal_A_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_llama_cot-A_con_predict"
+    }
+  },
+  "normal_A_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_mistral_cot-A_predict"
+    }
+  },
+  "normal_A_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_mistral_cot-A_con_predict"
+    }
+  },
+  "normal_A_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_qwen_cot-A_predict"
+    }
+  },
+  "normal_A_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "normal_qwen_cot-A_con_predict"
+    }
+  },
+  "normal_B_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_llama_cot-B_predict"
+    }
+  },
+  "normal_B_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_llama_cot-B_con_predict"
+    }
+  },
+  "normal_B_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_mistral_cot-B_predict"
+    }
+  },
+  "normal_B_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_mistral_cot-B_con_predict"
+    }
+  },
+  "normal_B_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_qwen_cot-B_predict"
+    }
+  },
+  "normal_B_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "normal_qwen_cot-B_con_predict"
+    }
+  },
+  "normal_C_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_llama_cot-C_predict"
+    }
+  },
+  "normal_C_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_llama_cot-C_con_predict"
+    }
+  },
+  "normal_C_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_mistral_cot-C_predict"
+    }
+  },
+  "normal_C_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_mistral_cot-C_con_predict"
+    }
+  },
+  "normal_C_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_qwen_cot-C_predict"
+    }
+  },
+  "normal_C_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/normal_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "normal_qwen_cot-C_con_predict"
+    }
+  },
   "baseline_A_llama": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/baseline_A.json",
     "columns": {
