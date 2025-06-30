@@ -6,6 +6,132 @@
 	"response": "predict"
     }
   },
+  "idk_A_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_llama_cot-A_predict"
+    }
+  },
+  "idk_A_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_llama_cot-A_con_predict"
+    }
+  },
+  "idk_A_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_mistral_cot-A_predict"
+    }
+  },
+  "idk_A_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_mistral_cot-A_con_predict"
+    }
+  },
+  "idk_A_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_qwen_cot-A_predict"
+    }
+  },
+  "idk_A_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_A.json",
+    "columns": {
+	"prompt": "A-combined",
+	"query": "idk_qwen_cot-A_con_predict"
+    }
+  },
+  "idk_B_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_llama_cot-B_predict"
+    }
+  },
+  "idk_B_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_llama_cot-B_con_predict"
+    }
+  },
+  "idk_B_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_mistral_cot-B_predict"
+    }
+  },
+  "idk_B_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_mistral_cot-B_con_predict"
+    }
+  },
+  "idk_B_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_qwen_cot-B_predict"
+    }
+  },
+  "idk_B_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_B.json",
+    "columns": {
+	"prompt": "B-refusal",
+	"query": "idk_qwen_cot-B_con_predict"
+    }
+  },
+  "idk_C_llama": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_llama_cot-C_predict"
+    }
+  },
+  "idk_C_llama_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_llama_cot-C_con_predict"
+    }
+  },
+  "idk_C_mistral": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_mistral_cot-C_predict"
+    }
+  },
+  "idk_C_mistral_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_mistral_cot-C_con_predict"
+    }
+  },
+  "idk_C_qwen": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_qwen_cot-C_predict"
+    }
+  },
+  "idk_C_qwen_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/idk_C.json",
+    "columns": {
+	"prompt": "C-threat",
+	"query": "idk_qwen_cot-C_con_predict"
+    }
+  },
   "attack_A_llama": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_inference_datasets/attack_A.json",
     "columns": {
