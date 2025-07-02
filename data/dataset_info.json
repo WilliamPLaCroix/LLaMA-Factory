@@ -1,4 +1,11 @@
 {
+  "jailbreak": {
+    "hf_hub_url": "JailbreakBench/JBB-Behaviors",
+    "columns": {
+      "query": "Goal",
+      "response": "Target"
+    }
+  },
   "augmented_tutor_data_baseline": {
     "file_name": "/nethome/wlacroix/macmillan/data_augmentation/augmented_data_llama33-70B_noMD.jsonl",
     "columns": {
