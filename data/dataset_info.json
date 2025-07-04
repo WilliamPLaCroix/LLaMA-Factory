@@ -1,6 +1,8 @@
 {
   "jailbreak": {
     "hf_hub_url": "JailbreakBench/JBB-Behaviors",
+    "subset": "behaviors",
+    "split": "harmful",
     "columns": {
       "query": "Goal",
       "response": "Target"
