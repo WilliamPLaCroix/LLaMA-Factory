@@ -8,6 +8,306 @@
       "response": "Target"
     }
   },
+  "jailbreakjudge_attack_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_gemma"
+    }
+  },
+  "refusaljudge_attack_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_gemma"
+    }
+  },
+  "jailbreakjudge_attack_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_llama"
+    }
+  },
+  "refusaljudge_attack_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_llama"
+    }
+  },
+  "jailbreakjudge_attack_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_mistral"
+    }
+  },
+  "refusaljudge_attack_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_mistral"
+    }
+  },
+  "jailbreakjudge_attack_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_qwen"
+    }
+  },
+  "refusaljudge_attack_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_qwen"
+    }
+  },
+  "jailbreakjudge_attack_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_internlm"
+    }
+  },
+  "refusaljudge_attack_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_internlm"
+    }
+  },
+  "jailbreakjudge_idk_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_idk_gemma"
+    }
+  },
+  "refusaljudge_idk_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_idk_gemma"
+    }
+  },
+  "jailbreakjudge_idk_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_idk_llama"
+    }
+  },
+  "refusaljudge_idk_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_idk_llama"
+    }
+  },
+  "jailbreakjudge_idk_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_idk_mistral"
+    }
+  },
+  "refusaljudge_idk_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_idk_mistral"
+    }
+  },
+  "jailbreakjudge_idk_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_idk_qwen"
+    }
+  },
+  "refusaljudge_idk_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_idk_qwen"
+    }
+  },
+  "jailbreakjudge_idk_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_idk_internlm"
+    }
+  },
+  "refusaljudge_idk_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_idk_internlm"
+    }
+  },
+  "jailbreakjudge_normal_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_normal_gemma"
+    }
+  },
+  "refusaljudge_normal_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_normal_gemma"
+    }
+  },
+  "jailbreakjudge_normal_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_normal_llama"
+    }
+  },
+  "refusaljudge_normal_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_normal_llama"
+    }
+  },
+  "jailbreakjudge_normal_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_normal_mistral"
+    }
+  },
+  "refusaljudge_normal_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_normal_mistral"
+    }
+  },
+  "jailbreakjudge_normal_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_normal_qwen"
+    }
+  },
+  "refusaljudge_normal_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_normal_qwen"
+    }
+  },
+  "jailbreakjudge_normal_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_normal_internlm"
+    }
+  },
+  "refusaljudge_normal_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_normal_internlm"
+    }
+  },
+  "jailbreakjudge_baseline_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_baseline_gemma"
+    }
+  },
+  "refusaljudge_baseline_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_baseline_gemma"
+    }
+  },
+  "jailbreakjudge_baseline_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_baseline_llama"
+    }
+  },
+  "refusaljudge_baseline_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_baseline_llama"
+    }
+  },
+  "jailbreakjudge_baseline_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_baseline_mistral"
+    }
+  },
+  "refusaljudge_baseline_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_baseline_mistral"
+    }
+  },
+  "jailbreakjudge_baseline_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_baseline_qwen"
+    }
+  },
+  "refusaljudge_baseline_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_baseline_qwen"
+    }
+  },
+  "jailbreakjudge_baseline_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_baseline_internlm"
+    }
+  },
+  "refusaljudge_baseline_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_baseline_internlm"
+    }
+  },
+  "jailbreakjudge_attack_idk_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_idk_gemma"
+    }
+  },
+  "refusaljudge_attack_idk_gemma": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_idk_gemma"
+    }
+  },
+  "jailbreakjudge_attack_idk_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_idk_llama"
+    }
+  },
+  "refusaljudge_attack_idk_llama": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_idk_llama"
+    }
+  },
+  "jailbreakjudge_attack_idk_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_idk_mistral"
+    }
+  },
+  "refusaljudge_attack_idk_mistral": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_idk_mistral"
+    }
+  },
+  "jailbreakjudge_attack_idk_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_idk_qwen"
+    }
+  },
+  "refusaljudge_attack_idk_qwen": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_idk_qwen"
+    }
+  },
+  "jailbreakjudge_attack_idk_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "jailbreakjudge_attack_idk_internlm"
+    }
+  },
+  "refusaljudge_attack_idk_internlm": {
+    "hf_hub_url": "/nethome/wlacroix/macmillan/macmillan_pipeline/jailbreak_logs/combined_jailbreak_inference.json",
+    "columns": {
+      "query": "refusaljudge_attack_idk_internlm"
+    }
+  },
   "augmented_tutor_data_baseline": {
     "file_name": "/nethome/wlacroix/macmillan/data_augmentation/augmented_data_llama33-70B_noMD.jsonl",
     "columns": {
