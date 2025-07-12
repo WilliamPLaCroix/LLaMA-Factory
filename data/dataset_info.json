@@ -357,102 +357,46 @@
 	"query": "attack_idk_qwen_cot-A_con_predict"
     }
   },
-  "attack_idk_B_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
+  "attack_idk_A_gemma": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_llama_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "attack_idk_llama_cot-A_predict"
     }
   },
-  "attack_idk_B_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
+  "attack_idk_A_gemma_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_llama_cot-B_con_predict"
+	"prompt": "A-combined",
+	"query": "attack_idk_llama_cot-A_con_predict"
     }
   },
-  "attack_idk_B_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
+  "attack_idk_A_internlm": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_mistral_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "attack_idk_internlm_cot-A_predict"
     }
   },
-  "attack_idk_B_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
+  "attack_idk_A_internlm_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_mistral_cot-B_con_predict"
-    }
-  },
-  "attack_idk_B_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_qwen_cot-B_predict"
-    }
-  },
-  "attack_idk_B_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_idk_qwen_cot-B_con_predict"
-    }
-  },
-  "attack_idk_C_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_llama_cot-C_predict"
-    }
-  },
-  "attack_idk_C_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_llama_cot-C_con_predict"
-    }
-  },
-  "attack_idk_C_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_mistral_cot-C_predict"
-    }
-  },
-  "attack_idk_C_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_mistral_cot-C_con_predict"
-    }
-  },
-  "attack_idk_C_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_qwen_cot-C_predict"
-    }
-  },
-  "attack_idk_C_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_idk_qwen_cot-C_con_predict"
+	"prompt": "A-combined",
+	"query": "attack_idk_internlm_cot-A_con_predict"
     }
   },
   "idk_A_llama": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_llama_cot-A_predict"
+	"query": "idk_gemma_cot-A_predict"
     }
   },
   "idk_A_llama_con": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_llama_cot-A_con_predict"
+	"query": "idk_gemma_cot-A_con_predict"
     }
   },
   "idk_A_mistral": {
@@ -483,88 +427,32 @@
 	"query": "idk_qwen_cot-A_con_predict"
     }
   },
-  "idk_B_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
+  "idk_A_gemma": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_llama_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "idk_gemma_cot-A_predict"
     }
   },
-  "idk_B_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
+  "idk_A_gemma_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_llama_cot-B_con_predict"
+	"prompt": "A-combined",
+	"query": "idk_gemma_cot-A_con_predict"
     }
   },
-  "idk_B_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
+  "idk_A_internlm": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_mistral_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "idk_gemma_cot-A_predict"
     }
   },
-  "idk_B_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
+  "idk_A_internlm_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_mistral_cot-B_con_predict"
-    }
-  },
-  "idk_B_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_qwen_cot-B_predict"
-    }
-  },
-  "idk_B_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "idk_qwen_cot-B_con_predict"
-    }
-  },
-  "idk_C_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_llama_cot-C_predict"
-    }
-  },
-  "idk_C_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_llama_cot-C_con_predict"
-    }
-  },
-  "idk_C_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_mistral_cot-C_predict"
-    }
-  },
-  "idk_C_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_mistral_cot-C_con_predict"
-    }
-  },
-  "idk_C_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_qwen_cot-C_predict"
-    }
-  },
-  "idk_C_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/idk_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "idk_qwen_cot-C_con_predict"
+	"prompt": "A-combined",
+	"query": "idk_gemma_cot-A_con_predict"
     }
   },
   "attack_A_llama": {
@@ -609,88 +497,32 @@
 	"query": "attack_qwen_cot-A_con_predict"
     }
   },
-  "attack_B_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
+  "attack_A_gemma": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_llama_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "attack_gemma_cot-A_predict"
     }
   },
-  "attack_B_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
+  "attack_A_gemma_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_llama_cot-B_con_predict"
+	"prompt": "A-combined",
+	"query": "attack_gemma_cot-A_con_predict"
     }
   },
-  "attack_B_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
+  "attack_A_internlm": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_mistral_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "attack_internlm_cot-A_predict"
     }
   },
-  "attack_B_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
+  "attack_A_internlm_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_mistral_cot-B_con_predict"
-    }
-  },
-  "attack_B_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_qwen_cot-B_predict"
-    }
-  },
-  "attack_B_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "attack_qwen_cot-B_con_predict"
-    }
-  },
-  "attack_C_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_llama_cot-C_predict"
-    }
-  },
-  "attack_C_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_llama_cot-C_con_predict"
-    }
-  },
-  "attack_C_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_mistral_cot-C_predict"
-    }
-  },
-  "attack_C_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_mistral_cot-C_con_predict"
-    }
-  },
-  "attack_C_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_qwen_cot-C_predict"
-    }
-  },
-  "attack_C_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/attack_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "attack_qwen_cot-C_con_predict"
+	"prompt": "A-combined",
+	"query": "attack_internlm_cot-A_con_predict"
     }
   },
   "normal_A_llama": {
@@ -735,88 +567,32 @@
 	"query": "normal_qwen_cot-A_con_predict"
     }
   },
-  "normal_B_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
+  "normal_A_gemma": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_llama_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "normal_gemma_cot-A_predict"
     }
   },
-  "normal_B_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
+  "normal_A_gemma_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_llama_cot-B_con_predict"
+	"prompt": "A-combined",
+	"query": "normal_gemma_cot-A_con_predict"
     }
   },
-  "normal_B_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
+  "normal_A_internlm": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_mistral_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "normal_internlm_cot-A_predict"
     }
   },
-  "normal_B_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
+  "normal_A_internlm_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_mistral_cot-B_con_predict"
-    }
-  },
-  "normal_B_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_qwen_cot-B_predict"
-    }
-  },
-  "normal_B_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "normal_qwen_cot-B_con_predict"
-    }
-  },
-  "normal_C_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_llama_cot-C_predict"
-    }
-  },
-  "normal_C_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_llama_cot-C_con_predict"
-    }
-  },
-  "normal_C_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_mistral_cot-C_predict"
-    }
-  },
-  "normal_C_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_mistral_cot-C_con_predict"
-    }
-  },
-  "normal_C_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_qwen_cot-C_predict"
-    }
-  },
-  "normal_C_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/normal_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "normal_qwen_cot-C_con_predict"
+	"prompt": "A-combined",
+	"query": "normal_internlm_cot-A_con_predict"
     }
   },
   "baseline_A_llama": {
@@ -861,88 +637,32 @@
 	"query": "baseline_qwen_cot-A_con_predict"
     }
   },
-  "baseline_B_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
+  "baseline_A_gemma": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_llama_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "baseline_gemma_cot-A_predict"
     }
   },
-  "baseline_B_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
+  "baseline_A_gemma_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_llama_cot-B_con_predict"
+	"prompt": "A-combined",
+	"query": "baseline_gemma_cot-A_con_predict"
     }
   },
-  "baseline_B_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
+  "baseline_A_internlm": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_mistral_cot-B_predict"
+	"prompt": "A-combined",
+	"query": "baseline_internlm_cot-A_predict"
     }
   },
-  "baseline_B_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
+  "baseline_A_internlm_con": {
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_A.json",
     "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_mistral_cot-B_con_predict"
-    }
-  },
-  "baseline_B_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_qwen_cot-B_predict"
-    }
-  },
-  "baseline_B_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_B.json",
-    "columns": {
-	"prompt": "B-refusal",
-	"query": "baseline_qwen_cot-B_con_predict"
-    }
-  },
-  "baseline_C_llama": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_llama_cot-C_predict"
-    }
-  },
-  "baseline_C_llama_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_llama_cot-C_con_predict"
-    }
-  },
-  "baseline_C_mistral": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_mistral_cot-C_predict"
-    }
-  },
-  "baseline_C_mistral_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_mistral_cot-C_con_predict"
-    }
-  },
-  "baseline_C_qwen": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_qwen_cot-C_predict"
-    }
-  },
-  "baseline_C_qwen_con": {
-    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inference_combined_datasets/baseline_C.json",
-    "columns": {
-	"prompt": "C-threat",
-	"query": "baseline_qwen_cot-C_con_predict"
+	"prompt": "A-combined",
+	"query": "baseline_internlm_cot-A_con_predict"
     }
   },
   "cot_A": {
