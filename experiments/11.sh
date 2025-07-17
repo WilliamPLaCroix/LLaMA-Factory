@@ -21,8 +21,8 @@ which python
 echo "Starting Main Experiment Workflow!"
 
 echo "Begin Training"
-#llamafactory-cli train experiments/11.yaml \
-#> experiments/logs/11_train.log  2>&1
+llamafactory-cli train experiments/11.yaml \
+> experiments/logs/11_train.log  2>&1
 
 echo "Begin Merge"
 llamafactory-cli export experiments/11_merge.yaml \

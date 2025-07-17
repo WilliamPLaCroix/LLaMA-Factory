@@ -20,9 +20,9 @@ which python
 # Main Experiment Script
 echo "Starting Main Experiment Workflow!"
 
-#echo "Begin Training"
-#llamafactory-cli train experiments/8.yaml \
-#> experiments/logs/8_train.log  2>&1
+echo "Begin Training"
+llamafactory-cli train experiments/8.yaml \
+> experiments/logs/8_train.log  2>&1
 
 echo "Begin Merge"
 llamafactory-cli export experiments/8_merge.yaml \

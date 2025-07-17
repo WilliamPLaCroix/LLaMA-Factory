@@ -33,8 +33,5 @@ echo "Begin Inference"
 python3 scripts/vllm_infer_metrics.py --model_name_or_path "/scratch/common_models/Llama-3.2-3B-Instruct" --adapter_name_or_path "/scratch/wlacroix/.cache/llama_factory/2_through_12_dareties" --save_path "/scratch/wlacroix/.cache/llama_factory/2_through_12_dareties" --template llama3 --dataset wikilarge_grade_12_test --temperature 0 --grade 12 \
 > experiments/logs/2_through_12_dareties_infer.log 2>&1
 
-#or if you encounter error:
-#FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
-#> PTA/experiments_sarubi/logs_lora_sft 2>&1
 
 echo "Main Experiment Workflow Completed!"
