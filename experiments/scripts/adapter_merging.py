@@ -58,7 +58,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     print(f"Merged adapters in {merged:.2f}s")
     print(f"Cleaned up extra adapters in {cleaned:.2f}s")
     print(f"Total time for adapter loading, merging, cleaning: {total:.2f}s")
-    model.save_pretrained(f"{output}", selected_adapters=merged_adapter_name)
+    model.save_pretrained(f"{output}", selected_adapters=[merged_adapter_name])
     print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
 
 if __name__ == "__main__":
