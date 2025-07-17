@@ -47,7 +47,6 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     
     merged = time.time() - start - loaded
     model.set_adapter(merged_adapter_name)
-    print("model adapter name:", model.adapter_name)
     print(model.peft_config.keys())
     # # clean up unused adapters
     # for grade in grades:
