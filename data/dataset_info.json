@@ -666,51 +666,15 @@
     }
   },
   "cot_A": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_test.jsonl",
     "columns": {
-	"prompt": "question",
-	"query": "idk",
-    "system": "system"
+	"query": "input"
     }
   },
   "cot_A_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
+    "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/combined_test_con.jsonl",
     "columns": {
-	"prompt": "question",
-	"query": "idk",
-    "system": "constraint"
-    }
-  },
-  "cot_B": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
-    "columns": {
-	"prompt": "question",
-	"query": "pls",
-    "system": "system"
-    }
-  },
-  "cot_B_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
-    "columns": {
-	"prompt": "question",
-	"query": "pls",
-    "system": "constraint"
-    }
-  },
-  "cot_C": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
-    "columns": {
-	"prompt": "question",
-	"query": "threat",
-    "system": "system"
-    }
-  },
-  "cot_C_con": {
-    "file_name": "/nethome/wlacroix/macmillan/cot_eval.json",
-    "columns": {
-	"prompt": "question",
-	"query": "threat",
-    "system": "constraint"
+	"query": "input"
     }
   },
   "augmented_tutor_data_noMD": {
