@@ -76,7 +76,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"sari": [], "fkgl": [], "fkgl-delta": [], "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -118,6 +118,13 @@ class ComputeSimilarity:
         self.score_dict["fkgl"].append(fkgl)
         target_grade = sum(grades) / len(grades)
         self.score_dict["fkgl-delta"].append(abs(fkgl - target_grade))
+
+        def compute_fkgl_x_sari(fkgl, fkgl_alpha=0.5):
+            sari_mean = np.mean(self.score_dict["sari"])
+            sari_beta = 1 - fkgl_alpha
+            return 100 - sari_beta * (100 - sari_mean) - 10 *fkgl_alpha * fkgl
+
+        self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(self.score_dict["fkgl-delta"], fkgl_alpha=0.5))
 
         # print(torch.cuda.memory_summary())
 
