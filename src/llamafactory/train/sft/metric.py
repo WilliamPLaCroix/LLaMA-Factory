@@ -117,14 +117,15 @@ class ComputeSimilarity:
         fkgl = textstat.flesch_kincaid_grade(" ".join(preds))
         self.score_dict["fkgl"].append(fkgl)
         target_grade = sum(grades) / len(grades)
-        self.score_dict["fkgl-delta"].append(abs(fkgl - target_grade))
+        fkgl_delta = abs(fkgl - target_grade)
+        self.score_dict["fkgl-delta"].append(fkgl_delta)
 
-        def compute_fkgl_x_sari(fkgl, fkgl_alpha=0.5):
+        def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
             sari_mean = np.mean(self.score_dict["sari"])
             sari_beta = 1 - fkgl_alpha
-            return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl
+            return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl_delta
 
-        self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(self.score_dict["fkgl-delta"], fkgl_alpha=0.5))
+        self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5))
 
         # print(torch.cuda.memory_summary())
 
