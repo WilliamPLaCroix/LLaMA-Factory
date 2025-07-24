@@ -122,7 +122,7 @@ class ComputeSimilarity:
         def compute_fkgl_x_sari(fkgl, fkgl_alpha=0.5):
             sari_mean = np.mean(self.score_dict["sari"])
             sari_beta = 1 - fkgl_alpha
-            return 100 - sari_beta * (100 - sari_mean) - 10 *fkgl_alpha * fkgl
+            return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl
 
         self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(self.score_dict["fkgl-delta"], fkgl_alpha=0.5))
 
