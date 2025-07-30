@@ -361,14 +361,14 @@
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/attack_idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "attack_idk_llama_cot-A_predict"
+	"query": "attack_idk_gemma_cot-A_predict"
     }
   },
   "attack_idk_A_gemma_con": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/attack_idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "attack_idk_llama_cot-A_con_predict"
+	"query": "attack_idk_gemma_cot-A_con_predict"
     }
   },
   "attack_idk_A_internlm": {
@@ -389,14 +389,14 @@
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_gemma_cot-A_predict"
+	"query": "idk_llama_cot-A_predict"
     }
   },
   "idk_A_llama_con": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_gemma_cot-A_con_predict"
+	"query": "idk_llama_cot-A_con_predict"
     }
   },
   "idk_A_mistral": {
@@ -445,14 +445,14 @@
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_gemma_cot-A_predict"
+	"query": "idk_internlm_cot-A_predict"
     }
   },
   "idk_A_internlm_con": {
     "file_name": "/nethome/wlacroix/macmillan/macmillan_pipeline/inferences/inference_combined_datasets/idk_A.json",
     "columns": {
 	"prompt": "A-combined",
-	"query": "idk_gemma_cot-A_con_predict"
+	"query": "idk_internlm_cot-A_con_predict"
     }
   },
   "attack_A_llama": {
