@@ -1,5 +1,6 @@
 ### model
 model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct
+adapter_name_or_path: /scratch/wlacroix/.cache/llama_factory/baseline_adapter/checkpoint-3500
 trust_remote_code: True
 seed: 42
 use_fast_tokenizer: True
@@ -23,7 +24,7 @@ preprocessing_num_workers: 16
 train_on_prompt: False
 
 ### output
-output_dir: /scratch/wlacroix/.cache/llama_factory/4_adapter
+output_dir: /scratch/wlacroix/.cache/llama_factory/4_from_baseline
 logging_steps: 10
 save_steps: 100
 plot_loss: True
@@ -33,7 +34,7 @@ overwrite_output_dir: True
 per_device_train_batch_size: 8
 gradient_accumulation_steps: 4
 learning_rate: 1.0e-4
-num_train_epochs: 20
+num_train_epochs: 5
 lr_scheduler_type: cosine
 warmup_ratio: 0.2
 bf16: True
@@ -49,7 +50,7 @@ predict_with_generate: False
 
 #if you want to save best model:
 save_strategy: steps
-save_total_limit: 3
+save_total_limit: 5
 load_best_model_at_end: True
 metric_for_best_model: "eval_wikilarge_grade_4_validate_fkgl-delta"
 greater_is_better: False  # Higher SARI is better
