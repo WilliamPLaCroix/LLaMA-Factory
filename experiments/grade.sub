@@ -1,6 +1,6 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
-executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade_cleaned.sh
+executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade.sh
 arguments       = $(grade)
 log             = /scratch/wlacroix/logs/cleaned_$(grade).log
 output          = /scratch/wlacroix/logs/cleaned_$(grade).out
