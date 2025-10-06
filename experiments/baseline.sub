@@ -2,9 +2,9 @@ universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/baseline.sh
 arguments       = $(group)
-log             = /scratch/wlacroix/logs/baseline_$(group).log
-output          = /scratch/wlacroix/logs/baseline_$(group).out
-error           = /scratch/wlacroix/logs/baseline_$(group).err
+log             = /scratch/wlacroix/logs/$(group)_baseline.log
+output          = /scratch/wlacroix/logs/$(group)_baseline.out
+error           = /scratch/wlacroix/logs/$(group)_baseline.err
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
 #when_to_transfer_output = ON_EXIT
