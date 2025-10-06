@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-variation="cleaned"
+variation="${1:?group required, e.g., cleaned}"
 group="baseline"  # fixed for baselines
 
 #! Edit these once
@@ -35,7 +35,7 @@ set -euo pipefail
 echo "Starting ${variation} ${group} workflow"
 
 # Train baseline
-# llamafactory-cli train "experiments/baseline_cleaned.yaml" \
+# llamafactory-cli train "experiments/baseline_${variation}.yaml" \
 #   --dataset "${variation}_${group}_train" \
 #   --eval_dataset "${variation}_${group}_validation" \
 #   --output_dir "${OUT_ADAPTER}" \
@@ -96,7 +96,7 @@ echo "Main ${variation} ${group} Workflow Completed!"
 # python3 - <<'PY'
 # import json, glob, numpy as np, os
 # import os
-# cache=os.environ["CACHE"]; variation=os.environ.get("variation","cleaned")
+# cache=os.environ["CACHE"]; variation=os.environ.get("variation","${variation}")
 # root=f"{cache}/{variation}-baseline"
 # vals=[]
 # for p in glob.glob(f"{root}/metrics.json"):  # metrics.json already written by vllm_infer_metrics
