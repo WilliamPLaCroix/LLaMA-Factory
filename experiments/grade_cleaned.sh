@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+
 
 grade="${1:?grade required, e.g., grade05}"
 variation="cleaned"
@@ -39,6 +39,8 @@ echo "CUDA_HOME: $CUDA_HOME"
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
 which python
+
+set -euo pipefail
 
 # Train grade from the chosen baseline adapter
 echo "Starting ${variation} ${grade} workflow"

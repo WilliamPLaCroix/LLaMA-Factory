@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+
 
 variation="cleaned"
 group="baseline"  # fixed for baselines
@@ -7,21 +7,19 @@ group="baseline"  # fixed for baselines
 #! Edit these once
 echo "Current conda environment: $CONDA_DEFAULT_ENV"
 REPO="/nethome/wlacroix/LLaMA-Factory"
-ENV_ACTIVATE="/nethome/wlacroix/miniconda3/etc/profile.d/conda.sh"
-ENV_NAME="/nethome/wlacroix/miniconda3/envs/llama_factory_v2"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-
 RUN_ID="${variation}-${group}"
-LOG_DIR="${REPO}/experiments/logs/${variation}/${group}"
+LOG_DIR="${REPO}/experiments/logs/${variation}"
 OUT_ADAPTER="${CACHE}/${RUN_ID}_adapter"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
 mkdir -p "${LOG_DIR}" # "${OUT_MERGED}" "$(dirname "${REPO}/experiments/logs/condor/dummy")"
 
 # Env
-source "$ENV_ACTIVATE"
-conda activate "$ENV_NAME"
+
+source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
+conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
 cd "$REPO"
 echo "HOST: $HOSTNAME"; nvidia-smi || true
@@ -32,6 +30,8 @@ echo "CUDA_HOME: $CUDA_HOME"
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
 which python
+
+set -euo pipefail
 
 echo "Starting ${variation} ${group} workflow"
 
