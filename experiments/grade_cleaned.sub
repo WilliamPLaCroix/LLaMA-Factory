@@ -1,0 +1,25 @@
+universe        = vanilla
+executable      = experiments/grade_cleaned.sh
+arguments       = $(grade)
+log             = /scratch/wlacroix/logs/grade_cleaned_$(grade).log
+output          = /scratch/wlacroix/logs/grade_cleaned_$(grade).out
+error           = /scratch/wlacroix/logs/grade_cleaned_$(grade).err
+request_gpus    = 1
+request_cpus    = 10
+request_memory  = 50 GB
+getenv          = true
+should_transfer_files = NO
+
+queue grade from (
+grade02
+grade03
+grade04
+grade05
+grade06
+grade07
+grade08
+grade09
+grade10
+grade11
+grade12
+)

@@ -1,0 +1,11 @@
+universe        = vanilla
+executable      = experiments/baseline_cleaned.sh
+log             = /scratch/wlacroix/logs/baseline_cleaned.log
+output          = /scratch/wlacroix/logs/baseline_cleaned.out
+error           = /scratch/wlacroix/logs/baseline_cleaned.err
+request_gpus    = 1
+request_cpus    = 10
+request_memory  = 50 GB
+getenv          = true
+should_transfer_files = NO
+queue 1

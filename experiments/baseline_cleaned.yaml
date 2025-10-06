@@ -1,0 +1,38 @@
+stage: sft
+do_train: true
+template: llama3
+model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct
+# no adapter here
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_target: all
+lora_dropout: 0.05
+
+cutoff_len: 1024
+preprocessing_num_workers: 16
+train_on_prompt: false
+overwrite_cache: true
+
+# these get overridden by CLI but keep defaults for manual runs
+dataset: cleaned_grade02_train, cleaned_grade03_train, cleaned_grade04_train, cleaned_grade05_train, cleaned_grade06_train, cleaned_grade07_train, cleaned_grade08_train, cleaned_grade09_train, cleaned_grade010_train, cleaned_grade011_train, cleaned_grade012_train
+eval_dataset: cleaned_baseline_validation
+
+output_dir: /scratch/wlacroix/.cache/llama_factory/cleaned_baseline-adapter
+logging_steps: 10
+save_steps: 100
+save_total_limit: 5
+plot_loss: true
+overwrite_output_dir: true
+
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 32
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-4
+num_train_epochs: 5
+eval_strategy: steps
+eval_steps: 100
+bf16: true
+lr_scheduler_type: cosine
+warmup_ratio: 0.2
+load_best_model_at_end: true
