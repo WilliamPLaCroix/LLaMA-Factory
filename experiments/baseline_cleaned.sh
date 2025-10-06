@@ -89,6 +89,8 @@ for n in {2..12}; do
   echo "grade: ${n}"
 done
 
+echo "Main ${variation} ${group} Workflow Completed!"
+
 
 # Optional: write a summary metrics.json by averaging SARI across grades
 # python3 - <<'PY'

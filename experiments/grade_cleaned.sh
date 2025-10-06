@@ -23,7 +23,7 @@ mkdir -p "${LOG_DIR}" # "$(dirname "${REPO}/experiments/logs/condor/dummy")" "${
 # Guard
 if [[ ! -d "${BASELINE_ADAPTER}" ]]; then
   echo "Missing baseline adapter for ${variation}: ${BASELINE_ADAPTER}" >&2
-  exit 2
+  # exit 2
 fi
 
 # Env
