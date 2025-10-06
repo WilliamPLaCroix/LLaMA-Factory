@@ -1,14 +1,22 @@
 universe        = vanilla
-executable      = experiments/grade_cleaned.sh
+initialdir      = /nethome/wlacroix/LLaMA-Factory/
+executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade_cleaned.sh
 arguments       = $(grade)
 log             = /scratch/wlacroix/logs/grade_cleaned_$(grade).log
 output          = /scratch/wlacroix/logs/grade_cleaned_$(grade).out
 error           = /scratch/wlacroix/logs/grade_cleaned_$(grade).err
-request_gpus    = 1
-request_cpus    = 10
-request_memory  = 50 GB
-getenv          = true
-should_transfer_files = NO
+
+# If all files are on the server, otherwise set to YES
+#should_transfer_files   = NO
+#when_to_transfer_output = ON_EXIT
+request_GPUs            = 1
+request_CPUs            = 10
+request_memory          = 50G
+getenv                  = True
+requirements            = (GPUs_GlobalMemoryMb >= 64000)
+#64000
++WantGPUHomeMounted     = true
++MaxWallTime = 604800
 
 queue grade from (
 grade02

@@ -39,7 +39,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         _ = model.load_adapter(adapter_path, adapter_name=grade)
     loaded = time.time() - start
     #merged_adapter_name = f'{"_merge_".join(grades)}_adapter'
-    merged_adapter_name = "2_through_12_dareties"
+    merged_adapter_name = f"2_through_12_{merge_method}"
     if density is not None:
         model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name, density=density)
     else:
@@ -59,7 +59,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     print(f"Cleaned up extra adapters in {cleaned:.2f}s")
     print(f"Total time for adapter loading, merging, cleaning: {total:.2f}s")
     model.save_pretrained(f"{output}", selected_adapters=[merged_adapter_name])
-    print(f"Saved merged adapter to {output}/{merged_adapter_name}_adapter")
+    print(f"Saved merged adapter to {output}/{merged_adapter_name}")
 
 if __name__ == "__main__":
     fire.Fire(merge_adapters)
