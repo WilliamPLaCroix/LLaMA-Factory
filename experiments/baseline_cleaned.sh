@@ -22,10 +22,9 @@ source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
 cd "$REPO"
-echo "HOST: $HOSTNAME"; nvidia-smi || true
 echo "=== CUDA Debugging Information ==="
+echo "HOST: $HOSTNAME"; nvidia-smi || true
 nvcc --version
-nvidia-smi
 echo "CUDA_HOME: $CUDA_HOME"
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
@@ -47,7 +46,6 @@ echo "Dummy call for debugging: $(date) on $(hostname)"
 echo "training variables for ${variation} ${group}:"
 echo "dataset: ${variation}_${group}_train"
 echo "eval_dataset: ${variation}_${group}_validation"
-echo "adapter_name_or_path: ${BASELINE_ADAPTER}"
 echo "output_dir: ${OUT_ADAPTER}"
 echo "log: ${LOG_DIR}/${group}_train.log"
 
