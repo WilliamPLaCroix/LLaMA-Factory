@@ -31,10 +31,9 @@ source "$ENV_ACTIVATE"
 conda activate "$ENV_NAME"
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
 cd "$REPO"
-echo "HOST: $HOSTNAME"; nvidia-smi || true
 echo "=== CUDA Debugging Information ==="
+echo "HOST: $HOSTNAME"; nvidia-smi || true
 nvcc --version
-nvidia-smi
 echo "CUDA_HOME: $CUDA_HOME"
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
