@@ -13,7 +13,7 @@ BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 
 RUN_ID="${variation}-${grade}"
-LOG_DIR="${REPO}/experiments/logs/${variation}/"
+LOG_DIR="${REPO}/experiments/logs/${variation}"
 OUT_ADAPTER="${CACHE}/${RUN_ID}_adapter"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 BASELINE_ADAPTER="${CACHE}/${variation}-baseline_adapter"
