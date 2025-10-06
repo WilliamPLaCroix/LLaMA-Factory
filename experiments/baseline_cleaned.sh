@@ -63,7 +63,16 @@ echo "log: ${LOG_DIR}/${group}_train.log"
 # ) > "${LOG_DIR}/merge.log" 2>&1
 
 # Inference on each grade test with the baseline adapter
-# for n in {2..12}; do
+# echo variables from python3 scripts/vllm_infer_metrics.py call
+echo "Dummy call for debugging: $(date) on $(hostname)"
+echo "inference variables for ${variation} ${group}:"
+echo "model_name_or_path: ${BASE_MODEL}"
+echo "adapter_name_or_path: ${OUT_ADAPTER}"
+echo "save_path: ${OUT_ADAPTER}"
+echo "temperature: 0"
+echo "template: llama3"
+
+for n in {2..12}; do
 #   echo "Infer baseline ${variation} on grade ${n}"
 #   python3 scripts/vllm_infer_metrics.py \
 #     --model_name_or_path "${BASE_MODEL}" \
@@ -75,19 +84,11 @@ echo "log: ${LOG_DIR}/${group}_train.log"
 #     --temperature 0 \
 #     --grade "${n}" \
 #     > "${LOG_DIR}/infer_g${n}.log" 2>&1
-# done
+  echo "save_name: baseline_${variation}_g${n}.jsonl"
+  echo "dataset: ${variation}_grade${n}_validation"
+  echo "grade: ${n}"
+done
 
-# echo variables from python3 scripts/vllm_infer_metrics.py call
-echo "Dummy call for debugging: $(date) on $(hostname)"
-echo "inference variables for ${variation} ${grade}:"
-echo "model_name_or_path: ${BASE_MODEL}"
-echo "adapter_name_or_path: ${OUT_ADAPTER}"
-echo "save_path: ${OUT_ADAPTER}"
-echo "save_name: baseline_${variation}_g${n}.jsonl"
-echo "template: llama3"
-echo "dataset: ${variation}_grade${n}_validation"
-echo "temperature: 0"
-echo "grade: ${n}"
 
 # Optional: write a summary metrics.json by averaging SARI across grades
 # python3 - <<'PY'
