@@ -114,7 +114,7 @@ class ComputeSimilarity:
             self.score_dict["sari"].append(sari_score['sari'])
 
         #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-        fkgl = textstat.flesch_kincaid_grade(" ".join(preds))
+        fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
         self.score_dict["fkgl"].append(fkgl)
         target_grade = sum(grades) / len(grades)
         fkgl_delta = abs(fkgl - target_grade)
