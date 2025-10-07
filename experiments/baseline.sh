@@ -84,7 +84,7 @@ echo "save_path: ${OUT_ADAPTER}"
 echo "temperature: 0"
 echo "template: llama3"
 
-for n in {2..12}; do
+for n2 in $(seq -w 2 12); do
   echo "Infer baseline ${variation} on grade ${n}"
   WANDB_NAME="${RUN_ID}-infer-g${n}" \
   WANDB_JOB_TYPE="inference" \
