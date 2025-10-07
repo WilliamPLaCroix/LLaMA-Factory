@@ -9,10 +9,10 @@
       "response": "output"
     }
   },
-  "original_grade02_validate": {
+  "original_grade02_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade02",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -39,10 +39,10 @@
       "response": "output"
     }
   },
-  "original_grade03_validate": {
+  "original_grade03_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade03",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -69,10 +69,10 @@
       "response": "output"
     }
   },
-  "original_grade04_validate": {
+  "original_grade04_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade04",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -99,10 +99,10 @@
       "response": "output"
     }
   },
-  "original_grade05_validate": {
+  "original_grade05_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade05",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -129,10 +129,10 @@
       "response": "output"
     }
   },
-  "original_grade06_validate": {
+  "original_grade06_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade06",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -159,10 +159,10 @@
       "response": "output"
     }
   },
-  "original_grade07_validate": {
+  "original_grade07_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade07",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -189,10 +189,10 @@
       "response": "output"
     }
   },
-  "original_grade08_validate": {
+  "original_grade08_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade08",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -219,10 +219,10 @@
       "response": "output"
     }
   },
-  "original_grade09_validate": {
+  "original_grade09_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade09",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -249,10 +249,10 @@
       "response": "output"
     }
   },
-  "original_grade10_validate": {
+  "original_grade10_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade10",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -279,10 +279,10 @@
       "response": "output"
     }
   },
-  "original_grade11_validate": {
+  "original_grade11_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade11",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -309,10 +309,10 @@
       "response": "output"
     }
   },
-  "original_grade12_validate": {
+  "original_grade12_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/grade12",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -339,10 +339,10 @@
       "response": "output"
     }
   },
-  "original_baseline_validate": {
+  "original_baseline_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "original/baseline",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -369,10 +369,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade02_validate": {
+  "cleaned_grade02_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade02",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -399,10 +399,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade03_validate": {
+  "cleaned_grade03_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade03",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -429,10 +429,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade04_validate": {
+  "cleaned_grade04_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade04",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -459,10 +459,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade05_validate": {
+  "cleaned_grade05_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade05",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -489,10 +489,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade06_validate": {
+  "cleaned_grade06_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade06",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -519,10 +519,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade07_validate": {
+  "cleaned_grade07_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade07",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -549,10 +549,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade08_validate": {
+  "cleaned_grade08_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade08",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -579,10 +579,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade09_validate": {
+  "cleaned_grade09_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade09",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -609,10 +609,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade10_validate": {
+  "cleaned_grade10_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade10",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -639,10 +639,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade11_validate": {
+  "cleaned_grade11_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade11",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -669,10 +669,10 @@
       "response": "output"
     }
   },
-  "cleaned_grade12_validate": {
+  "cleaned_grade12_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/grade12",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -699,10 +699,10 @@
       "response": "output"
     }
   },
-  "cleaned_baseline_validate": {
+  "cleaned_baseline_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "cleaned/baseline",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -729,10 +729,10 @@
       "response": "output"
     }
   },
-  "augmented_grade02_validate": {
+  "augmented_grade02_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade02",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -759,10 +759,10 @@
       "response": "output"
     }
   },
-  "augmented_grade03_validate": {
+  "augmented_grade03_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade03",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -789,10 +789,10 @@
       "response": "output"
     }
   },
-  "augmented_grade04_validate": {
+  "augmented_grade04_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade04",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -819,10 +819,10 @@
       "response": "output"
     }
   },
-  "augmented_grade05_validate": {
+  "augmented_grade05_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade05",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -849,10 +849,10 @@
       "response": "output"
     }
   },
-  "augmented_grade06_validate": {
+  "augmented_grade06_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade06",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -879,10 +879,10 @@
       "response": "output"
     }
   },
-  "augmented_grade07_validate": {
+  "augmented_grade07_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade07",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -909,10 +909,10 @@
       "response": "output"
     }
   },
-  "augmented_grade08_validate": {
+  "augmented_grade08_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade08",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -939,10 +939,10 @@
       "response": "output"
     }
   },
-  "augmented_grade09_validate": {
+  "augmented_grade09_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade09",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -969,10 +969,10 @@
       "response": "output"
     }
   },
-  "augmented_grade10_validate": {
+  "augmented_grade10_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade10",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -999,10 +999,10 @@
       "response": "output"
     }
   },
-  "augmented_grade11_validate": {
+  "augmented_grade11_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade11",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -1029,10 +1029,10 @@
       "response": "output"
     }
   },
-  "augmented_grade12_validate": {
+  "augmented_grade12_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/grade12",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
@@ -1059,10 +1059,10 @@
       "response": "output"
     }
   },
-  "augmented_baseline_validate": {
+  "augmented_baseline_validation": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "folder": "augmented/baseline",
-    "split": "validate",
+    "split": "validation",
     "columns": {
       "prompt": "instruction",
       "query": "input",
