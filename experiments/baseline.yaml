@@ -1,4 +1,4 @@
-dstage: sft
+stage: sft
 do_train: true
 template: llama3
 model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct
