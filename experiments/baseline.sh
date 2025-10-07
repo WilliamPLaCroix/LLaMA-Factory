@@ -40,6 +40,9 @@ echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
 which python
 
+python3 -m pip install --upgrade --quiet wandb \
+  || python3 -m pip install --user --upgrade --quiet wandb
+
 set -euo pipefail
 
 echo "Starting ${variation} ${group} workflow"
@@ -85,19 +88,19 @@ echo "temperature: 0"
 echo "template: llama3"
 
 for n in {2..12}; do
-#   echo "Infer baseline ${variation} on grade ${n}"
-#   WANDB_NAME="${RUN_ID}-infer-g${n}" \
-#   WANDB_JOB_TYPE="inference" \
-#   python3 scripts/vllm_infer_metrics.py \
-#     --model_name_or_path "${BASE_MODEL}" \
-#     --adapter_name_or_path "${OUT_ADAPTER}" \
-#     --save_path "${OUT_ADAPTER}" \
-#     --save_name "baseline_${variation}_g${n}.jsonl" \
-#     --template llama3 \
-#     --dataset "${variation}_grade${n}_validation" \
-#     --temperature 0 \
-#     --grade "${n}" \
-#     > "${LOG_DIR}/infer_g${n}.log" 2>&1
+  echo "Infer baseline ${variation} on grade ${n}"
+  WANDB_NAME="${RUN_ID}-infer-g${n}" \
+  WANDB_JOB_TYPE="inference" \
+  python3 scripts/vllm_infer_metrics.py \
+    --model_name_or_path "${BASE_MODEL}" \
+    --adapter_name_or_path "${OUT_ADAPTER}" \
+    --save_path "${OUT_ADAPTER}" \
+    --save_name "baseline_${variation}_g${n}.jsonl" \
+    --template llama3 \
+    --dataset "${variation}_grade${n}_validation" \
+    --temperature 0 \
+    --grade "${n}" \
+    > "${LOG_DIR}/infer_g${n}.log" 2>&1
   echo "save_name: baseline_${variation}_g${n}.jsonl"
   echo "dataset: ${variation}_grade${n}_validation"
   echo "grade: ${n}"
