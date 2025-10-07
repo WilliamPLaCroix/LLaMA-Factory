@@ -11,7 +11,7 @@ BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_ID="${variation}-${group}"
 LOG_DIR="${REPO}/experiments/logs/${variation}"
-OUT_ADAPTER="${CACHE}/${RUN_ID}_adapter"
+OUT_ADAPTER="${CACHE}/${variation}_${group}-adapter"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
 # --- W&B wiring ---
@@ -21,6 +21,8 @@ export WANDB_DIR="${LOG_DIR}"                  # keeps artifacts and offline cac
 export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
 export WANDB_NAME="${RUN_ID}"                  # training run name
 export WANDB_TAGS="baseline,${variation},${group}"
+export WANDB_RESUME=allow
+export WANDB_RUN_ID="${RUN_ID}"
 # export WANDB_MODE=offline                    # uncomment if you need offline logging
 
 

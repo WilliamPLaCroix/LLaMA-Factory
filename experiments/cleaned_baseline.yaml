@@ -21,6 +21,7 @@ overwrite_cache: true
 
 dataset: cleaned_grade02_train, cleaned_grade03_train, cleaned_grade04_train, cleaned_grade05_train, cleaned_grade06_train, cleaned_grade07_train, cleaned_grade08_train, cleaned_grade09_train, cleaned_grade10_train, cleaned_grade11_train, cleaned_grade12_train
 
+resume_from_checkpoint: true
 output_dir: /scratch/wlacroix/.cache/llama_factory/cleaned_baseline-adapter
 logging_strategy: "steps"
 logging_steps: 10
@@ -34,11 +35,10 @@ per_device_train_batch_size: 8
 per_device_eval_batch_size: 32
 gradient_accumulation_steps: 4
 learning_rate: 1.0e-4
-num_train_epochs: 5
+num_train_epochs: 10
 bf16: true
 lr_scheduler_type: cosine
 warmup_ratio: 0.2
-
 
 ### eval
 do_eval: True
@@ -48,6 +48,6 @@ predict_with_generate: false
 
 metric_for_best_model: "eval_cleaned_baseline_validation_sari"
 save_strategy: epoch
-save_total_limit: 3
+save_total_limit: 10
 load_best_model_at_end: True
 greater_is_better: True  # Higher SARI is better
