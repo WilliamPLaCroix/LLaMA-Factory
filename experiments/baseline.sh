@@ -14,6 +14,16 @@ LOG_DIR="${REPO}/experiments/logs/${variation}"
 OUT_ADAPTER="${CACHE}/${RUN_ID}_adapter"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
+# --- W&B wiring ---
+export WANDB_PROJECT="llamafactory"
+export WANDB_ENTITY="your_entity"              # optional
+export WANDB_DIR="${LOG_DIR}"                  # keeps artifacts and offline caches with your logs
+export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
+export WANDB_NAME="${RUN_ID}"                  # training run name
+export WANDB_TAGS="baseline,${variation},${group}"
+# export WANDB_MODE=offline                    # uncomment if you need offline logging
+
+
 mkdir -p "${LOG_DIR}" # "${OUT_MERGED}" "$(dirname "${REPO}/experiments/logs/condor/dummy")"
 
 # Env
@@ -35,13 +45,15 @@ set -euo pipefail
 echo "Starting ${variation} ${group} workflow"
 
 # Train baseline
-# llamafactory-cli train "experiments/baseline_${variation}.yaml" \
-#   --dataset "${variation}_${group}_train" \
-#   --eval_dataset "${variation}_${group}_validation" \
-#   --output_dir "${OUT_ADAPTER}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+llamafactory-cli train "experiments/baseline_${variation}.yaml" \
+  --dataset="['${variation}_grade02_train', '${variation}_grade03_train', '${variation}_grade04_train', '${variation}_grade05_train', '${variation}_grade06_train', '${variation}_grade07_train', '${variation}_grade08_train', '${variation}_grade09_train', '${variation}_grade010_train', '${variation}_grade011_train', '${variation}_grade012_train']" \
+  --eval_dataset "${variation}_${group}_validate" \
+  --metric_for_best_model "eval_${variation}_${group}_validate_sari" \
+  --output_dir "${OUT_ADAPTER}" \
+  --run_name "${variation}-${group}" \
+  > "${LOG_DIR}/train.log" 2>&1
 
-# echo variables from llamafactory-cli train call
+echo variables from llamafactory-cli train call
 echo "Dummy call for debugging: $(date) on $(hostname)"
 echo "training variables for ${variation} ${group}:"
 echo "dataset: ${variation}_${group}_train"
@@ -74,6 +86,8 @@ echo "template: llama3"
 
 for n in {2..12}; do
 #   echo "Infer baseline ${variation} on grade ${n}"
+#   WANDB_NAME="${RUN_ID}-infer-g${n}" \
+#   WANDB_JOB_TYPE="inference" \
 #   python3 scripts/vllm_infer_metrics.py \
 #     --model_name_or_path "${BASE_MODEL}" \
 #     --adapter_name_or_path "${OUT_ADAPTER}" \

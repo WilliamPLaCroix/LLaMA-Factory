@@ -39,11 +39,8 @@ sari = load("sari")
 
 import textstat
 
-import nltk
-#nltk.download('punkt_tab')
-#nltk.download('punkt')
-#nltk.download('wordnet')
-#nltk.download('omw-1.4')
+import wandb
+import os
 
 def vllm_infer(
     model_name_or_path: str,
@@ -75,6 +72,29 @@ def vllm_infer(
     check_version("vllm>=0.4.3,<=0.7.3")
     if pipeline_parallel_size > get_device_count():
         raise ValueError("Pipeline parallel size should be smaller than the number of gpus.")
+
+    run = wandb.init(
+        project=os.getenv("WANDB_PROJECT", "llamafactory"),
+        entity=os.getenv("WANDB_ENTITY"),
+        group=os.getenv("WANDB_RUN_GROUP"),
+        name=os.getenv("WANDB_NAME", f"infer-{dataset}"),
+        job_type=os.getenv("WANDB_JOB_TYPE", "inference"),
+        config={
+            "dataset": dataset,
+            "dataset_dir": dataset_dir,
+            "template": template,
+            "temperature": temperature,
+            "top_p": top_p,
+            "top_k": top_k,
+            "max_new_tokens": max_new_tokens,
+            "repetition_penalty": repetition_penalty,
+            "skip_special_tokens": skip_special_tokens,
+            "grade": grade,
+            "model_name_or_path": model_name_or_path,
+            "adapter_name_or_path": adapter_name_or_path,
+        },
+        reinit=True
+    )
 
     model_args, data_args, _, generating_args = get_infer_args(
         dict(
@@ -181,7 +201,7 @@ def vllm_infer(
         print(f"Label: {lbl}")
         print("-" * 80)
 
-    text = f" ".join(preds)
+    text = f"\n".join(preds)
     metrics["fkgl"] = textstat.flesch_kincaid_grade(text)
     
     print("*" * 70)
@@ -243,6 +263,18 @@ def vllm_infer(
     print("*" * 70)
     print(f'Metrics written to metrics.json: sari: {metrics["sari"]}, perplexity: {metrics["perplexity"]}, fkgl: {metrics["fkgl"]}')
     print("*" * 70)
+
+    pref = f"infer/grade{grade}"
+    log_payload = {f"{pref}/{k}": v for k, v in metrics.items()}
+    wandb.log(log_payload)
+
+    # >>> also log a summary row and the predictions file if you save one
+    wandb.run.summary.update({f"{pref}/{k}": v for k, v in metrics.items()})
+    predictions_path = os.path.join(save_path, save_name)
+    if os.path.exists(predictions_path):
+        wandb.save(predictions_path)
+
+    run.finish()
 
 if __name__ == "__main__":
     fire.Fire(vllm_infer)
