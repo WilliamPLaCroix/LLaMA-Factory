@@ -47,6 +47,8 @@ set -euo pipefail
 
 echo "Starting ${variation} ${group} workflow"
 
+head -n5 experiments/baseline.yaml
+
 # Train baseline
 llamafactory-cli train experiments/baseline.yaml \
   --dataset="['${variation}_grade02_train', '${variation}_grade03_train', '${variation}_grade04_train', '${variation}_grade05_train', '${variation}_grade06_train', '${variation}_grade07_train', '${variation}_grade08_train', '${variation}_grade09_train', '${variation}_grade010_train', '${variation}_grade011_train', '${variation}_grade012_train']" \
