@@ -15,8 +15,8 @@ OUT_ADAPTER="${CACHE}/${RUN_ID}_adapter"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
 # --- W&B wiring ---
-export WANDB_PROJECT="llamafactory"
-export WANDB_ENTITY="your_entity"              # optional
+export WANDB_PROJECT="Thesis_Phase"
+#export WANDB_ENTITY="your_entity"              # optional
 export WANDB_DIR="${LOG_DIR}"                  # keeps artifacts and offline caches with your logs
 export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
 export WANDB_NAME="${RUN_ID}"                  # training run name
@@ -40,8 +40,8 @@ echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
 echo "==================================="
 which python
 
-python3 -m pip install --upgrade --quiet wandb \
-  || python3 -m pip install --user --upgrade --quiet wandb
+# python3 -m pip install --upgrade --quiet wandb \
+#   || python3 -m pip install --user --upgrade --quiet wandb
 
 set -euo pipefail
 
