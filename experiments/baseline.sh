@@ -48,7 +48,7 @@ set -euo pipefail
 echo "Starting ${variation} ${group} workflow"
 
 # Train baseline
-llamafactory-cli train "experiments/baseline.yaml" \
+llamafactory-cli train experiments/baseline.yaml \
   --dataset="['${variation}_grade02_train', '${variation}_grade03_train', '${variation}_grade04_train', '${variation}_grade05_train', '${variation}_grade06_train', '${variation}_grade07_train', '${variation}_grade08_train', '${variation}_grade09_train', '${variation}_grade010_train', '${variation}_grade011_train', '${variation}_grade012_train']" \
   --eval_dataset "${variation}_${group}_validate" \
   --metric_for_best_model "eval_${variation}_${group}_validate_sari" \

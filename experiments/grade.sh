@@ -44,7 +44,7 @@ set -euo pipefail
 # Train grade from the chosen baseline adapter
 echo "Starting ${variation} ${grade} workflow"
 
-# llamafactory-cli train "experiments/grade_cleaned.yaml" \
+# llamafactory-cli train experiments/grade.yaml \
 #   --dataset "${variation}_${grade}_train" \
 #   --eval_dataset "${variation}_${grade}_validation" \
 #   --adapter_name_or_path "${BASELINE_ADAPTER}" \
