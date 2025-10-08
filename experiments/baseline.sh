@@ -5,24 +5,31 @@ variation="${1:?group required, e.g., cleaned}"
 group="baseline"  # fixed for baselines
 run_version="v0-2"  # e.g., v0-2; used in WANDB_PROJECT
 
-#! Edit these once
+
 echo "Current conda environment: $CONDA_DEFAULT_ENV"
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_ID="${variation}-${group}"
 LOG_DIR="${REPO}/experiments/logs/${variation}"
+CFG_DIR="${REPO}/experiments"
 OUT_ADAPTER="${CACHE}/${run_version}_${variation}_${group}-adapter"
 mkdir -p "${OUT_ADAPTER}"
 echo "OUT_ADAPTER=${OUT_ADAPTER}"
 ls -la "${OUT_ADAPTER}" || echo "(new dir)"
 
-OUT_MERGED="${CACHE}/${RUN_ID}"
+if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
+  CFG="${CFG_DIR}/${variation}_${group}.resume.yaml"
+  echo "[train] Resuming with ${CFG}"
+else
+  CFG="${CFG_DIR}/${variation}_${group}.init.yaml"
+  echo "[train] Fresh start with ${CFG}"
+fi
+# OUT_MERGED="${CACHE}/${RUN_ID}"
 
 # --- W&B wiring ---
 WBRUN_FILE="${OUT_ADAPTER}/wandb_run_id.txt"
 mkdir -p "$(dirname "$WBRUN_FILE")"
-echo "$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)" > "$WBRUN_FILE"
 
 if [ -f "${WBRUN_FILE}" ]; then
   export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"   # reuse same run
@@ -71,7 +78,7 @@ echo "Starting ${variation} ${group} workflow"
 head -n5 experiments/${variation}_baseline.yaml
 
 # Train baseline
-llamafactory-cli train experiments/${variation}_baseline.yaml \
+llamafactory-cli train "${CFG}" \
 > "${LOG_DIR}/train.log" 2>&1
 
 echo "$WANDB_RUN_ID" > "${OUT_ADAPTER}/wandb_parent_id.txt"
@@ -85,18 +92,6 @@ echo "eval_dataset: ${variation}_${group}_validation"
 echo "output_dir: ${OUT_ADAPTER}"
 echo "log: ${LOG_DIR}/${group}_train.log"
 
-# Merge (optional, keeps parity with grades)
-# llamafactory-cli export <(cat <<EOF
-# model_name_or_path: ${BASE_MODEL}
-# adapter_name_or_path: ${OUT_ADAPTER}
-# template: llama3
-# export_dir: ${OUT_MERGED}
-# export_size: 2
-# export_device: cpu
-# export_legacy_format: false
-# task: sft
-# EOF
-# ) > "${LOG_DIR}/merge.log" 2>&1
 
 # Inference on each grade test with the baseline adapter
 # echo variables from python3 scripts/vllm_infer_metrics.py call
