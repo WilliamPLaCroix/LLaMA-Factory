@@ -72,6 +72,17 @@ def vllm_infer(
     check_version("vllm>=0.4.3,<=0.7.3")
     if pipeline_parallel_size > get_device_count():
         raise ValueError("Pipeline parallel size should be smaller than the number of gpus.")
+    
+    parent_id_path = os.path.join(save_path, "wandb_parent_id.txt")
+    if os.path.exists(parent_id_path):
+        with open(parent_id_path) as f:
+            parent_id = f.read().strip()
+        # store as config for filtering and as summary for quick viewing
+        wandb.config.update({"parent_run_id": parent_id}, allow_val_change=True)
+        wandb.run.summary["parent_run_id"] = parent_id
+
+    run_id = os.getenv("WANDB_RUN_ID") or None
+    resume_mode = "allow" if run_id else "never"
 
     run = wandb.init(
         project=os.getenv("WANDB_PROJECT", "llamafactory"),
@@ -79,6 +90,8 @@ def vllm_infer(
         group=os.getenv("WANDB_RUN_GROUP"),
         name=os.getenv("WANDB_NAME", f"infer-{dataset}"),
         job_type=os.getenv("WANDB_JOB_TYPE", "inference"),
+        id=run_id,
+        resume=resume_mode,
         config={
             "dataset": dataset,
             "dataset_dir": dataset_dir,

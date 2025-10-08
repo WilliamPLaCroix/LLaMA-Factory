@@ -12,6 +12,7 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_ID="${variation}-${group}"
 LOG_DIR="${REPO}/experiments/logs/${variation}"
 OUT_ADAPTER="${CACHE}/${variation}_${group}-adapter"
+WBRUN_FILE="${OUT_ADAPTER}/wandb_run_id.txt"
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
 # --- W&B wiring ---
@@ -22,7 +23,13 @@ export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
 export WANDB_NAME="${RUN_ID}"                  # training run name
 export WANDB_TAGS="baseline,${variation},${group}"
 export WANDB_RESUME=allow
-export WANDB_RUN_ID="${RUN_ID}"
+if [ -f "${WBRUN_FILE}" ]; then
+  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
+else
+  # 8-char base36-ish ID; W&B accepts custom IDs
+  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-8)"
+  echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
+fi
 # export WANDB_MODE=offline                    # uncomment if you need offline logging
 
 
@@ -54,6 +61,9 @@ head -n5 experiments/${variation}_baseline.yaml
 # Train baseline
 llamafactory-cli train experiments/${variation}_baseline.yaml \
 > "${LOG_DIR}/train.log" 2>&1
+
+echo "$WANDB_RUN_ID" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+echo "$WANDB_PROJECT" > "${OUT_ADAPTER}/wandb_project.txt"
 
 echo variables from llamafactory-cli train call
 echo "Dummy call for debugging: $(date) on $(hostname)"
@@ -88,6 +98,8 @@ echo "template: llama3"
 
 for n2 in $(seq -w 2 12); do
   echo "Infer baseline ${variation} on grade ${n}"
+  unset WANDB_RUN_ID
+  WANDB_RESUME=never
   WANDB_NAME="${RUN_ID}-infer-g${n}" \
   WANDB_JOB_TYPE="inference" \
   python3 scripts/vllm_infer_metrics.py \
