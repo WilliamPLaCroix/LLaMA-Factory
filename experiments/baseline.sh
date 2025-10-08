@@ -75,8 +75,6 @@ set -euo pipefail
 
 echo "Starting ${variation} ${group} workflow"
 
-head -n5 experiments/${variation}_baseline.yaml
-
 # Train baseline
 llamafactory-cli train "${CFG}" \
 > "${LOG_DIR}/train.log" 2>&1
