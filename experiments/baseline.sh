@@ -12,8 +12,17 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_ID="${variation}-${group}"
 LOG_DIR="${REPO}/experiments/logs/${variation}"
 OUT_ADAPTER="${CACHE}/${variation}_${group}-adapter"
-WBRUN_FILE="${OUT_ADAPTER}/wandb_run_id.txt"
 OUT_MERGED="${CACHE}/${RUN_ID}"
+
+mkdir -p "${OUT_ADAPTER}"
+WBRUN_FILE="${OUT_ADAPTER}/wandb_run_id.txt"
+if [ -f "${WBRUN_FILE}" ]; then
+  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
+else
+  # 8-char base36-ish ID; W&B accepts custom IDs
+  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-8)"
+  echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
+fi
 
 # --- W&B wiring ---
 export WANDB_PROJECT="Thesis_Phase"
@@ -23,13 +32,7 @@ export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
 export WANDB_NAME="${RUN_ID}"                  # training run name
 export WANDB_TAGS="baseline,${variation},${group}"
 export WANDB_RESUME=allow
-if [ -f "${WBRUN_FILE}" ]; then
-  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
-else
-  # 8-char base36-ish ID; W&B accepts custom IDs
-  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-8)"
-  echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
-fi
+
 # export WANDB_MODE=offline                    # uncomment if you need offline logging
 
 
@@ -99,11 +102,24 @@ echo "template: llama3"
 # 2 digit zero-padded sequence
 for grade in {02..12}; do
   echo "Infer baseline ${variation} on grade ${grade}"
-  unset WANDB_RUN_ID
+  grade_int=$((10#$grade))
+
+  export WANDB_RUN_ID
+  export WANDB_RESUME=allow
+  export WANDB_JOB_TYPE="inference"
+
+  # --- persist & reuse a unique run id for each grade ---
+  IDFILE="${OUT_ADAPTER}/wandb_infer_g${grade}.id"
+  if [ -f "$IDFILE" ]; then
+    export WANDB_RUN_ID="$(cat "$IDFILE")"   # reuse same run id -> same W&B run
+  else
+    export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
+    echo "$WANDB_RUN_ID" > "$IDFILE"
+  fi
+
+  # --- resume so re-runs overwrite points with the same step ---
   export WANDB_TAGS="baseline,${variation},${group},g${grade}"
-  WANDB_RESUME=never
-  WANDB_NAME="${RUN_ID}"
-  WANDB_JOB_TYPE="inference" \
+
   python3 scripts/vllm_infer_metrics.py \
     --model_name_or_path "${BASE_MODEL}" \
     --adapter_name_or_path "${OUT_ADAPTER}" \
@@ -112,7 +128,7 @@ for grade in {02..12}; do
     --template llama3 \
     --dataset "${variation}_grade${grade}_validation" \
     --temperature 0 \
-    --grade "${grade}" \
+    --grade "${grade_int}" \
     > "${LOG_DIR}/infer_g${grade}.log" 2>&1
   echo "save_name: baseline_${variation}_g${grade}.jsonl"
   echo "dataset: ${variation}_grade${grade}_validation"

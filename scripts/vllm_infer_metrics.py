@@ -76,11 +76,10 @@ def vllm_infer(
     run_id = os.getenv("WANDB_RUN_ID") or None
     resume_mode = "allow" if run_id else "never"
 
-    run = wandb.init(
+    init_kwargs = dict(
         project=os.getenv("WANDB_PROJECT", "llamafactory"),
         entity=os.getenv("WANDB_ENTITY"),
         group=os.getenv("WANDB_RUN_GROUP"),
-        name=os.getenv("WANDB_NAME", f"infer-{dataset}"),
         job_type=os.getenv("WANDB_JOB_TYPE", "inference"),
         id=run_id,
         resume=resume_mode,
@@ -100,6 +99,11 @@ def vllm_infer(
         },
         reinit=True
     )
+
+    if run_id is None:
+        init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline")
+
+    run = wandb.init(**init_kwargs)
 
     parent_id_path = os.path.join(save_path, "wandb_parent_id.txt")
     if os.path.exists(parent_id_path):
@@ -277,12 +281,24 @@ def vllm_infer(
     print(f'Metrics written to metrics.json: sari: {metrics["sari"]}, perplexity: {metrics["perplexity"]}, fkgl: {metrics["fkgl"]}')
     print("*" * 70)
 
-    pref = f"infer/grade{grade}"
-    log_payload = {f"{pref}/{k}": v for k, v in metrics.items()}
-    wandb.log(log_payload)
+    def _read_global_step(output_dir: str) -> int | None:
+        try:
+            with open(os.path.join(output_dir, "trainer_state.json"), "r", encoding="utf-8") as f:
+                state = json.load(f)
+            return int(state.get("global_step") or state.get("global_steps") or 0)
+        except Exception:
+            return None
 
-    # >>> also log a summary row and the predictions file if you save one
+    # After you compute `metrics`
+    pref = f"infer/grade{grade:02d}"
+    payload = {f"{pref}/{k}": v for k, v in metrics.items()}
+
+    step = _read_global_step(save_path)
+    wandb.log(payload, step=(step if step is not None else 0))
+
+    # Keep a summary copy for quick table viewing
     wandb.run.summary.update({f"{pref}/{k}": v for k, v in metrics.items()})
+
     predictions_path = os.path.join(save_path, save_name)
     if os.path.exists(predictions_path):
         wandb.save(predictions_path)
