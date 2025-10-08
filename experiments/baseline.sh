@@ -96,25 +96,26 @@ echo "save_path: ${OUT_ADAPTER}"
 echo "temperature: 0"
 echo "template: llama3"
 
-for n2 in $(seq -w 2 12); do
-  echo "Infer baseline ${variation} on grade ${n}"
+# 2 digit zero-padded sequence
+for n2 in {02..12}; do
+  echo "Infer baseline ${variation} on grade ${n2}"
   unset WANDB_RUN_ID
   WANDB_RESUME=never
-  WANDB_NAME="${RUN_ID}-infer-g${n}" \
+  WANDB_NAME="${RUN_ID}-infer-g${n2}" \
   WANDB_JOB_TYPE="inference" \
   python3 scripts/vllm_infer_metrics.py \
     --model_name_or_path "${BASE_MODEL}" \
     --adapter_name_or_path "${OUT_ADAPTER}" \
     --save_path "${OUT_ADAPTER}" \
-    --save_name "baseline_${variation}_g${n}.jsonl" \
+    --save_name "baseline_${variation}_g${n2}.jsonl" \
     --template llama3 \
-    --dataset "${variation}_grade${n}_validation" \
+    --dataset "${variation}_grade${n2}_validation" \
     --temperature 0 \
-    --grade "${n}" \
-    > "${LOG_DIR}/infer_g${n}.log" 2>&1
-  echo "save_name: baseline_${variation}_g${n}.jsonl"
-  echo "dataset: ${variation}_grade${n}_validation"
-  echo "grade: ${n}"
+    --grade "${n2}" \
+    > "${LOG_DIR}/infer_g${n2}.log" 2>&1
+  echo "save_name: baseline_${variation}_g${n2}.jsonl"
+  echo "dataset: ${variation}_grade${n2}_validation"
+  echo "grade: ${n2}"
 done
 
 echo "Main ${variation} ${group} Workflow Completed!"
