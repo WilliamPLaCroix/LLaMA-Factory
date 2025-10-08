@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-
+source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 variation="${1:?group required, e.g., cleaned}"
 group="baseline"  # fixed for baselines
 
