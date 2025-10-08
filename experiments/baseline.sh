@@ -62,8 +62,8 @@ echo "Starting ${variation} ${group} workflow"
 head -n5 experiments/${variation}_baseline.yaml
 
 # Train baseline
-# llamafactory-cli train experiments/${variation}_baseline.yaml \
-# > "${LOG_DIR}/train.log" 2>&1
+llamafactory-cli train experiments/${variation}_baseline.yaml \
+> "${LOG_DIR}/train.log" 2>&1
 
 echo "$WANDB_RUN_ID" > "${OUT_ADAPTER}/wandb_parent_id.txt"
 echo "$WANDB_PROJECT" > "${OUT_ADAPTER}/wandb_project.txt"
