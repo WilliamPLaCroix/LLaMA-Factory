@@ -46,7 +46,7 @@ eval_dataset: augmented_baseline_validation
 eval_strategy: epoch
 predict_with_generate: false
 
-metric_for_best_model: "eval_augmented_baseline_validation_sari"
+metric_for_best_model: "eval_augmented_baseline_validation_dfkgl_sari"
 save_strategy: epoch
 save_total_limit: 20
 load_best_model_at_end: True
