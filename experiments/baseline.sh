@@ -25,7 +25,7 @@ else
 fi
 
 # --- W&B wiring ---
-export WANDB_PROJECT="Thesis_Phase"
+export WANDB_PROJECT="Thesis_Phase_v0-2"
 #export WANDB_ENTITY="your_entity"              # optional
 export WANDB_DIR="${LOG_DIR}"                  # keeps artifacts and offline caches with your logs
 export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
