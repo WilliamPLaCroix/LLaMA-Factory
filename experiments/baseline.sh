@@ -3,6 +3,7 @@
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 variation="${1:?group required, e.g., cleaned}"
 group="baseline"  # fixed for baselines
+run_version="v0-2"  # e.g., v0-2; used in WANDB_PROJECT
 
 #! Edit these once
 echo "Current conda environment: $CONDA_DEFAULT_ENV"
@@ -11,21 +12,29 @@ BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_ID="${variation}-${group}"
 LOG_DIR="${REPO}/experiments/logs/${variation}"
-OUT_ADAPTER="${CACHE}/${variation}_${group}-adapter"
+OUT_ADAPTER="${CACHE}/${run_version}_${variation}_${group}-adapter"
+mkdir -p "${OUT_ADAPTER}"
+echo "OUT_ADAPTER=${OUT_ADAPTER}"
+ls -la "${OUT_ADAPTER}" || echo "(new dir)"
+
 OUT_MERGED="${CACHE}/${RUN_ID}"
 
-mkdir -p "${OUT_ADAPTER}"
+# --- W&B wiring ---
 WBRUN_FILE="${OUT_ADAPTER}/wandb_run_id.txt"
+mkdir -p "$(dirname "$WBRUN_FILE")"
+echo "$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)" > "$WBRUN_FILE"
+
 if [ -f "${WBRUN_FILE}" ]; then
-  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
+  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"   # reuse same run
 else
-  # 8-char base36-ish ID; W&B accepts custom IDs
-  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-8)"
+  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
-# --- W&B wiring ---
-export WANDB_PROJECT="Thesis_Phase_v0-2"
+grep -E "Resuming|Loaded state" -n "${LOG_DIR}/train*.log" || echo "No resume detected"
+export WANDB_RESUME=allow
+
+export WANDB_PROJECT="Thesis_Phase_${run_version}"
 #export WANDB_ENTITY="your_entity"              # optional
 export WANDB_DIR="${LOG_DIR}"                  # keeps artifacts and offline caches with your logs
 export WANDB_RUN_GROUP="${variation}-${group}" # groups training + inference
