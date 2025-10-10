@@ -74,7 +74,7 @@ def vllm_infer(
         raise ValueError("Pipeline parallel size should be smaller than the number of gpus.")
 
     run_id = os.getenv("WANDB_RUN_ID") or None
-    resume_mode = "must" if run_id else "never"
+    resume_mode = "allow" if run_id else "never"
 
     init_kwargs = dict(
                         project=os.environ.get("WANDB_PROJECT"),

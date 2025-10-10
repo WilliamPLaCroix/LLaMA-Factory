@@ -91,7 +91,7 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
 
     # Keep SAME run id as training; do NOT create per-grade runs
     export WANDB_RUN_ID
-    export WANDB_RESUME=must
+    export WANDB_RESUME=allow
     export WANDB_NAME="model=${MODEL_VARIATION}"   # keep stable name for color-by-run
 
     # Rich tags & notes for grouping/filtering in the UI
