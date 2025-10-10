@@ -139,7 +139,7 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
         --dataset "${MODEL_VARIATION}_grade${grade}_validation" \
         --temperature 0 \
         --grade "${grade_int}" \
-        > "${LOG_DIR}/infer_g${grade}.log" 2>&1
+        > "${LOG_DIR}/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1
     echo "save_name: baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}.jsonl"
     echo "dataset: ${DATASET_VARIATION}_grade${grade}_validation"
     echo "grade: ${grade}@${DATASET_VARIATION}"
