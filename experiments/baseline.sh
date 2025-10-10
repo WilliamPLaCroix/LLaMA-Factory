@@ -107,9 +107,8 @@ echo "Dataset variations for inference: ${ds_variations[*]}"
 
 # 2 digit zero-padded sequence
 for DATASET_VARIATION in "${ds_variations[@]}"; do
-  echo "== Inference on dataset variation: ${DATASET_VARIATION}"
     for grade in {02..12}; do
-    echo "Infer baseline ${MODEL_VARIATION} on grade ${grade}"
+    echo "Infer baseline ${MODEL_VARIATION} on grade ${grade} variation ${DATASET_VARIATION}"
     grade_int=$((10#$grade))
 
     export DATASET_VARIATION="${DATASET_VARIATION}"
@@ -135,27 +134,27 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
         --model_name_or_path "${BASE_MODEL}" \
         --adapter_name_or_path "${OUT_ADAPTER}" \
         --save_path "${OUT_ADAPTER}" \
-        --save_name "baseline_${variation}_g${grade}@${DATASET_VARIATION}.jsonl" \
+        --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}.jsonl" \
         --template llama3 \
-        --dataset "${variation}_grade${grade}_validation" \
+        --dataset "${MODEL_VARIATION}_grade${grade}_validation" \
         --temperature 0 \
         --grade "${grade_int}" \
         > "${LOG_DIR}/infer_g${grade}.log" 2>&1
-    echo "save_name: baseline_${variation}_g${grade}@${DATASET_VARIATION}.jsonl"
+    echo "save_name: baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}.jsonl"
     echo "dataset: ${DATASET_VARIATION}_grade${grade}_validation"
     echo "grade: ${grade}@${DATASET_VARIATION}"
     done
 done
 
-echo "Main ${variation} ${group} Workflow Completed!"
+echo "Main ${MODEL_VARIATION} ${group} Workflow Completed!"
 
 
 # Optional: write a summary metrics.json by averaging SARI across grades
 # python3 - <<'PY'
 # import json, glob, numpy as np, os
 # import os
-# cache=os.environ["CACHE"]; variation=os.environ.get("variation","${variation}")
-# root=f"{cache}/{variation}-baseline"
+# cache=os.environ["CACHE"]; MODEL_VARIATION=os.environ.get("MODEL_VARIATION","${MODEL_VARIATION}")
+# root=f"{cache}/{MODEL_VARIATION}-baseline"
 # vals=[]
 # for p in glob.glob(f"{root}/metrics.json"):  # metrics.json already written by vllm_infer_metrics
 #     with open(p) as f:
