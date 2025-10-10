@@ -145,6 +145,7 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
     echo "dataset: ${DATASET_VARIATION}_grade${grade}_validation"
     echo "grade: ${grade}@${DATASET_VARIATION}"
     done
+done
 
 echo "Main ${variation} ${group} Workflow Completed!"
 
