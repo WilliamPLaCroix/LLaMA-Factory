@@ -230,22 +230,22 @@ def vllm_infer(
     print("*" * 70)
 
     # need to free up memory...? model -> cpu, call perplexity, which includes model -> gpu
-    import torch
+    # import torch
 
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
+    # if torch.cuda.is_available():
+    #     device = torch.device("cuda")
+    # else:
+    #     device = torch.device("cpu")
 
-    allocated_memory = torch.cuda.memory_allocated(device) / (1024**2) # Convert to MB
-    reserved_memory = torch.cuda.memory_reserved(device) / (1024**2) # Convert to MB
-    max_reserved_memory = torch.cuda.max_memory_reserved(device) / (1024**2) # Convert to MB
+    # allocated_memory = torch.cuda.memory_allocated(device) / (1024**2) # Convert to MB
+    # reserved_memory = torch.cuda.memory_reserved(device) / (1024**2) # Convert to MB
+    # max_reserved_memory = torch.cuda.max_memory_reserved(device) / (1024**2) # Convert to MB
 
-    print(f"Allocated memory: {allocated_memory:.2f} MB")
-    print(f"Reserved memory: {reserved_memory:.2f} MB")
-    print(f"Max reserved memory: {max_reserved_memory:.2f} MB")    
+    # print(f"Allocated memory: {allocated_memory:.2f} MB")
+    # print(f"Reserved memory: {reserved_memory:.2f} MB")
+    # print(f"Max reserved memory: {max_reserved_memory:.2f} MB")    
     
-    print("Attempting to load model+adapter")
+    # print("Attempting to load model+adapter")
 
     #if adapter_name_or_path is not None:
     #    config = PeftConfig.from_pretrained(adapter_name_or_path)
