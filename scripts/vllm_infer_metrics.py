@@ -196,7 +196,7 @@ def vllm_infer(
     system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
     sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
     
-    with open(f"{adapter_name_or_path}/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
+    with open(f"{save_path}/generated_predictions/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
         for text, pred, label in zip(sources, preds, labels):
             sari_score = sari.compute(sources=[text], predictions=[pred], references=[[label]])
             score_dict["sari"].append(sari_score['sari'])

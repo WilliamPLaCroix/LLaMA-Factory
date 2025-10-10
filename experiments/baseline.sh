@@ -16,7 +16,7 @@ RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
-mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs"
+mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
 if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
