@@ -71,10 +71,9 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # --------------- TRAIN ---------------
+# echo "[train] would run llamafactory-cli train ${CFG}"
 # llamafactory-cli train "${CFG}" \
 #   > "${LOG_DIR}/train.log" 2>&1
-
-echo "[train] would run llamafactory-cli train ${CFG}"
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
@@ -82,7 +81,9 @@ export WANDB_JOB_TYPE="infer"
 
 ds_variations=(original cleaned augmented)
 for DATASET_VARIATION in "${ds_variations[@]}"; do
+  echo "[infer] dataset variation: ${DATASET_VARIATION}"
   for grade in {02..12}; do
+    echo "[infer]   grade: ${grade}"
 
     # Keep SAME run id as training; do NOT create per-grade runs
     export WANDB_RUN_ID
@@ -98,6 +99,9 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
     export INFER_VARIANT="${DATASET_VARIATION}"
     export INFER_GRADE="${grade}"
 
+    # echo the specific inference arguments
+
+
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
     python3 scripts/vllm_infer_metrics.py \
       --model_name_or_path "${BASE_MODEL}" \
@@ -109,6 +113,8 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
       --temperature 0 \
       --grade "${grade}" \
       > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
+
+    echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
 
   done
 
