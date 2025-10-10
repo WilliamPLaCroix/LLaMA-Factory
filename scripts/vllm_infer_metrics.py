@@ -219,7 +219,7 @@ def vllm_infer(
 
     text = f"\n".join(preds)
     metrics["fkgl"] = textstat.flesch_kincaid_grade(text)
-    metrics["dfkgl"] = abs(metrics["fkgl"] - grade)
+    metrics["dfkgl"] = round(abs(float(metrics["fkgl"]) - float(grade)), 2)
 
     bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
     metrics["bert_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
