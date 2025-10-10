@@ -68,6 +68,10 @@ which python
 
 set -euo pipefail
 
+export WANDB_START_METHOD=thread
+export WANDB_HTTP_TIMEOUT=300          # uploads
+export WANDB_ENABLE_SERVICE=true       # modern client path
+
 echo "Starting ${MODEL_VARIATION} ${group} workflow"
 # ==========================================
 # Train baseline, uncomment to retrain

@@ -97,7 +97,8 @@ def vllm_infer(
             "model_name_or_path": model_name_or_path,
             "adapter_name_or_path": adapter_name_or_path,
         },
-        reinit=True
+        reinit=True,
+        settings=wandb.Settings(init_timeout=300, start_method="thread")
     )
 
     if run_id is None:
@@ -190,7 +191,8 @@ def vllm_infer(
     if isinstance(model_args.vllm_config, dict):
         engine_args.update(model_args.vllm_config)
 
-    score_dict = {"easse_sari": [], "sari": [], "perplexity": [], "fkgl": []}
+
+    score_dict = {"easse_sari": [], "sari": [], "perplexity": [], "fkgl": [], "dfkgl": []}
 
     results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
     preds = [result.outputs[0].text for result in results]
