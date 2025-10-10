@@ -79,10 +79,14 @@ set -euo pipefail
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
 export WANDB_JOB_TYPE="infer"
 
+echo "staring run at $(date)"
+run_start_time=$(date +%s)
 ds_variations=(original cleaned augmented)
 for DATASET_VARIATION in "${ds_variations[@]}"; do
   echo "[infer] dataset variation: ${DATASET_VARIATION}"
+  variation_start_time=$(date +%s)
   for grade in {02..12}; do
+    grade_start_time=$(date +%s)
     echo "[infer]   grade: ${grade}"
 
     # Keep SAME run id as training; do NOT create per-grade runs
@@ -115,11 +119,15 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
       > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
-
+    grade_end_time=$(date +%s)
+    echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
   done
-
+    variation_end_time=$(date +%s)
+    echo "[infer] dataset variation ${DATASET_VARIATION} took $((variation_end_time - variation_start_time)) seconds"
 done
 
+end_time=$(date +%s)
+echo "Total infer time: $((end_time - run_start_time)) seconds"
 echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
 
 echo "Done. Tips in W&B UI:
