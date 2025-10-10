@@ -34,6 +34,7 @@ if is_vllm_available():
 import numpy as np
 from evaluate import load
 sari = load("sari")
+from bert_score import score
 #perplexity = load("perplexity", module_type="metric")
 #from readability import Readability
 
@@ -188,14 +189,14 @@ def vllm_infer(
         engine_args.update(model_args.vllm_config)
 
 
-    score_dict = {"easse_sari": [], "sari": [], "perplexity": [], "fkgl": [], "dfkgl": []}
+    score_dict = {"sari": [], "perplexity": [], "fkgl": [], "dfkgl": [], "bert_F1": []}
 
     results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
     preds = [result.outputs[0].text for result in results]
     
     system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
     sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
-    
+
     with open(f"{save_path}/generated_predictions/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
         for text, pred, label in zip(sources, preds, labels):
             sari_score = sari.compute(sources=[text], predictions=[pred], references=[[label]])
@@ -218,9 +219,11 @@ def vllm_infer(
 
     text = f"\n".join(preds)
     metrics["fkgl"] = textstat.flesch_kincaid_grade(text)
+    metrics["dfkgl"] = abs(metrics["fkgl"] - grade)
 
-    ###TODO: add bertscore here
-    
+    bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
+    metrics["bert_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
+
     print("*" * 70)
     #print("Readability results:", fk)
     print("Textstat FKGL:", metrics["fkgl"])
