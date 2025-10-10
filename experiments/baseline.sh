@@ -47,9 +47,9 @@ grep -E "Resuming|Loaded state" -n "${LOG_DIR}/train*.log" || echo "No resume de
 export WANDB_RESUME=allow
 export WANDB_PROJECT="Thesis_Phase_${run_version}"
 export WANDB_DIR="${LOG_DIR}"
-export WANDB_RUN_GROUP="${MODEL_VARIATION}-${group}"   # parent group: model variation
-export WANDB_NAME="${RUN_ID}"                           # parent run name
-export WANDB_TAGS="baseline,${MODEL_VARIATION},${group}"
+export WANDB_RUN_GROUP="baseline/${MODEL_VARIATION}"    # parent group is just the model variation
+export WANDB_NAME="train"                               # short, clean parent name
+export WANDB_TAGS="baseline,model:${MODEL_VARIATION},group:${group}"
 
 # --- Env ---
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
@@ -120,10 +120,10 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
 
     export WANDB_RESUME=allow
     export WANDB_JOB_TYPE="inference"
-    export WANDB_RUN_GROUP="${MODEL_VARIATION}-${group}"  # keep all children under model variation
-    # Add a second grouping field as a tag for easy faceting in the UI
-    export WANDB_NAME="${RUN_ID}|infer|${DATASET_VARIATION}|g${grade}"
-    export WANDB_TAGS="baseline,${MODEL_VARIATION},${group},DATASET_VARIATION:${DATASET_VARIATION},group:${MODEL_VARIATION}-${DATASET_VARIATION},grade:${grade_int}"
+    export WANDB_RUN_GROUP="baseline/${MODEL_VARIATION}"
+    export WANDB_NAME="baseline-${MODEL_VARIATION}-g${grade}@${DATASET_VARIATION}"
+    export WANDB_TAGS="baseline,model:${MODEL_VARIATION},group:${group},dsvar:${DATASET_VARIATION},group2:${MODEL_VARIATION}-${DATASET_VARIATION},grade:${grade_int}"
+    export WANDB_NOTES="DATASET_VARIATION=${DATASET_VARIATION}; grade=${grade_int}; adapter=${MODEL_VARIATION}"
 
     # Paths and names
     SAVE_DIR="${OUT_ADAPTER}/infer/${DATASET_VARIATION}/g${grade}"
