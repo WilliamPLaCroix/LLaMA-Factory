@@ -278,12 +278,6 @@ def vllm_infer(
     
     metrics["perplexity"] = round(perplexity_results, 2)
 
-    with open(f"{save_path}/{save_name}.metrics", "w", encoding="utf-8") as f:
-        f.write(json.dumps({"sari": metrics["sari"], "perplexity": metrics["perplexity"], "fkgl": metrics["fkgl"]}))
-    print("*" * 70)
-    print(f'Metrics written to metrics.json: sari: {metrics["sari"]}, perplexity: {metrics["perplexity"]}, fkgl: {metrics["fkgl"]}')
-    print("*" * 70)
-
     def _read_global_step(output_dir: str) -> int | None:
         try:
             with open(os.path.join(output_dir, "trainer_state.json"), "r", encoding="utf-8") as f:
@@ -318,6 +312,15 @@ def vllm_infer(
         wandb.save(predictions_path)
 
     run.finish()
+
+    with open(f"{save_path}/{save_name}.metrics", "w", encoding="utf-8") as f:
+        f.write(json.dumps(metrics))
+
+    print("*" * 70)
+    print(f'Metrics written to {save_path}/{save_name}.metrics:')
+    for k, v in metrics.items():
+        print(f"  {k}: {v}")
+    print("*" * 70)
 
 if __name__ == "__main__":
     fire.Fire(vllm_infer)
