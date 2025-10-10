@@ -305,7 +305,7 @@ def vllm_infer(
 
 
 
-    pref = f'test/{run.config["test_variant"]}/grade/{run.config["grade"]}'
+    pref = f'infer/{run.config["infer_variant"]}/grade/{run.config["grade"]}'
     payload = {f"{pref}/{k}": v for k, v in metrics.items()}
 
     step = _read_global_step(adapter_name_or_path)
@@ -316,8 +316,8 @@ def vllm_infer(
                              
     run.summary.update({f"{pref}/{k}": _py_scalar(v) for k, v in metrics.items()})
 
-    train_v = run.config["train_variant"]; test_v = run.config["test_variant"]
-    run.summary.update({f"matrix/{train_v}/{test_v}/{k}": _py_scalar(v) for k, v in metrics.items()})
+    train_v = run.config["train_variant"]; inver_v = run.config["infer_variant"]
+    run.summary.update({f"matrix/{train_v}/{inver_v}/{k}": _py_scalar(v) for k, v in metrics.items()})
 
 
     predictions_path = os.path.join(adapter_name_or_path, save_name)
