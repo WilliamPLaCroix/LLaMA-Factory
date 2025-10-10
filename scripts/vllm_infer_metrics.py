@@ -74,32 +74,28 @@ def vllm_infer(
         raise ValueError("Pipeline parallel size should be smaller than the number of gpus.")
 
     run_id = os.getenv("WANDB_RUN_ID") or None
-    resume_mode = "allow" if run_id else "never"
+    resume_mode = "must" if run_id else "never"
 
     init_kwargs = dict(
-        project=os.getenv("WANDB_PROJECT", "llamafactory"),
-        entity=os.getenv("WANDB_ENTITY"),
-        group=os.getenv("WANDB_RUN_GROUP"),
-        job_type=os.getenv("WANDB_JOB_TYPE", "inference"),
-        id=run_id,
-        resume=resume_mode,
-        config={
-            "dataset": dataset,
-            "dataset_dir": dataset_dir,
-            "template": template,
-            "temperature": temperature,
-            "top_p": top_p,
-            "top_k": top_k,
-            "max_new_tokens": max_new_tokens,
-            "repetition_penalty": repetition_penalty,
-            "skip_special_tokens": skip_special_tokens,
-            "grade": grade,
-            "model_name_or_path": model_name_or_path,
-            "adapter_name_or_path": adapter_name_or_path,
-        },
-        reinit=True,
-        settings=wandb.Settings(init_timeout=300, start_method="thread")
-    )
+                        project=os.environ.get("WANDB_PROJECT"),
+                        entity=os.environ.get("WANDB_ENTITY") or None,
+                        id=os.environ.get("WANDB_RUN_ID"),
+                        resume=resume_mode,
+                        name=os.environ.get("WANDB_NAME"),
+                        group=os.environ.get("WANDB_RUN_GROUP"),
+                        job_type=os.environ.get("WANDB_JOB_TYPE"),
+                        dir=os.environ.get("WANDB_DIR"),
+                        config={
+                            "train_variant": os.environ.get("TRAIN_VARIANT"),
+                            "infer_variant": os.environ.get("INFER_VARIANT"),
+                            "grade": int(os.environ.get("INFER_GRADE", "0")),
+                            "palette": {
+                                "original": "#1f77b4",
+                                "cleaned": "#2ca02c",
+                                "augmented": "#d62728",
+                                        },
+                                },
+                        )
 
     if run_id is None:
         init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline-")
@@ -294,14 +290,35 @@ def vllm_infer(
             return None
 
     # After you compute `metrics`
-    pref = f"infer/grade{grade:02d}"
+    train_variant = run.config["train_variant"]
+    infer_variant  = run.config["infer_variant"]
+    grade         = run.config["grade"]
+    prefix = f"infer/{infer_variant}/grade{grade}"
+    run.summary[f"{prefix}/SARI"] = float(sari)
+    run.summary[f"{prefix}/BLEU"] = float(bleu)
+
+    def _py_scalar(x):
+        # Coerce numpy types to Python scalars so summary accepts them cleanly
+        if isinstance(x, (np.generic,)):
+            return x.item()
+        return x
+
+
+
+    pref = f'test/{run.config["test_variant"]}/grade/{run.config["grade"]}'
     payload = {f"{pref}/{k}": v for k, v in metrics.items()}
 
     step = _read_global_step(adapter_name_or_path)
     wandb.log(payload, step=(step if step is not None else 0))
 
     # Keep a summary copy for quick table viewing
-    wandb.run.summary.update({f"{pref}/{k}": v for k, v in metrics.items()})
+    #wandb.run.summary.update({f"{pref}/{k}": v for k, v in metrics.items()}
+                             
+    run.summary.update({f"{pref}/{k}": _py_scalar(v) for k, v in metrics.items()})
+
+    train_v = run.config["train_variant"]; test_v = run.config["test_variant"]
+    run.summary.update({f"matrix/{train_v}/{test_v}/{k}": _py_scalar(v) for k, v in metrics.items()})
+
 
     predictions_path = os.path.join(adapter_name_or_path, save_name)
     if os.path.exists(predictions_path):
