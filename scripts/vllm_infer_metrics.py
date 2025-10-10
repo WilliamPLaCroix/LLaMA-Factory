@@ -289,21 +289,11 @@ def vllm_infer(
         except Exception:
             return None
 
-    # After you compute `metrics`
-    train_variant = run.config["train_variant"]
-    infer_variant  = run.config["infer_variant"]
-    grade         = run.config["grade"]
-    prefix = f"infer/{infer_variant}/grade{grade}"
-    run.summary[f"{prefix}/SARI"] = float(sari)
-    run.summary[f"{prefix}/BLEU"] = float(bleu)
-
     def _py_scalar(x):
         # Coerce numpy types to Python scalars so summary accepts them cleanly
         if isinstance(x, (np.generic,)):
             return x.item()
         return x
-
-
 
     pref = f'infer/{run.config["infer_variant"]}/grade/{run.config["grade"]}'
     payload = {f"{pref}/{k}": v for k, v in metrics.items()}
