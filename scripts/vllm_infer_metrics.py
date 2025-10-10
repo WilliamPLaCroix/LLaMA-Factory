@@ -102,11 +102,11 @@ def vllm_infer(
     )
 
     if run_id is None:
-        init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline")
+        init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline-")
 
     run = wandb.init(**init_kwargs)
 
-    parent_id_path = os.path.join(save_path, "wandb_parent_id.txt")
+    parent_id_path = os.path.join(adapter_name_or_path, "wandb_parent_id.txt")
     if os.path.exists(parent_id_path):
         with open(parent_id_path, 'r', encoding='utf-8') as f:
             parent_id = f.read().strip()
@@ -200,7 +200,7 @@ def vllm_infer(
     system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
     sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
     
-    with open(f"{save_path}/{save_name}", "w", encoding="utf-8") as f:
+    with open(f"{adapter_name_or_path}/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
         for text, pred, label in zip(sources, preds, labels):
             sari_score = sari.compute(sources=[text], predictions=[pred], references=[[label]])
             score_dict["sari"].append(sari_score['sari'])
@@ -222,6 +222,8 @@ def vllm_infer(
 
     text = f"\n".join(preds)
     metrics["fkgl"] = textstat.flesch_kincaid_grade(text)
+
+    ###TODO: add bertscore here
     
     print("*" * 70)
     #print("Readability results:", fk)
@@ -270,14 +272,14 @@ def vllm_infer(
     
     perplexity_results = calculate_ppl(model_name_or_path=model_name_or_path,
                                         adapter_name_or_path=adapter_name_or_path,
-                                        save_path=save_path,
+                                        save_path=adapter_name_or_path,
                                         dataset=dataset,
                                         template=template,
                                         )
     
     metrics["perplexity"] = round(perplexity_results, 2)
 
-    with open(f"{save_path}/metrics.json", "w", encoding="utf-8") as f:
+    with open(f"{save_path}/{save_name}.metrics", "w", encoding="utf-8") as f:
         f.write(json.dumps({"sari": metrics["sari"], "perplexity": metrics["perplexity"], "fkgl": metrics["fkgl"]}))
     print("*" * 70)
     print(f'Metrics written to metrics.json: sari: {metrics["sari"]}, perplexity: {metrics["perplexity"]}, fkgl: {metrics["fkgl"]}')
@@ -295,13 +297,13 @@ def vllm_infer(
     pref = f"infer/grade{grade:02d}"
     payload = {f"{pref}/{k}": v for k, v in metrics.items()}
 
-    step = _read_global_step(save_path)
+    step = _read_global_step(adapter_name_or_path)
     wandb.log(payload, step=(step if step is not None else 0))
 
     # Keep a summary copy for quick table viewing
     wandb.run.summary.update({f"{pref}/{k}": v for k, v in metrics.items()})
 
-    predictions_path = os.path.join(save_path, save_name)
+    predictions_path = os.path.join(adapter_name_or_path, save_name)
     if os.path.exists(predictions_path):
         wandb.save(predictions_path)
 

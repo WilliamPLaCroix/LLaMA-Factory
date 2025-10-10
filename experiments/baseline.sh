@@ -134,7 +134,7 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
         --model_name_or_path "${BASE_MODEL}" \
         --adapter_name_or_path "${OUT_ADAPTER}" \
         --save_path "${OUT_ADAPTER}" \
-        --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}.jsonl" \
+        --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
         --template llama3 \
         --dataset "${MODEL_VARIATION}_grade${grade}_validation" \
         --temperature 0 \
