@@ -147,7 +147,7 @@ def vllm_infer(
             f.write(json.dumps({"prompt": text, "predict": pred, "label": label}, ensure_ascii=False) + "\n")
 
     print("*" * 70)
-    print(f"{len(prompts)} generated results have been saved at f"{save_path}/{save_name}".")
+    print(f"{len(prompts)} generated results have been saved at {save_path}/{save_name}")
     print("*" * 70)
 
 
