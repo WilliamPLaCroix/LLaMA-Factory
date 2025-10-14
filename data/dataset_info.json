@@ -1,5 +1,12 @@
 {
-  "original_grade02_train": {
+  "prompt_rephrasing": {
+    "file_name": "/nethome/wlacroix/false_refusal/data/xsb_ignore-word_system-prompt.jsonl",
+    "columns": {
+	"prompt": "system-prompt",
+	"query": "prompt"
+    }
+  },
+    "original_grade02_train": {
     "hf_hub_url": "williamplacroix/graded_wikilarge",
     "subset": "original-grade02",
     "split": "train",
