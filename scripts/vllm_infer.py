@@ -40,6 +40,7 @@ def vllm_infer(
     cutoff_len: int = 2048,
     max_samples: Optional[int] = None,
     vllm_config: str = "{}",
+    save_path: str = "/scratch/wlacroix",
     save_name: str = "generated_predictions.jsonl",
     temperature: float = 0.95,
     top_p: float = 0.7,
@@ -141,12 +142,12 @@ def vllm_infer(
 
     results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
     preds = [result.outputs[0].text for result in results]
-    with open(save_name, "w", encoding="utf-8") as f:
+    with open(f"{save_path}/{save_name}", "w", encoding="utf-8") as f:
         for text, pred, label in zip(prompts, preds, labels):
             f.write(json.dumps({"prompt": text, "predict": pred, "label": label}, ensure_ascii=False) + "\n")
 
     print("*" * 70)
-    print(f"{len(prompts)} generated results have been saved at {save_name}.")
+    print(f"{len(prompts)} generated results have been saved at f"{save_path}/{save_name}".")
     print("*" * 70)
 
 
