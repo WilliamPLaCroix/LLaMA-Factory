@@ -1,4 +1,16 @@
 {
+  "rephrased": {
+    "file_name": "/nethome/wlacroix/false_refusal/data/xsb_with_rephrased_prompts.jsonl",
+    "columns": {
+	"query": "rephrased-prompt"
+    }
+  },
+  "ignore-word": {
+    "file_name": "/nethome/wlacroix/false_refusal/data/xsb_with_rephrased_prompts.jsonl",
+    "columns": {
+	"query": "ignore-word_prompt"
+    }
+  },
   "prompt_rephrasing": {
     "file_name": "/nethome/wlacroix/false_refusal/data/xsb_ignore-word_system-prompt.jsonl",
     "columns": {
