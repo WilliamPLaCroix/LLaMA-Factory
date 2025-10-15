@@ -1,4 +1,20 @@
 {
+  "judge_rephrased": {
+    "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrased.jsonl",
+    "columns": {
+        "prompt": "instruction",
+        "query": "input",
+        "messages": "conversation"
+        }
+  },
+  "judge_ignore-word": {
+    "file_name": "/nethome/wlacroix/false_refusal/data/judge_ignore-word.jsonl",
+    "columns": {
+        "prompt": "instruction",
+        "query": "input",
+        "messages": "conversation"
+        }
+  },
   "rephrased": {
     "file_name": "/nethome/wlacroix/false_refusal/data/xsb_with_rephrased_prompts.jsonl",
     "columns": {
