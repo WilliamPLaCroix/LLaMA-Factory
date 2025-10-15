@@ -1,6 +1,6 @@
 {
   "judge_rephrase_dataset": {
-    "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrased.jsonl",
+    "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrase_dataset.jsonl",
     "columns": {
         "prompt": "instruction",
         "query": "input",
@@ -8,7 +8,7 @@
         }
   },
   "judge_ignore-word_dataset": {
-    "file_name": "/nethome/wlacroix/false_refusal/data/judge_ignore-word.jsonl",
+    "file_name": "/nethome/wlacroix/false_refusal/data/judge_ignore-word_dataset.jsonl",
     "columns": {
         "prompt": "instruction",
         "query": "input",
