@@ -64,9 +64,9 @@ source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 cd "$REPO"
 
-if ! python -c "import bert_score" >/dev/null 2>&1; then
-  python -m pip install -U bert-score
-fi
+# if ! python -c "import bert_score" >/dev/null 2>&1; then
+#   python -m pip install -U bert-score
+# fi
 
 echo "=== ENV ==="
 echo "Conda: $CONDA_DEFAULT_ENV"; which python
