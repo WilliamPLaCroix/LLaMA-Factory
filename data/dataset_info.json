@@ -1,5 +1,5 @@
 {
-  "judge_rephrase": {
+  "judge_rephrase_dataset": {
     "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrased.jsonl",
     "columns": {
         "prompt": "instruction",
@@ -7,7 +7,7 @@
         "messages": "conversation"
         }
   },
-  "judge_ignore-word": {
+  "judge_ignore-word_dataset": {
     "file_name": "/nethome/wlacroix/false_refusal/data/judge_ignore-word.jsonl",
     "columns": {
         "prompt": "instruction",
