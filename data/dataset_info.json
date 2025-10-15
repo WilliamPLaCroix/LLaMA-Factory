@@ -1,5 +1,5 @@
 {
-  "judge_rephrased": {
+  "judge_rephrase": {
     "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrased.jsonl",
     "columns": {
         "prompt": "instruction",
