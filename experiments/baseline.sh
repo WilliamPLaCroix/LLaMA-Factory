@@ -3,7 +3,7 @@
 
 # ---------------- User knobs ----------------
 MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-PROJECT_VERSION="v0-2"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
 
@@ -75,9 +75,9 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # --------------- TRAIN ---------------
-# echo "[train] would run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+echo "[train] will now run llamafactory-cli train ${CFG}"
+llamafactory-cli train "${CFG}" \
+  > "${LOG_DIR}/train.log" 2>&1
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
