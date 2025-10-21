@@ -75,9 +75,9 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # --------------- TRAIN ---------------
-echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train "${CFG}" \
-  > "${LOG_DIR}/train.log" 2>&1
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+# llamafactory-cli train "${CFG}" \
+#   > "${LOG_DIR}/train.log" 2>&1
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
