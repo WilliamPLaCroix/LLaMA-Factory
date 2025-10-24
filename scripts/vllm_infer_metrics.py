@@ -269,10 +269,11 @@ def vllm_infer(
 
     #perplexity_results = perplexity.compute(predictions=labels, model=model, tokenizer=tokenizer)
     from stat_utils.cal_ppl import calculate_ppl
-    
+    ppl_save_path = save_path if adapter_name_or_path is None else adapter_name_or_path
+
     perplexity_results = calculate_ppl(model_name_or_path=model_name_or_path,
                                         adapter_name_or_path=adapter_name_or_path,
-                                        save_path=adapter_name_or_path,
+                                        save_path=ppl_save_path,
                                         dataset=dataset,
                                         template=template,
                                         )
