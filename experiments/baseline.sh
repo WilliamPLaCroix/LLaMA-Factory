@@ -86,7 +86,7 @@ export WANDB_JOB_TYPE="infer"
 
 echo "staring run at $(date)"
 run_start_time=$(date +%s)
-ds_variations=(original cleaned augmented)
+ds_variations=(cleaned) # original augmented)
 for DATASET_VARIATION in "${ds_variations[@]}"; do
   echo "[infer] dataset variation: ${DATASET_VARIATION}"
   variation_start_time=$(date +%s)
