@@ -42,11 +42,11 @@ else
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
-# Persist for other scripts and future resumes
-# printf '%s
-# ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
-# printf '%s
-# ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+Persist for other scripts and future resumes
+printf '%s
+' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+printf '%s
+' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 # An experiment group id to compare the trio {original,cleaned,augmented} together
 EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"

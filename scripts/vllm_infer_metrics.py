@@ -103,13 +103,14 @@ def vllm_infer(
 
     run = wandb.init(**init_kwargs)
 
-    parent_id_path = os.path.join(adapter_name_or_path, "wandb_parent_id.txt")
-    if os.path.exists(parent_id_path):
-        with open(parent_id_path, 'r', encoding='utf-8') as f:
-            parent_id = f.read().strip()
-        # store as config for filtering and as summary for quick viewing
-        wandb.config.update({"parent_run_id": parent_id}, allow_val_change=True)
-        wandb.run.summary["parent_run_id"] = parent_id
+    if adapter_name_or_path is not None:
+        parent_id_path = os.path.join(adapter_name_or_path, "wandb_parent_id.txt")
+        if os.path.exists(parent_id_path):
+            with open(parent_id_path, 'r', encoding='utf-8') as f:
+                parent_id = f.read().strip()
+            # store as config for filtering and as summary for quick viewing
+            wandb.config.update({"parent_run_id": parent_id}, allow_val_change=True)
+            wandb.run.summary["parent_run_id"] = parent_id
 
     model_args, data_args, _, generating_args = get_infer_args(
         dict(
@@ -295,7 +296,7 @@ def vllm_infer(
     pref = f'infer/{run.config["infer_variant"]}/grade/{run.config["grade"]}'
     payload = {f"{pref}/{k}": v for k, v in metrics.items()}
 
-    step = _read_global_step(adapter_name_or_path)
+    step = _read_global_step(adapter_name_or_path) if adapter_name_or_path else None
     wandb.log(payload, step=(step if step is not None else 0))
 
     # Keep a summary copy for quick table viewing
@@ -306,10 +307,10 @@ def vllm_infer(
     train_v = run.config["train_variant"]; inver_v = run.config["infer_variant"]
     run.summary.update({f"matrix/{train_v}/{inver_v}/{k}": _py_scalar(v) for k, v in metrics.items()})
 
-
-    predictions_path = os.path.join(adapter_name_or_path, save_name)
-    if os.path.exists(predictions_path):
-        wandb.save(predictions_path)
+    if adapter_name_or_path is not None:
+        predictions_path = os.path.join(adapter_name_or_path, save_name)
+        if os.path.exists(predictions_path):
+            wandb.save(predictions_path)
 
     run.finish()
 
