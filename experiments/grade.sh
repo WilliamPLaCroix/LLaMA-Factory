@@ -77,7 +77,7 @@ set -euo pipefail
 # --------------- TRAIN ---------------
 echo "[train] will now run llamafactory-cli train ${CFG}"
 llamafactory-cli train "${CFG}" \
-  > "${LOG_DIR}/train${BASE_GROUP}.log" 2>&1
+  > "${LOG_DIR}/train_grade${BASE_GROUP}.log" 2>&1
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
@@ -116,12 +116,12 @@ python3 scripts/vllm_infer_metrics.py \
     --model_name_or_path "${BASE_MODEL}" \
     --adapter_name_or_path "${OUT_ADAPTER}" \
     --save_path "${LOG_DIR}" \
-    --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
+    --save_name "graded_${MODEL_VARIATION}_grade${grade}@${DATASET_VARIATION}" \
     --template llama3 \
     --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
     --temperature 0 \
     --grade "${grade}" \
-    > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
+    > "${LOG_DIR}/logs/infer_grade${grade}.log" 2>&1 || true
 
 echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
 grade_end_time=$(date +%s)

@@ -2,9 +2,9 @@ universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade.sh
 arguments       = $(grade)
-log             = /scratch/wlacroix/logs/cleaned_$(grade).log
-output          = /scratch/wlacroix/logs/cleaned_$(grade).out
-error           = /scratch/wlacroix/logs/cleaned_$(grade).err
+log             = /scratch/wlacroix/logs/cleaned_grade$(grade).log
+output          = /scratch/wlacroix/logs/cleaned_grade$(grade).out
+error           = /scratch/wlacroix/logs/cleaned_grade$(grade).err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
@@ -19,15 +19,15 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 queue grade from (
-grade02
-grade03
-grade04
-grade05
-grade06
-grade07
-grade08
-grade09
-grade10
-grade11
-grade12
+02
+03
+04
+05
+06
+07
+08
+09
+10
+11
+12
 )
