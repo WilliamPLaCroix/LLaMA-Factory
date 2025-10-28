@@ -1,47 +1,34 @@
 #!/usr/bin/env bash
 
-# Train a single grade-specific adapter starting from a shared baseline adapter
-# Usage: ./grade_robust.sh <variation> <grade>
-#   variation: original|cleaned|augmented
-#   grade: grade02 .. grade12
 
 # ---------------- User knobs ----------------
-VARIATION="${1:?variation required: original|cleaned|augmented}"
-GRADE="${2:?grade required, e.g., grade05}"
-PROJECT_VERSION="v0-2"                 # used in WANDB_PROJECT
-BASE_GROUP="grade"                     # logical family for this run
+# MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
+MODEL_VARIATION="graded"              # fixed for baseline runs
+PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
+BASE_GROUP="${1:?model grade required: 02|03|04|05|06|07|08|09|10|11|12}"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
-source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh || true
+source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
+RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}"
+LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments"
-RUN_KEY="${VARIATION}-${GRADE}-${BASE_GROUP}"
-LOG_DIR="${REPO}/experiments/logs/${VARIATION}"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${VARIATION}_${GRADE}-${BASE_GROUP}-adapter"
-BASELINE_ADAPTER="${CACHE}/${PROJECT_VERSION}_${VARIATION}_baseline-adapter"
-
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
-if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-  CFG="${CFG_DIR}/${VARIATION}_${BASE_GROUP}.resume.yaml"
-  echo "[train] Resuming with ${CFG}"
-else
-  CFG="${CFG_DIR}/${VARIATION}_${BASE_GROUP}.init.yaml"
-  echo "[train] Fresh start with ${CFG}"
-fi
+# if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
+#   CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+#   echo "[train] Resuming with ${CFG}"
+# else
+CFG="${CFG_DIR}/grade${BASE_GROUP}.yaml"
+echo "[train] Fresh start with ${CFG}"
+#fi
 
-# ---------------- Guards ----------------
-if [[ ! -d "${BASELINE_ADAPTER}" ]]; then
-  echo "[guard] Missing baseline adapter: ${BASELINE_ADAPTER}" >&2
-  echo "[hint] Run baseline.sh for ${VARIATION} first, which creates the shared warm start adapter." >&2
-  exit 2
-fi
-
-# ---------------- Stable W&B run id per grade variant ----------------
+# ---------------- Stable W&B run id per train variant ----------------
 ID_DIR="${HOME}/.llf_wandb_ids"
 mkdir -p "${ID_DIR}"
 WBRUN_FILE="${ID_DIR}/${RUN_KEY}.id"
@@ -50,96 +37,103 @@ if [[ -f "${WBRUN_FILE}" ]]; then
   export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
 else
   # short stable id
-  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
+  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
+' | cut -c1-12)"
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
-# Persist for other scripts and future resumes
-printf '%s\n' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
-printf '%s\n' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+Persist for other scripts and future resumes
+printf '%s
+' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+printf '%s
+' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+
+EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
 
 # ---------------- Core W&B env ----------------
-# Group all grades of a given variation under one timestamped group for easy comparison
-EXPERIMENT_GROUP="${VARIATION}-grades-$(date +%Y%m%d-%H%M%S)"
 export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
-export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"
-export WANDB_NAME="model=${VARIATION},grade=${GRADE}"
-export WANDB_TAGS="${BASE_GROUP},${VARIATION},${GRADE}"
+export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
+export WANDB_NAME="model=${MODEL_VARIATION}"           # stable name per train variant
+export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
-cd "${REPO}"
+cd "$REPO"
 
 # if ! python -c "import bert_score" >/dev/null 2>&1; then
 #   python -m pip install -U bert-score
 # fi
 
-set -euo pipefail
-
 echo "=== ENV ==="
 echo "Conda: $CONDA_DEFAULT_ENV"; which python
 nvidia-smi || true; nvcc --version || true
 
+set -euo pipefail
+
 # --------------- TRAIN ---------------
-# Warm start this grade adapter from the shared baseline adapter of the same variation
-export WANDB_JOB_TYPE="train"
-DATASET_TRAIN="${VARIATION}_${GRADE}_train"
-DATASET_VAL="${VARIATION}_${GRADE}_validation"
-
-# Un-comment to run for real
+echo "[train] will now run llamafactory-cli train ${CFG}"
 llamafactory-cli train "${CFG}" \
-  --dataset "${DATASET_TRAIN}" \
-  --eval_dataset "${DATASET_VAL}" \
-  --adapter_name_or_path "${BASELINE_ADAPTER}" \
-  --output_dir "${OUT_ADAPTER}" \
-  > "${LOG_DIR}/${VARIATION}_${GRADE}_train.log" 2>&1
+  > "${LOG_DIR}/train${BASE_GROUP}.log" 2>&1
 
-# Always echo the planned command for auditability
-cat <<EOF
-[train] planned call
-llamafactory-cli train ${CFG} \
-  --dataset ${DATASET_TRAIN} \
-  --eval_dataset ${DATASET_VAL} \
-  --adapter_name_or_path ${BASELINE_ADAPTER} \
-  --output_dir ${OUT_ADAPTER} \
-  > ${LOG_DIR}/${VARIATION}_${GRADE}_train.log 2>&1
-EOF
 
-# --------------- INFER (on this grade’s test set) ---------------
+# --------------- INFER (same run; tag infer dataset + grade) ---------------
 export WANDB_JOB_TYPE="infer"
-GNUM="${GRADE#grade}"   # "02".."12"
 
-SAVE_NAME="${VARIATION}_${GRADE}_test_preds.jsonl"
-DATASET_TEST="${VARIATION}_${GRADE}_test"
+echo "staring run at $(date)"
+run_start_time=$(date +%s)
 
-# Un-comment to run for real
+DATASET_VARIATION="cleaned" # original augmented)
+
+echo "[infer] dataset variation: ${DATASET_VARIATION}"
+variation_start_time=$(date +%s)
+grade="${BASE_GROUP}"
+grade_start_time=$(date +%s)
+echo "[infer]   grade: ${grade}"
+
+# Keep SAME run id as training; do NOT create per-grade runs
+export WANDB_RUN_ID
+export WANDB_RESUME=allow
+export WANDB_NAME="model=${MODEL_VARIATION}"   # keep stable name for color-by-run
+
+# Rich tags & notes for grouping/filtering in the UI
+export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
+export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
+
+# If your inference script forwards env to W&B config, also export custom hints
+export TRAIN_VARIANT="${MODEL_VARIATION}"
+export INFER_VARIANT="${DATASET_VARIATION}"
+export INFER_GRADE="${grade}"
+
+# echo the specific inference arguments
+
+# Call your inference (must use wandb.init(resume='allow') or respect env id)
+
 python3 scripts/vllm_infer_metrics.py \
-  --model_name_or_path "${BASE_MODEL}" \
-  --adapter_name_or_path "${OUT_ADAPTER}" \
-  --save_path "${OUT_ADAPTER}" \
-  --save_name "${SAVE_NAME}" \
-  --template llama3 \
-  --dataset "${DATASET_TEST}" \
-  --temperature 0 \
-  --grade "${GNUM}" \
-  > "${LOG_DIR}/${VARIATION}_${GNUM}_infer.log" 2>&1
+    --model_name_or_path "${BASE_MODEL}" \
+    --adapter_name_or_path "${OUT_ADAPTER}" \
+    --save_path "${LOG_DIR}" \
+    --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
+    --template llama3 \
+    --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
+    --temperature 0 \
+    --grade "${grade}" \
+    > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
 
-cat <<EOF
-[infer] planned call
-python3 scripts/vllm_infer_metrics.py \
-  --model_name_or_path ${BASE_MODEL} \
-  --adapter_name_or_path ${OUT_ADAPTER} \
-  --save_path ${OUT_ADAPTER} \
-  --save_name ${SAVE_NAME} \
-  --template llama3 \
-  --dataset ${DATASET_TEST} \
-  --temperature 0 \
-  --grade ${GNUM} \
-  > ${LOG_DIR}/${VARIATION}_${GNUM}_infer.log 2>&1
-EOF
+echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
+grade_end_time=$(date +%s)
+echo "[infer]  ${DATASET_VARIATION} grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
 
-echo "[done] ${VARIATION} ${GRADE}"
+
+
+end_time=$(date +%s)
+echo "Total infer time: $((end_time - run_start_time)) seconds"
+echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
+
+echo "Done. Tips in W&B UI:
+  • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
+  • Color by run to keep train variants consistent.
+  • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
