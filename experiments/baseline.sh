@@ -3,7 +3,7 @@
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-MODEL_VARIATION="official"  # fixed for baseline runs
+MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
@@ -20,13 +20,13 @@ OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapte
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
-# if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-#   CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
-#   echo "[train] Resuming with ${CFG}"
-# else
-#   CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
-#   echo "[train] Fresh start with ${CFG}"
-# fi
+if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
+  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+  echo "[train] Resuming with ${CFG}"
+else
+  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
+  echo "[train] Fresh start with ${CFG}"
+fi
 
 # ---------------- Stable W&B run id per train variant ----------------
 ID_DIR="${HOME}/.llf_wandb_ids"
@@ -112,9 +112,10 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
 
 
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
-    # --adapter_name_or_path "${OUT_ADAPTER}" \
+
     python3 scripts/vllm_infer_metrics.py \
       --model_name_or_path "${BASE_MODEL}" \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
       --save_path "${LOG_DIR}" \
       --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
       --template llama3 \
