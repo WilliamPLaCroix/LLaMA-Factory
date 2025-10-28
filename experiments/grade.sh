@@ -15,7 +15,7 @@ BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
-CFG_DIR="${REPO}/experiments"
+CFG_DIR="${REPO}/experiments/configs"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
@@ -24,7 +24,7 @@ mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_p
 #   CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
 #   echo "[train] Resuming with ${CFG}"
 # else
-CFG="configs/${CFG_DIR}/grade${BASE_GROUP}.yaml"
+CFG="${CFG_DIR}/grade${BASE_GROUP}.yaml"
 echo "[train] Fresh start with ${CFG}"
 #fi
 
@@ -42,7 +42,7 @@ else
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
-Persist for other scripts and future resumes
+# Persist for other scripts and future resumes
 printf '%s
 ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
 printf '%s
