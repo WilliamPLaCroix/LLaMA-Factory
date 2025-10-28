@@ -21,7 +21,7 @@ which python
 echo "Starting Main Experiment Workflow!"
 
 echo "Begin Training"
-llamafactory-cli train experiments/debug.yaml \
+llamafactory-cli train experiments/configs/debug.yaml \
 > experiments/logs/debug_train.log 2>&1
 
 echo "Begin Inference"

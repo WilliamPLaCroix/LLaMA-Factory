@@ -24,7 +24,7 @@ mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_p
 #   CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
 #   echo "[train] Resuming with ${CFG}"
 # else
-CFG="${CFG_DIR}/grade${BASE_GROUP}.yaml"
+CFG="configs/${CFG_DIR}/grade${BASE_GROUP}.yaml"
 echo "[train] Fresh start with ${CFG}"
 #fi
 
