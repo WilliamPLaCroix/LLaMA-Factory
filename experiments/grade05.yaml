@@ -19,17 +19,17 @@ preprocessing_num_workers: 16
 train_on_prompt: false
 overwrite_cache: true
 
-dataset: cleaned_grade02_train
+dataset: cleaned_grade05_train
 
 # resume_from_checkpoint: true
-output_dir: /scratch/wlacroix/.cache/llama_factory/v0-3_cleaned_grade02-adapter
+output_dir: /scratch/wlacroix/.cache/llama_factory/v0-3_cleaned_grade05-adapter
 logging_strategy: "steps"
 logging_steps: 10
 save_steps: 100
 plot_loss: true
 overwrite_output_dir: true
 report_to: ["wandb"] 
-run_name: cleaned-grade02
+run_name: cleaned-grade05
 
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 32
@@ -42,11 +42,11 @@ warmup_ratio: 0.2
 
 ### eval
 do_eval: True
-eval_dataset: cleaned_grade02_validation
+eval_dataset: cleaned_grade05_validation
 eval_strategy: epoch
 predict_with_generate: false
 
-metric_for_best_model: "eval_cleaned_grade02_validation_dfkgl_sari"
+metric_for_best_model: "eval_cleaned_grade05_validation_dfkgl_sari"
 save_strategy: epoch
 save_total_limit: 20
 load_best_model_at_end: True
