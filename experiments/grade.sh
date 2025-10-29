@@ -13,7 +13,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-graded"
+RUN_KEY="graded-infer"
 LOG_DIR="${REPO}/experiments/logs/graded"
 CFG_DIR="${REPO}/experiments/configs"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_grade${BASE_GROUP}-adapter"
