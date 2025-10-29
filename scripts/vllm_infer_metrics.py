@@ -75,14 +75,13 @@ def vllm_infer(
         raise ValueError("Pipeline parallel size should be smaller than the number of gpus.")
 
     run_id = os.getenv("WANDB_RUN_ID") or None
-    resume_mode = "allow" if run_id else "never"
 
     init_kwargs = dict(
                         project=os.environ.get("WANDB_PROJECT"),
                         entity=os.environ.get("WANDB_ENTITY") or None,
-                        id=os.environ.get("WANDB_RUN_ID"),
-                        resume=resume_mode,
-                        name=os.environ.get("WANDB_NAME"),
+                        id=run_id,
+                        resume="allow" if run_id else "never",
+                        #name=os.environ.get("WANDB_NAME"), # do not set if id is present
                         group=os.environ.get("WANDB_RUN_GROUP"),
                         job_type=os.environ.get("WANDB_JOB_TYPE"),
                         dir=os.environ.get("WANDB_DIR"),
@@ -94,9 +93,11 @@ def vllm_infer(
                                 "original": "#1f77b4",
                                 "cleaned": "#2ca02c",
                                 "augmented": "#d62728",
+                                "graded": "#9467bd",
                                         },
                                 },
                         )
+    print("[wandb] url:", wandb.run.url, "id:", wandb.run.id)
 
     if run_id is None:
         init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline-")

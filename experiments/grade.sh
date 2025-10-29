@@ -107,6 +107,7 @@ export INFER_GRADE="${grade}"
 # echo the specific inference arguments
 
 # Call your inference (must use wandb.init(resume='allow') or respect env id)
+echo "[wandb] using project=${WANDB_PROJECT} entity=${WANDB_ENTITY} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
 
 python3 scripts/vllm_infer_metrics.py \
     --model_name_or_path "${BASE_MODEL}" \
