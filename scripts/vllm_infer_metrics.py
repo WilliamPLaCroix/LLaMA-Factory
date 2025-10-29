@@ -97,7 +97,6 @@ def vllm_infer(
                                         },
                                 },
                         )
-    print("[wandb] url:", wandb.run.url, "id:", wandb.run.id)
 
     if run_id is None:
         init_kwargs["name"] = os.getenv("WANDB_NAME", f"{os.getenv('variation','var')}-baseline-")
