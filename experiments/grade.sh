@@ -13,7 +13,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-grade${BASE_GROUP}"
+RUN_KEY="${MODEL_VARIATION}-graded"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_grade${BASE_GROUP}-adapter"
@@ -37,8 +37,7 @@ if [[ -f "${WBRUN_FILE}" ]]; then
   export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
 else
   # short stable id
-  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
-' | cut -c1-12)"
+  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
@@ -53,8 +52,8 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
-export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
-export WANDB_NAME="model=${MODEL_VARIATION}"           # stable name per train variant
+export WANDB_RUN_GROUP="graded"
+export WANDB_NAME="model=graded"
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 # --------------- System info ---------------
@@ -79,12 +78,12 @@ set -euo pipefail
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
-export WANDB_JOB_TYPE="infer"
+
 
 echo "staring run at $(date)"
 run_start_time=$(date +%s)
 
-DATASET_VARIATION="cleaned" # original augmented)
+DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
 
 echo "[infer] dataset variation: ${DATASET_VARIATION}"
 variation_start_time=$(date +%s)
@@ -94,8 +93,7 @@ echo "[infer]   grade: ${grade}"
 
 # Keep SAME run id as training; do NOT create per-grade runs
 export WANDB_RUN_ID
-export WANDB_RESUME=allow
-export WANDB_NAME="model=graded"   # keep stable name for color-by-run
+export WANDB_JOB_TYPE="infer"
 
 # Rich tags & notes for grouping/filtering in the UI
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
