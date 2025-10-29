@@ -56,6 +56,10 @@ export WANDB_RUN_GROUP="graded"
 export WANDB_NAME="model=graded-infer"
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
+export WANDB_ENABLE_SERVICE=true
+export WANDB_HTTP_TIMEOUT=300
+export WANDB_START_METHOD=thread
+
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2

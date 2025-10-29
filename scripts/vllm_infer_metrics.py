@@ -81,7 +81,7 @@ def vllm_infer(
                         #entity=os.environ.get("WANDB_ENTITY") or None,
                         id=run_id,
                         resume="allow" if run_id else "never",
-                        #name=os.environ.get("WANDB_NAME"), # do not set if id is present
+                        name=os.environ.get("WANDB_NAME"), # do not set if id is present
                         group=os.environ.get("WANDB_RUN_GROUP"),
                         job_type=os.environ.get("WANDB_JOB_TYPE"),
                         dir=os.environ.get("WANDB_DIR"),
@@ -95,6 +95,12 @@ def vllm_infer(
                                 "augmented": "#d62728"
                                         },
                                 },
+                        settings=wandb.Settings(
+                                                init_timeout=300,
+                                                start_method="thread",
+                                                _service_wait=300,
+                                                ),
+                        reinit=True,
                         )
 
     if run_id is None:
