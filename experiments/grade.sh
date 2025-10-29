@@ -3,7 +3,7 @@
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-MODEL_VARIATION="graded"              # fixed for baseline runs
+MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
 BASE_GROUP="${1:?model grade required: 02|03|04|05|06|07|08|09|10|11|12}"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
@@ -13,10 +13,10 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}"
+RUN_KEY="${MODEL_VARIATION}-grade${BASE_GROUP}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_grade${BASE_GROUP}-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
@@ -43,10 +43,8 @@ else
 fi
 
 # Persist for other scripts and future resumes
-printf '%s
-' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
-printf '%s
-' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+echo "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
 
@@ -75,9 +73,9 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # --------------- TRAIN ---------------
-echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train "${CFG}" \
-  > "${LOG_DIR}/train_grade${BASE_GROUP}.log" 2>&1
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+# llamafactory-cli train "${CFG}" \
+#   > "${LOG_DIR}/train_grade${BASE_GROUP}.log" 2>&1
 
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
@@ -97,7 +95,7 @@ echo "[infer]   grade: ${grade}"
 # Keep SAME run id as training; do NOT create per-grade runs
 export WANDB_RUN_ID
 export WANDB_RESUME=allow
-export WANDB_NAME="model=${MODEL_VARIATION}"   # keep stable name for color-by-run
+export WANDB_NAME="model=graded"   # keep stable name for color-by-run
 
 # Rich tags & notes for grouping/filtering in the UI
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
@@ -126,14 +124,7 @@ python3 scripts/vllm_infer_metrics.py \
 echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
 grade_end_time=$(date +%s)
 echo "[infer]  ${DATASET_VARIATION} grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
-
-
-
 end_time=$(date +%s)
 echo "Total infer time: $((end_time - run_start_time)) seconds"
-echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
 
-echo "Done. Tips in W&B UI:
-  • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
-  • Color by run to keep train variants consistent.
-  • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
+/scratch/wlacroix/.cache/llama_factory/v0-3_graded_02-adapter
