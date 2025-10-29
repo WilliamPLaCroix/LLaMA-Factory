@@ -97,10 +97,8 @@ def vllm_infer(
                                 },
                         settings=wandb.Settings(
                                                 init_timeout=300,
-                                                start_method="thread",
                                                 _service_wait=300,
                                                 ),
-                        reinit=True,
                         )
 
     if run_id is None:

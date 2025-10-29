@@ -45,8 +45,6 @@ fi
 echo "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
 echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
-EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
-
 # ---------------- Core W&B env ----------------
 export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
@@ -58,7 +56,6 @@ export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 export WANDB_ENABLE_SERVICE=true
 export WANDB_HTTP_TIMEOUT=300
-export WANDB_START_METHOD=thread
 
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
