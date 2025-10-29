@@ -53,7 +53,7 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="graded"
-export WANDB_NAME="model=graded"
+export WANDB_NAME="model=graded-infer"
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 # --------------- System info ---------------
