@@ -78,7 +78,7 @@ def vllm_infer(
 
     init_kwargs = dict(
                         project=os.environ.get("WANDB_PROJECT"),
-                        entity=os.environ.get("WANDB_ENTITY") or None,
+                        #entity=os.environ.get("WANDB_ENTITY") or None,
                         id=run_id,
                         resume="allow" if run_id else "never",
                         #name=os.environ.get("WANDB_NAME"), # do not set if id is present
@@ -92,8 +92,7 @@ def vllm_infer(
                             "palette": {
                                 "original": "#1f77b4",
                                 "cleaned": "#2ca02c",
-                                "augmented": "#d62728",
-                                "graded": "#9467bd",
+                                "augmented": "#d62728"
                                         },
                                 },
                         )
