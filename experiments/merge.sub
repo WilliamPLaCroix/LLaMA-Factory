@@ -19,5 +19,5 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 queue merge_method from (
-
+linear
 )
