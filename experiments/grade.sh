@@ -100,6 +100,9 @@ for GRADE in "${GRADES[@]}"; do
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     # Switch to shared inference W&B config
+    grade_start_time=$(date +%s)
+    DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
+    
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
     export WANDB_NAME="model=graded-from-${MODEL_VARIATION}-baseline"
@@ -113,8 +116,7 @@ for GRADE in "${GRADES[@]}"; do
 
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
-    grade_start_time=$(date +%s)
-    DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
+    
     echo "[infer] dataset variation: ${DATASET_VARIATION}"
     echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
 
