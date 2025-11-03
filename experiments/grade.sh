@@ -83,7 +83,7 @@ for GRADE in "${GRADES[@]}"; do
     # Set training-specific W&B config
     export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded-train"
-    export WANDB_NAME="model=graded-train-grade${GRADE}"
+    export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
     export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
     export WANDB_JOB_TYPE="train"
 
@@ -103,7 +103,7 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
-    export WANDB_NAME="model=graded-infer"
+    export WANDB_NAME="model=graded-from-${MODEL_VARIATION}-baseline"
     export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"
