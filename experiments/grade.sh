@@ -4,7 +4,6 @@
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
-#BASE_GROUP="${1:?model grade required: 02|03|04|05|06|07|08|09|10|11|12}"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
@@ -78,33 +77,33 @@ for GRADE in "${GRADES[@]}"; do
     [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
     export WANDB_DIR="${LOG_DIR}"
     export WANDB_RESUME=allow
-
-    # --------------- TRAIN ---------------
-    # Set training-specific W&B config
-    export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
-    export WANDB_RUN_GROUP="graded-train"
-    export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
-    export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
-    export WANDB_JOB_TYPE="train"
-
     export WANDB_ENABLE_SERVICE=true
     export WANDB_HTTP_TIMEOUT=300
 
-
     # --------------- TRAIN ---------------
-    CFG="${CFG_DIR}/grade${GRADE}.yaml" ### TODO: don't forget to change yamls when running secondary training
-    echo "[train] Fresh start with ${CFG}"
-    echo "[train] will now run llamafactory-cli train ${CFG}"
-    llamafactory-cli train "${CFG}" \
-      > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
+    # Set training-specific W&B config
+    if [[ "${GRADE}" == "02" ]]; then
+        echo "[train] Skipping training for grade ${GRADE} - already completed"
+    else
+        export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
+        export WANDB_RUN_GROUP="graded-train"
+        export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
+        export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
+        export WANDB_JOB_TYPE="train"
 
+        CFG="${CFG_DIR}/grade${GRADE}.yaml"
+        echo "[train] Fresh start with ${CFG}"
+        echo "[train] will now run llamafactory-cli train ${CFG}"
+        llamafactory-cli train "${CFG}" \
+        > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1`
+    fi
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
     export WANDB_NAME="model=graded-from-${MODEL_VARIATION}-baseline"
-    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
+    export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"
 
