@@ -1,7 +1,7 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade.sh
-arguments       = # $(grade)
+# arguments       = $(grade)
 log             = /scratch/wlacroix/logs/grade_infer/cleaned_individual_grades.log
 output          = /scratch/wlacroix/logs/grade_infer/cleaned_individual_grades.out
 error           = /scratch/wlacroix/logs/grade_infer/cleaned_individual_grades.err
