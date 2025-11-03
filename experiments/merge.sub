@@ -2,9 +2,9 @@ universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/merge.sh
 arguments       = $(merge_method)
-log             = /scratch/wlacroix/logs/cleaned_graded$(merge).log
-output          = /scratch/wlacroix/logs/cleaned_graded$(merge).out
-error           = /scratch/wlacroix/logs/cleaned_graded$(merge).err
+log             = /scratch/wlacroix/logs/cleaned_graded$(merge_method).log
+output          = /scratch/wlacroix/logs/cleaned_graded$(merge_method).out
+error           = /scratch/wlacroix/logs/cleaned_graded$(merge_method).err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
@@ -19,5 +19,5 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 queue merge_method from (
-linear
+debug
 )
