@@ -102,12 +102,12 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     grade_start_time=$(date +%s)
     DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
-    
+
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
     export WANDB_NAME="model=graded-from-${MODEL_VARIATION}-baseline"
-    export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
-    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
+    export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
+    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"
 
     export TRAIN_VARIANT="${MODEL_VARIATION}"
