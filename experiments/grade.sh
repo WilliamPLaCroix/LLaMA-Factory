@@ -95,7 +95,7 @@ for GRADE in "${GRADES[@]}"; do
         echo "[train] Fresh start with ${CFG}"
         echo "[train] will now run llamafactory-cli train ${CFG}"
         llamafactory-cli train "${CFG}" \
-        > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1`
+        > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
     fi
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
