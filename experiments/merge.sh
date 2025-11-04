@@ -53,85 +53,85 @@ python3 experiments/scripts/adapter_merging.py \
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
 
-# for GRADE in "${GRADES[@]}"; do
-#     echo "----- Starting grade ${GRADE} -----"
-#     echo "staring run at $(date)"
-#     run_start_time=$(date +%s)
+for GRADE in "${GRADES[@]}"; do
+    echo "----- Starting grade ${GRADE} -----"
+    echo "staring run at $(date)"
+    run_start_time=$(date +%s)
     
-#     OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge_${MERGE_METHOD}_g@${ADAPTER_SELECTION}w@${WEIGHT_METHOD}"
-#     mkdir -p "${OUT_ADAPTER}"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge_${MERGE_METHOD}_g@${ADAPTER_SELECTION}w@${WEIGHT_METHOD}"
+    mkdir -p "${OUT_ADAPTER}"
 
-#     ID_DIR="${HOME}/.llf_wandb_ids"
-#     mkdir -p "${ID_DIR}"
+    ID_DIR="${HOME}/.llf_wandb_ids"
+    mkdir -p "${ID_DIR}"
     
-#     # Shared inference run ID (consistent across all grades)
-#     INFER_WBRUN_FILE="${ID_DIR}/${RUN_KEY}-infer.id"
-#     if [[ -f "${INFER_WBRUN_FILE}" ]]; then
-#       INFER_WANDB_RUN_ID="$(cat "${INFER_WBRUN_FILE}")"
-#     else
-#       INFER_WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
-#       echo "${INFER_WANDB_RUN_ID}" > "${INFER_WBRUN_FILE}"
-#     fi
+    # Shared inference run ID (consistent across all grades)
+    INFER_WBRUN_FILE="${ID_DIR}/${RUN_KEY}-infer.id"
+    if [[ -f "${INFER_WBRUN_FILE}" ]]; then
+      INFER_WANDB_RUN_ID="$(cat "${INFER_WBRUN_FILE}")"
+    else
+      INFER_WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
+      echo "${INFER_WANDB_RUN_ID}" > "${INFER_WBRUN_FILE}"
+    fi
 
-#     # Persist for other scripts and future resumes
-#     echo "${INFER_WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_infer_id.txt"
-#     echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+    # Persist for other scripts and future resumes
+    echo "${INFER_WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_infer_id.txt"
+    echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
-#     # ---------------- Core W&B env ----------------
-#     export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
-#     [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
-#     export WANDB_DIR="${LOG_DIR}"
-#     export WANDB_RESUME=allow
-#     export WANDB_ENABLE_SERVICE=true
-#     export WANDB_HTTP_TIMEOUT=300
+    # ---------------- Core W&B env ----------------
+    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
+    [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
+    export WANDB_DIR="${LOG_DIR}"
+    export WANDB_RESUME=allow
+    export WANDB_ENABLE_SERVICE=true
+    export WANDB_HTTP_TIMEOUT=300
 
-#     # --------------- INFER (same run; tag infer dataset + grade) ---------------
-#     # Switch to shared inference W&B config
-#     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
-#     export WANDB_RUN_GROUP="merged"
-#     export WANDB_NAME="${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}-infer"
-#     # echo the specific inference arguments
-#     echo "[infer]   grade: ${GRADE}"
-#     grade_start_time=$(date +%s)
-#     DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
-#     export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
-#     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
-#     export WANDB_JOB_TYPE="infer"
+    # --------------- INFER (same run; tag infer dataset + grade) ---------------
+    # Switch to shared inference W&B config
+    export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
+    export WANDB_RUN_GROUP="merged"
+    export WANDB_NAME="${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}-infer"
+    # echo the specific inference arguments
+    echo "[infer]   grade: ${GRADE}"
+    grade_start_time=$(date +%s)
+    DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
+    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
+    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
+    export WANDB_JOB_TYPE="infer"
 
-#     echo "[infer] dataset variation: ${DATASET_VARIATION}"
-#     echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
+    echo "[infer] dataset variation: ${DATASET_VARIATION}"
+    echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
 
-#     # -------------- INFERENCE ECHO --------------
-#     echo the script call for debug
-#     echo "python3 scripts/vllm_infer_metrics.py "
-#     echo "    --model_name_or_path \'${BASE_MODEL}\' "
-#     echo "    --adapter_name_or_path \'${OUT_ADAPTER}\' "
-#     echo "    --save_path \'${LOG_DIR}\' "
-#     echo "    --save_name \'${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer\' "
-#     echo "    --template llama3 "
-#     echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
-#     echo "    --temperature 0 "
-#     echo "    --grade \'${GRADE}\' "
-#     echo " > \'${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log\' 2>&1"
-#     # -------------- INFERENCE CALL --------------
-#     python3 scripts/vllm_infer_metrics.py \
-#         --model_name_or_path "${BASE_MODEL}" \
-#         --adapter_name_or_path "${OUT_ADAPTER}" \
-#         --save_path "${LOG_DIR}" \
-#         --save_name "${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer" \
-#         --template llama3 \
-#         --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
-#         --temperature 0 \
-#         --grade "${GRADE}" \
-#         > "${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log" 2>&1
-#     # -------------- INFERENCE END --------------
+    # -------------- INFERENCE ECHO --------------
+    echo the script call for debug
+    echo "python3 scripts/vllm_infer_metrics.py "
+    echo "    --model_name_or_path \'${BASE_MODEL}\' "
+    echo "    --adapter_name_or_path \'${OUT_ADAPTER}\' "
+    echo "    --save_path \'${LOG_DIR}\' "
+    echo "    --save_name \'${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer\' "
+    echo "    --template llama3 "
+    echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
+    echo "    --temperature 0 "
+    echo "    --grade \'${GRADE}\' "
+    echo " > \'${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log\' 2>&1"
+    # -------------- INFERENCE CALL --------------
+    python3 scripts/vllm_infer_metrics.py \
+        --model_name_or_path "${BASE_MODEL}" \
+        --adapter_name_or_path "${OUT_ADAPTER}" \
+        --save_path "${LOG_DIR}" \
+        --save_name "${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer" \
+        --template llama3 \
+        --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
+        --temperature 0 \
+        --grade "${GRADE}" \
+        > "${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log" 2>&1
+    # -------------- INFERENCE END --------------
 
-#     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
-#     grade_end_time=$(date +%s)
-#     echo "[infer]  ${DATASET_VARIATION} grade ${GRADE} took $((grade_end_time - grade_start_time)) seconds"
-#     end_time=$(date +%s)
-#     echo "Run time: $((end_time - run_start_time)) seconds"
-# done
+    echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
+    grade_end_time=$(date +%s)
+    echo "[infer]  ${DATASET_VARIATION} grade ${GRADE} took $((grade_end_time - grade_start_time)) seconds"
+    end_time=$(date +%s)
+    echo "Run time: $((end_time - run_start_time)) seconds"
+done
 
 total_end_time=$(date +%s)
 echo "=== ALL GRADES COMPLETED ==="
