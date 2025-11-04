@@ -82,21 +82,21 @@ for GRADE in "${GRADES[@]}"; do
 
     # --------------- TRAIN ---------------
     # Set training-specific W&B config
-    if [[ "${GRADE}" == "02" ]]; then
-        echo "[train] Skipping training for grade ${GRADE} - already completed"
-    else
-        export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
-        export WANDB_RUN_GROUP="graded-train"
-        export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
-        export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
-        export WANDB_JOB_TYPE="train"
+    # if [[ "${GRADE}" == "02" ]]; then
+    #     echo "[train] Skipping training for grade ${GRADE} - already completed"
+    # else
+    export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
+    export WANDB_RUN_GROUP="graded-train"
+    export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
+    export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
+    export WANDB_JOB_TYPE="train"
 
-        CFG="${CFG_DIR}/grade${GRADE}.yaml"
-        echo "[train] Fresh start with ${CFG}"
-        echo "[train] will now run llamafactory-cli train ${CFG}"
-        llamafactory-cli train "${CFG}" \
-        > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
-    fi
+    CFG="${CFG_DIR}/grade${GRADE}.yaml"
+    echo "[train] Fresh start with ${CFG}"
+    echo "[train] will now run llamafactory-cli train ${CFG}"
+    llamafactory-cli train "${CFG}" \
+    > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
+    # fi
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     # Switch to shared inference W&B config
