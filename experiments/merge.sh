@@ -7,8 +7,7 @@ ADAPTER_SELECTION="all"          # fixed for baseline runs
 WEIGHT_METHOD="uniform"         # fixed for baseline runs
 
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
-#BASE_GROUP="${1:?model grade required: 02|03|04|05|06|07|08|09|10|11|12}"                  # logical family for this run
+PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT  
 ENTITY=""                              # optional W&B entity
 
 
@@ -94,7 +93,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
     DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
-    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
+    export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"
 
