@@ -16,7 +16,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer"
+RUN_KEY="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer-v2"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
