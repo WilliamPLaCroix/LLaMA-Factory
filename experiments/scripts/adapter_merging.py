@@ -31,6 +31,7 @@ def generate_weights(weight_method, merge_method, grades):
             assert abs(sum(weights) - 1.0) < 1e-6, "Weights must sum to 1.0 for linear merging methods"
     else:
         raise NotImplementedError("Custom weight methods not implemented yet")
+    return weights
 
 def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          merge_method="debug",
@@ -72,6 +73,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
 
     # merge adapters can happen in-place, even iterating through merge methods and parameters
     if merge_method == "debug":
+        print("Debug merging mode: iterating through multiple merge methods")
         #merge_methods = {"svd", "linear", "ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"}
         debug_methods = {"linear", "ties", "dare_ties", "dare_linear", "magnitude_prune"} # no SVD variants for debug, no CAT
         
