@@ -41,13 +41,15 @@ echo "Starting adapter merging at $(date)"
 total_start_time=$(date +%s)
 
 # --------------- MERGE ADAPTERS --------------- 
-echo "Begin Merger"
-python3 experiments/scripts/adapter_merging.py \
---merge_method="${MERGE_METHOD}" \
---adapter_selection="${ADAPTER_SELECTION}" \
---weight_method="${WEIGHT_METHOD}" \
---project_version="${PROJECT_VERSION}" \
-> experiments/logs/merged/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_merge.log 2>&1
+echo "Adapters already merged; skipping merge step."
+# Uncomment below to re-run merging
+# echo "Begin Merger"
+# python3 experiments/scripts/adapter_merging.py \
+# --merge_method="${MERGE_METHOD}" \
+# --adapter_selection="${ADAPTER_SELECTION}" \
+# --weight_method="${WEIGHT_METHOD}" \
+# --project_version="${PROJECT_VERSION}" \
+# > experiments/logs/merged/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_merge.log 2>&1
 # --------------- MERGE END ---------------
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
@@ -94,6 +96,7 @@ for GRADE in "${GRADES[@]}"; do
     grade_start_time=$(date +%s)
     DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
     export TRAIN_VARIANT="${MODEL_VARIATION}"
+    export INFER_VARIANT="${DATASET_VARIATION}"
     export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"

@@ -86,8 +86,8 @@ def vllm_infer(
                         job_type=os.environ.get("WANDB_JOB_TYPE"),
                         dir=os.environ.get("WANDB_DIR"),
                         config={
-                            "train_variant": os.environ.get("TRAIN_VARIANT"),
-                            "infer_variant": os.environ.get("INFER_VARIANT"),
+                            "train_variant": os.environ.get("TRAIN_VARIANT", "cleaned"),
+                            "infer_variant": os.environ.get("INFER_VARIANT", "cleaned"),
                             "grade": int(os.environ.get("INFER_GRADE", "0")),
                             "palette": {
                                 "original": "#1f77b4",
