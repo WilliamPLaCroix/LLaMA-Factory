@@ -38,7 +38,7 @@ nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
 
-echo "Starting sequential grade processing at $(date)"
+echo "Starting adapter merging at $(date)"
 total_start_time=$(date +%s)
 
 # --------------- MERGE ADAPTERS --------------- 
