@@ -88,11 +88,16 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
                 majority_sign_method = majority_sign_method
             else:
                 majority_sign_method = None  # not used for other methods
-            model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=method, adapter_name=merged_adapter_name, density=density)
-            print(f"Saved debug merged adapter: {merged_adapter_name}")
-            print(model.peft_config.keys())
-            model.delete_adapter(merged_adapter_name)
-            print(f"Deleted debug merged adapter: {merged_adapter_name}\n")
+            try:
+                model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=method, adapter_name=merged_adapter_name, density=density)
+                print(f"Saved debug merged adapter: {merged_adapter_name}")
+                print(model.peft_config.keys())
+                model.delete_adapter(merged_adapter_name)
+                print(f"Deleted debug merged adapter: {merged_adapter_name}\n")
+            except Exception as e:
+                print(f"Failed to merge adapters with method {method}: {e}\n")
+                print(f"Skipping deletion of failed merged adapter: {merged_adapter_name}\n")
+                print(model.peft_config.keys())
         return  # exit after debug merging
     
     merged_adapter_name = f"{project_version}_merge_{merge_method}_g@{grade_selection}w@{weight_method}"
