@@ -30,6 +30,7 @@ save_steps: 100
 plot_loss: true
 overwrite_output_dir: true
 report_to: ["wandb"]
+run_name: "model=grade06-from-cleaned-baseline"
 
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 32
