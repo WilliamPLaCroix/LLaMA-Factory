@@ -104,7 +104,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
                 print(model.peft_config.keys())
         return  # exit after debug merging
     
-    merged_adapter_name = f"{project_version}_merge_{merge_method}_g@{adapter_selection}w@{weight_method}"
+    merged_adapter_name = f"{project_version}_merge_{merge_method}_g@{adapter_selection}_w@{weight_method}"
     print(f"Merging adapters into new adapter: {merged_adapter_name}")
     weights = generate_weights(weight_method, merge_method, grades)
     # set default density if needed

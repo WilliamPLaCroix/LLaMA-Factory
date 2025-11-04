@@ -16,7 +16,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}-infer"
+RUN_KEY="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
@@ -47,7 +47,7 @@ python3 experiments/scripts/adapter_merging.py \
 --adapter_selection="${ADAPTER_SELECTION}" \
 --weight_method="${WEIGHT_METHOD}" \
 --project_version="${PROJECT_VERSION}" \
-> experiments/logs/merged/${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}_merge.log 2>&1
+> experiments/logs/merged/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_merge.log 2>&1
 # --------------- MERGE END ---------------
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
@@ -57,7 +57,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
     
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge_${MERGE_METHOD}_g@${ADAPTER_SELECTION}w@${WEIGHT_METHOD}"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge_${MERGE_METHOD}_g@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}"
     mkdir -p "${OUT_ADAPTER}"
 
     ID_DIR="${HOME}/.llf_wandb_ids"
@@ -88,7 +88,7 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="merged"
-    export WANDB_NAME="${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}-infer"
+    export WANDB_NAME="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
