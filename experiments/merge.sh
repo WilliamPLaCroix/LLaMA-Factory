@@ -93,9 +93,11 @@ for GRADE in "${GRADES[@]}"; do
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
     DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
+    export TRAIN_VARIANT="${MODEL_VARIATION}"
     export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
     export WANDB_JOB_TYPE="infer"
+    export INFER_GRADE="${GRADE}"
 
     echo "[infer] dataset variation: ${DATASET_VARIATION}"
     echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
