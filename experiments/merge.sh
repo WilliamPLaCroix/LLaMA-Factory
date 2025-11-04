@@ -111,7 +111,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
     echo "    --temperature 0 "
     echo "    --grade \'${GRADE}\' "
-    echo " > \'${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log\' 2>&1"
+    echo " > \'${LOG_DIR}/generated_predictions/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log\' 2>&1"
     # -------------- INFERENCE CALL --------------
     python3 scripts/vllm_infer_metrics.py \
         --model_name_or_path "${BASE_MODEL}" \
@@ -122,7 +122,7 @@ for GRADE in "${GRADES[@]}"; do
         --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
         --temperature 0 \
         --grade "${GRADE}" \
-        > "${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log" 2>&1
+        > "${LOG_DIR}/generated_predictions/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
