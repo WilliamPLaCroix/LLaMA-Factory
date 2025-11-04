@@ -18,10 +18,10 @@ REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}-infer"
-LOG_DIR="${REPO}/experiments/logs/graded"
+LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
-mkdir -p "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
+mkdir -p "${LOG_DIR}" "${LOG_DIR}/generated_predictions"
 
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
@@ -48,7 +48,7 @@ python3 experiments/scripts/adapter_merging.py \
 --adapters="${ADAPTER_SELECTION}" \
 --weights="${WEIGHT_METHOD}" \
 --project_version="${PROJECT_VERSION}" \
-> experiments/logs/${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}_merge.log 2>&1
+> experiments/logs/merged/${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}_merge.log 2>&1
 # --------------- MERGE END ---------------
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
@@ -112,7 +112,7 @@ GRADES=(02 03 04 05 06 07 08 09 10 11 12)
 #     echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
 #     echo "    --temperature 0 "
 #     echo "    --grade \'${GRADE}\' "
-#     echo " > \'${LOG_DIR}/logs/infer_grade${GRADE}.log\' 2>&1"
+#     echo " > \'${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log\' 2>&1"
 #     # -------------- INFERENCE CALL --------------
 #     python3 scripts/vllm_infer_metrics.py \
 #         --model_name_or_path "${BASE_MODEL}" \
@@ -123,7 +123,7 @@ GRADES=(02 03 04 05 06 07 08 09 10 11 12)
 #         --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
 #         --temperature 0 \
 #         --grade "${GRADE}" \
-#         > "${LOG_DIR}/logs/infer_grade${GRADE}.log" 2>&1
+#         > "${LOG_DIR}/generated_predictions/infer_grade${GRADE}.log" 2>&1
 #     # -------------- INFERENCE END --------------
 
 #     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
