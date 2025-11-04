@@ -110,24 +110,24 @@ for GRADE in "${GRADES[@]}"; do
     echo "python3 scripts/vllm_infer_metrics.py "
     echo "    --model_name_or_path \'${BASE_MODEL}\' "
     echo "    --adapter_name_or_path \'${OUT_ADAPTER}\' "
-    echo "    --save_path \'${LOG_DIR}\' "
+    echo "    --save_path \'${LOG_DIR}/generated_predictions\' "
     echo "    --save_name \'${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer\' "
     echo "    --template llama3 "
     echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
     echo "    --temperature 0 "
     echo "    --grade \'${GRADE}\' "
-    echo " > \'${LOG_DIR}/generated_predictions/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log\' 2>&1"
+    echo " > \'${LOG_DIR}/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log\' 2>&1"
     # -------------- INFERENCE CALL --------------
     python3 scripts/vllm_infer_metrics.py \
         --model_name_or_path "${BASE_MODEL}" \
         --adapter_name_or_path "${OUT_ADAPTER}" \
-        --save_path "${LOG_DIR}" \
+        --save_path "${LOG_DIR}/generated_predictions" \
         --save_name "${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer" \
         --template llama3 \
         --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
         --temperature 0 \
         --grade "${GRADE}" \
-        > "${LOG_DIR}/generated_predictions/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log" 2>&1
+        > "${LOG_DIR}/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
