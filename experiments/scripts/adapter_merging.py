@@ -10,12 +10,12 @@ def select_adapters(adapter_selection="all",
                     merge_method="linear"):
     trained_grades = list(range(2, 13))  # grades 2 to 12
     if grade_selection == "all":
-        grades = [str(grade) for grade in trained_grades]
+        grades = [str(f'{grade:02}') for grade in trained_grades]
     else:
         raise NotImplementedError("Custom grade selection not implemented yet")
     
     if adapter_selection == "all":
-        adapters = [adapter_path_format.format(str(f'{grade:02}')) for grade in grades]
+        adapters = [adapter_path_format.format(grade) for grade in grades]
     else:
         raise NotImplementedError("Custom adapter selection not implemented yet")
         
