@@ -19,17 +19,18 @@ def select_adapters(adapter_selection="all",
     else:
         raise NotImplementedError("Custom adapter selection not implemented yet")
         
+    assert len(adapters) == len(grades), "Adapters, grades, and weights must have the same length"
+    return adapters, grades
+
+def generate_weights(weight_method, merge_method, grades):
     if weight_method == "uniform":
         if merge_method in {"ties", "ties_svd", "dare_ties", "dare_ties_svd"}:
-            weights = [1.0 for _ in adapters]
+            weights = [1.0 for _ in grades]
         else:
-            weights = [1.0 / len(adapters) for _ in adapters]
+            weights = [1.0 / len(grades) for _ in grades]
             assert abs(sum(weights) - 1.0) < 1e-6, "Weights must sum to 1.0 for linear merging methods"
     else:
         raise NotImplementedError("Custom weight methods not implemented yet")
-
-    assert len(adapters) == len(grades) and len(adapters) == len(weights) and len(weights) == len(grades), "Adapters, grades, and weights must have the same length"
-    return adapters, grades, weights
 
 def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          merge_method="debug",
@@ -43,11 +44,11 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
          project_version="v0-3",
          ):
 
-    adapters, grades, weights = select_adapters(adapter_selection=adapter_selection, 
-                                                grade_selection=grade_selection, 
-                                                adapter_path_format=adapter_path_format,
-                                                weight_method=weight_method,
-                                                merge_method=merge_method)
+    adapters, grades = select_adapters(adapter_selection=adapter_selection, 
+                                        grade_selection=grade_selection, 
+                                        adapter_path_format=adapter_path_format,
+                                        weight_method=weight_method,
+                                        merge_method=merge_method)
 
     print(f"model: {model}")
     print(f"adapter_selection: {adapter_selection}")
@@ -75,7 +76,8 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         debug_methods = {"linear", "ties", "dare_ties", "dare_linear", "magnitude_prune"} # no SVD variants for debug, no CAT
         
         for method in debug_methods:
-            merged_adapter_name = f"{project_version}_debug_{merge_method}"
+            merged_adapter_name = f"{project_version}_debug_{method}"
+            weights = generate_weights(weight_method, method, grades)
             print(f"Merging adapters into new adapter: {merged_adapter_name}\n\tgrades:{grades} \n\tmethod: {method}\n\tweights: {weights}\n\tdensity: {density}\n\tmajority_sign_method: {majority_sign_method}")
             # set default density if needed
             if method in {"ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"} and density is None:
@@ -90,7 +92,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
                 majority_sign_method = None  # not used for other methods
             try:
                 model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=method, adapter_name=merged_adapter_name, density=density)
-                print(f"Saved debug merged adapter: {merged_adapter_name}")
+                print(f"Merged debug adapter: {merged_adapter_name}")
                 print(model.peft_config.keys())
                 model.delete_adapter(merged_adapter_name)
                 print(f"Deleted debug merged adapter: {merged_adapter_name}\n")
@@ -102,6 +104,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
     
     merged_adapter_name = f"{project_version}_merge_{merge_method}_g@{grade_selection}w@{weight_method}"
     print(f"Merging adapters into new adapter: {merged_adapter_name}")
+    weights = generate_weights(weight_method, merge_method, grades)
     # set default density if needed
     if merge_method in {"ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"} and density is None:
         density = 0.5  # default density for these methods
