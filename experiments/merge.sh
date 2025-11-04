@@ -45,8 +45,8 @@ total_start_time=$(date +%s)
 echo "Begin Merger"
 python3 experiments/scripts/adapter_merging.py \
 --merge_method="${MERGE_METHOD}" \
---adapters="${ADAPTER_SELECTION}" \
---weights="${WEIGHT_METHOD}" \
+--adapter_selection="${ADAPTER_SELECTION}" \
+--weight_method="${WEIGHT_METHOD}" \
 --project_version="${PROJECT_VERSION}" \
 > experiments/logs/merged/${MERGE_METHOD}-a@${ADAPTER_SELECTION}-w@${WEIGHT_METHOD}_merge.log 2>&1
 # --------------- MERGE END ---------------
