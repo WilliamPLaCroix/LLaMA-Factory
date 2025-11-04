@@ -2,9 +2,9 @@ universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/merge.sh
 arguments       = $(merge_method)
-log             = /scratch/wlacroix/logs/merge_$(merge_method).log
-output          = /scratch/wlacroix/logs/merge_$(merge_method).out
-error           = /scratch/wlacroix/logs/merge_$(merge_method).err
+log             = /scratch/wlacroix/logs/merged/merge_$(merge_method).log
+output          = /scratch/wlacroix/logs/merged/merge_$(merge_method).out
+error           = /scratch/wlacroix/logs/merged/merge_$(merge_method).err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
