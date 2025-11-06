@@ -21,10 +21,10 @@ mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_p
 
 # ---------------- Config choose: fresh vs resume ----------------
 if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-  CFG="configs/${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
   echo "[train] Resuming with ${CFG}"
 else
-  CFG="configs/${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
+  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
   echo "[train] Fresh start with ${CFG}"
 fi
 
