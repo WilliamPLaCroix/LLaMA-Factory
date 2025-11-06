@@ -13,7 +13,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-rerun"
+RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-rerun2"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
@@ -57,7 +57,7 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
-export WANDB_NAME="model=${MODEL_VARIATION}-rerun"           # stable name per train variant
+export WANDB_NAME="model=${MODEL_VARIATION}-rerun2"           # stable name per train variant
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 # --------------- System info ---------------
