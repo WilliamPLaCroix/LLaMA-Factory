@@ -1,12 +1,13 @@
 ### model
 model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct
-trust_remote_code: true
+trust_remote_code: True
 seed: 42
-use_fast_tokenizer: true
+use_fast_tokenizer: True
 
 ### method
 stage: sft
-do_train: True
+# do_train: True
+do_train: False
 finetuning_type: lora
 lora_rank: 8
 lora_alpha: 16
@@ -16,18 +17,19 @@ lora_dropout: 0.05
 cutoff_len: 1024
 template: llama3
 preprocessing_num_workers: 16
-train_on_prompt: false
-overwrite_cache: true
+train_on_prompt: False
+overwrite_cache: True
 
 dataset: cleaned_baseline_train
 
-# resume_from_checkpoint: true
+# resume_from_checkpoint: True
+resume_from_checkpoint: False
 output_dir: /scratch/wlacroix/.cache/llama_factory/v0-3_cleaned_baseline-adapter
 logging_strategy: "steps"
 logging_steps: 10
 save_steps: 100
-plot_loss: true
-overwrite_output_dir: true
+plot_loss: True
+overwrite_output_dir: True
 report_to: ["wandb"] 
 run_name: cleaned-baseline
 
@@ -36,7 +38,7 @@ per_device_eval_batch_size: 32
 gradient_accumulation_steps: 4
 learning_rate: 1.0e-4
 num_train_epochs: 20
-bf16: true
+bf16: True
 lr_scheduler_type: cosine
 warmup_ratio: 0.2
 
@@ -44,7 +46,8 @@ warmup_ratio: 0.2
 do_eval: True
 eval_dataset: cleaned_baseline_validation
 eval_strategy: epoch
-predict_with_generate: false
+predict_with_generate: False
+do_sample: False
 
 metric_for_best_model: "eval_cleaned_baseline_validation_dfkgl_sari"
 save_strategy: epoch
