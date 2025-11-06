@@ -6,7 +6,8 @@ use_fast_tokenizer: True
 
 ### method
 stage: sft
-do_train: True
+# do_train: True
+do_train: False
 finetuning_type: lora
 lora_rank: 8
 lora_alpha: 16
