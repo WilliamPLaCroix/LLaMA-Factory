@@ -1,5 +1,5 @@
 ### model
-model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct
+model_name_or_path: /scratch/common_models/Llama-3.2-3B-Instruct-greedy
 trust_remote_code: True
 seed: 42
 use_fast_tokenizer: True
