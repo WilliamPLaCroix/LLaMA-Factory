@@ -83,7 +83,7 @@ set -euo pipefail
 # ------------- loop eval for all checkpoints -------------]
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   checkpoint_name="$(basename "${checkpoint}")"
-  out="${OUT_ADAPTER}/${checkpoint_name}"
+  out="${checkpoint_name}"
   echo "[eval] Processing checkpoint: ${checkpoint_name}"
   echo "[eval] Checkpoint path: ${checkpoint}"
   echo "[eval] Output directory: ${out}"
