@@ -81,6 +81,8 @@ set -euo pipefail
 #   > "${LOG_DIR}/train.log" 2>&1
 
 # ------------- loop eval for all checkpoints -------------]
+export ALLOW_EXTRA_ARGS=1
+
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   out="${OUT_ADAPTER}/$(basename "${checkpoint}")"
   llamafactory-cli train "${CFG}" \
