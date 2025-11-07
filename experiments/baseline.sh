@@ -81,15 +81,25 @@ set -euo pipefail
 #   > "${LOG_DIR}/train.log" 2>&1
 
 # ------------- loop eval for all checkpoints -------------]
-export ALLOW_EXTRA_ARGS=1
-
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   out="${OUT_ADAPTER}/$(basename "${checkpoint}")"
-  llamafactory-cli train "${CFG}" \
-    adapter_name_or_path="${checkpoint}" \
-    do_train=False \
-    output_dir="${out}" \
+  
+  # Create a temporary config file for this checkpoint evaluation
+  temp_cfg="${CFG_DIR}/temp_eval_$(basename "${checkpoint}").yaml"
+  
+  # Copy the base config and modify for evaluation
+  cp "${CFG}" "${temp_cfg}"
+  
+  # Modify the config for evaluation using sed or yq
+  sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
+  sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
+  echo "adapter_name_or_path: ${checkpoint}" >> "${temp_cfg}"
+  
+  llamafactory-cli train "${temp_cfg}" \
     > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
+  
+  # Clean up temporary file
+  rm "${temp_cfg}"
 done
 
 # # --------------- INFER (same run; tag infer dataset + grade) ---------------
