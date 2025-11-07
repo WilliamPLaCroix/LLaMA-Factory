@@ -83,8 +83,7 @@ set -euo pipefail
 # ------------- loop eval for all checkpoints -------------]
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   out="${OUT_ADAPTER}/$(basename "${checkpoint}")"
-  llamafactory-cli eval \
-    "${CFG}" \
+  llamafactory-cli train "${CFG}" \
     adapter_name_or_path="${checkpoint}" \
     do_train=False \
     output_dir="${out}" \
