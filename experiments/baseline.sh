@@ -82,19 +82,34 @@ set -euo pipefail
 
 # ------------- loop eval for all checkpoints -------------]
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
-  out="${OUT_ADAPTER}/$(basename "${checkpoint}")"
+  checkpoint_name="$(basename "${checkpoint}")"
+  out="${OUT_ADAPTER}/${checkpoint_name}"
+  echo "[eval] Processing checkpoint: ${checkpoint_name}"
+  echo "[eval] Checkpoint path: ${checkpoint}"
+  echo "[eval] Output directory: ${out}"
   
   # Create a temporary config file for this checkpoint evaluation
   temp_cfg="${CFG_DIR}/temp_eval_$(basename "${checkpoint}").yaml"
   
   # Copy the base config and modify for evaluation
   cp "${CFG}" "${temp_cfg}"
+  echo "[eval] Original config content (relevant lines):"
+  grep -E "(do_train|output_dir|adapter_name_or_path)" "${CFG}" || echo "No matching lines found in original config"
+  
   
   # Modify the config for evaluation using sed or yq
   sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
-  sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
-  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
+  sed -i "s|output_dir: .*|output_dir: ${OUT_ADAPTER}/${out}|g" "${temp_cfg}"
+  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${OUT_ADAPTER}/${checkpoint}|g" "${temp_cfg}"
+    
+  echo "[eval] Modified config content (relevant lines):"
+  grep -E "(do_train|output_dir|adapter_name_or_path|resume_from_checkpoint)" "${temp_cfg}" || echo "No matching lines found in modified config"
   
+  echo "[eval] Full temporary config file contents:"
+  echo "--- START CONFIG ---"
+  cat "${temp_cfg}"
+  echo "--- END CONFIG ---"
+
   llamafactory-cli train "${temp_cfg}" \
     > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
   
