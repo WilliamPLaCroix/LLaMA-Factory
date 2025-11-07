@@ -42,7 +42,7 @@ else
   echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
 fi
 
-Persist for other scripts and future resumes
+# -------------------- Persist for other scripts and future resumes
 printf '%s
 ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
 printf '%s
@@ -75,7 +75,7 @@ nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
 
---------------- TRAIN ---------------
+# --------------- TRAIN ---------------
 echo "[train] will now run llamafactory-cli train ${CFG}"
 llamafactory-cli train "${CFG}" \
   > "${LOG_DIR}/train.log" 2>&1
