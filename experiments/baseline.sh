@@ -4,7 +4,7 @@
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
 
@@ -13,7 +13,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-rerun5"
+RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
@@ -57,7 +57,7 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
-export WANDB_NAME="model=${MODEL_VARIATION}-rerun5"           # stable name per train variant
+export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}"           # stable name per train variant
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
 # --------------- System info ---------------
@@ -75,104 +75,104 @@ nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
 
-# --------------- TRAIN ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+--------------- TRAIN ---------------
+echo "[train] will now run llamafactory-cli train ${CFG}"
+llamafactory-cli train "${CFG}" \
+  > "${LOG_DIR}/train.log" 2>&1
 
-# ------------- loop eval for all checkpoints -------------]
-for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
-  checkpoint_name="$(basename "${checkpoint}")"
-  out="${OUT_ADAPTER}/${checkpoint_name}"
-  echo "[eval] Processing checkpoint: ${checkpoint_name}"
-  echo "[eval] Checkpoint path: ${checkpoint}"
-  echo "[eval] Output directory: ${out}"
+# # # ------------- loop eval for all checkpoints -------------] 
+# # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
+# # #   checkpoint_name="$(basename "${checkpoint}")"
+# # #   out="${OUT_ADAPTER}/${checkpoint_name}"
+# # #   echo "[eval] Processing checkpoint: ${checkpoint_name}"
+# # #   echo "[eval] Checkpoint path: ${checkpoint}"
+# # #   echo "[eval] Output directory: ${out}"
   
-  # Create a temporary config file for this checkpoint evaluation
-  temp_cfg="${CFG_DIR}/temp_eval_$(basename "${checkpoint}").yaml"
+# # #   # Create a temporary config file for this checkpoint evaluation
+# # #   temp_cfg="${CFG_DIR}/temp_eval_$(basename "${checkpoint}").yaml"
   
-  # Copy the base config and modify for evaluation
-  cp "${CFG}" "${temp_cfg}"
-  echo "[eval] Original config content (relevant lines):"
-  grep -E "(do_train|output_dir|adapter_name_or_path)" "${CFG}" || echo "No matching lines found in original config"
+# # #   # Copy the base config and modify for evaluation
+# # #   cp "${CFG}" "${temp_cfg}"
+# # #   echo "[eval] Original config content (relevant lines):"
+# # #   grep -E "(do_train|output_dir|adapter_name_or_path)" "${CFG}" || echo "No matching lines found in original config"
   
   
-  # Modify the config for evaluation using sed or yq
-  sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
-  sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
-  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
+# # #   # Modify the config for evaluation using sed or yq
+# # #   sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
+# # #   sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
+# # #   sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
     
-  echo "[eval] Modified config content (relevant lines):"
-  grep -E "(do_train|output_dir|adapter_name_or_path|resume_from_checkpoint)" "${temp_cfg}" || echo "No matching lines found in modified config"
+# # #   echo "[eval] Modified config content (relevant lines):"
+# # #   grep -E "(do_train|output_dir|adapter_name_or_path|resume_from_checkpoint)" "${temp_cfg}" || echo "No matching lines found in modified config"
   
-  echo "[eval] Full temporary config file contents:"
-  echo "--- START CONFIG ---"
-  cat "${temp_cfg}"
-  echo "--- END CONFIG ---"
+# # #   echo "[eval] Full temporary config file contents:"
+# # #   echo "--- START CONFIG ---"
+# # #   cat "${temp_cfg}"
+# # #   echo "--- END CONFIG ---"
 
-  llamafactory-cli train "${temp_cfg}" \
-    > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
+# # #   llamafactory-cli train "${temp_cfg}" \
+# # #     > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
   
-  # Clean up temporary file
-  rm "${temp_cfg}"
+# # #   # Clean up temporary file
+# # #   rm "${temp_cfg}"
+# # # done
+
+# --------------- INFER (same run; tag infer dataset + grade) ---------------
+export WANDB_JOB_TYPE="infer"
+
+echo "staring run at $(date)"
+run_start_time=$(date +%s)
+ds_variations=(cleaned) # original augmented)
+for DATASET_VARIATION in "${ds_variations[@]}"; do
+  echo "[infer] dataset variation: ${DATASET_VARIATION}"
+  variation_start_time=$(date +%s)
+  for grade in {02..12}; do
+    grade_start_time=$(date +%s)
+    echo "[infer]   grade: ${grade}"
+
+    # Keep SAME run id as training; do NOT create per-grade runs
+    export WANDB_RUN_ID
+    export WANDB_RESUME=allow
+    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}"   # keep stable name for color-by-run
+
+    # Rich tags & notes for grouping/filtering in the UI
+    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
+    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
+
+    # If your inference script forwards env to W&B config, also export custom hints
+    export TRAIN_VARIANT="${MODEL_VARIATION}"
+    export INFER_VARIANT="${DATASET_VARIATION}"
+    export INFER_GRADE="${grade}"
+
+    # echo the specific inference arguments
+
+
+    # Call your inference (must use wandb.init(resume='allow') or respect env id)
+
+    python3 scripts/vllm_infer_metrics.py \
+      --model_name_or_path "${BASE_MODEL}" \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
+      --save_path "${LOG_DIR}" \
+      --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
+      --template llama3 \
+      --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
+      --temperature 0 \
+      --grade "${grade}" \
+      > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
+
+    echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
+    grade_end_time=$(date +%s)
+    echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
+  done
+    variation_end_time=$(date +%s)
+    echo "[infer] dataset variation ${DATASET_VARIATION} took $((variation_end_time - variation_start_time)) seconds"
 done
 
-# # --------------- INFER (same run; tag infer dataset + grade) ---------------
-# export WANDB_JOB_TYPE="infer"
+end_time=$(date +%s)
+echo "Total infer time: $((end_time - run_start_time)) seconds"
+echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
 
-# echo "staring run at $(date)"
-# run_start_time=$(date +%s)
-# ds_variations=(cleaned) # original augmented)
-# for DATASET_VARIATION in "${ds_variations[@]}"; do
-#   echo "[infer] dataset variation: ${DATASET_VARIATION}"
-#   variation_start_time=$(date +%s)
-#   for grade in {02..12}; do
-#     grade_start_time=$(date +%s)
-#     echo "[infer]   grade: ${grade}"
-
-#     # Keep SAME run id as training; do NOT create per-grade runs
-#     export WANDB_RUN_ID
-#     export WANDB_RESUME=allow
-#     export WANDB_NAME="model=${MODEL_VARIATION}"   # keep stable name for color-by-run
-
-#     # Rich tags & notes for grouping/filtering in the UI
-#     export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
-#     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
-
-#     # If your inference script forwards env to W&B config, also export custom hints
-#     export TRAIN_VARIANT="${MODEL_VARIATION}"
-#     export INFER_VARIANT="${DATASET_VARIATION}"
-#     export INFER_GRADE="${grade}"
-
-#     # echo the specific inference arguments
-
-
-#     # Call your inference (must use wandb.init(resume='allow') or respect env id)
-
-#     python3 scripts/vllm_infer_metrics.py \
-#       --model_name_or_path "${BASE_MODEL}" \
-#       --adapter_name_or_path "${OUT_ADAPTER}" \
-#       --save_path "${LOG_DIR}" \
-#       --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
-#       --template llama3 \
-#       --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
-#       --temperature 0 \
-#       --grade "${grade}" \
-#       > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
-
-#     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
-#     grade_end_time=$(date +%s)
-#     echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
-#   done
-#     variation_end_time=$(date +%s)
-#     echo "[infer] dataset variation ${DATASET_VARIATION} took $((variation_end_time - variation_start_time)) seconds"
-# done
-
-# end_time=$(date +%s)
-# echo "Total infer time: $((end_time - run_start_time)) seconds"
-# echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
-
-# echo "Done. Tips in W&B UI:
-#   • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
-#   • Color by run to keep train variants consistent.
-#   • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
+echo "Done. Tips in W&B UI:
+  • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
+  • Color by run to keep train variants consistent.
+  • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
