@@ -83,7 +83,7 @@ set -euo pipefail
 # ------------- loop eval for all checkpoints -------------]
 for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   checkpoint_name="$(basename "${checkpoint}")"
-  out="${checkpoint_name}"
+  out="${OUT_ADAPTER}/${checkpoint_name}"
   echo "[eval] Processing checkpoint: ${checkpoint_name}"
   echo "[eval] Checkpoint path: ${checkpoint}"
   echo "[eval] Output directory: ${out}"
@@ -99,8 +99,8 @@ for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   
   # Modify the config for evaluation using sed or yq
   sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
-  sed -i "s|output_dir: .*|output_dir: ${OUT_ADAPTER}/${out}|g" "${temp_cfg}"
-  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${OUT_ADAPTER}/${checkpoint}|g" "${temp_cfg}"
+  sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
+  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
     
   echo "[eval] Modified config content (relevant lines):"
   grep -E "(do_train|output_dir|adapter_name_or_path|resume_from_checkpoint)" "${temp_cfg}" || echo "No matching lines found in modified config"
