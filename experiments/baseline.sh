@@ -93,7 +93,7 @@ for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
   # Modify the config for evaluation using sed or yq
   sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
   sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
-  echo "adapter_name_or_path: ${checkpoint}" >> "${temp_cfg}"
+  sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
   
   llamafactory-cli train "${temp_cfg}" \
     > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
