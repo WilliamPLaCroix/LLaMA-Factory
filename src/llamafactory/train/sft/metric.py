@@ -93,14 +93,24 @@ class ComputeSimilarity:
 
         #preds = np.argmax(preds, axis=-1)
 
-        preds, labels, inputs = numpify(eval_preds.predictions), numpify(eval_preds.label_ids), numpify(eval_preds.inputs)
+        def continuation_text(pred_ids, inp_ids):
+            # prompt length = number of non-pad tokens in the input row
+            prompt_len = int((inp_ids != self.tokenizer.pad_token_id).sum())
+            cont_ids = pred_ids[prompt_len:]
+            text = self.tokenizer.decode(cont_ids, skip_special_tokens=True)
+            return text.split("<|eot_id|>", 1)[0]  # drop trailing EOT if present
+
+        preds = numpify(eval_preds.predictions)
+        labels = numpify(eval_preds.label_ids)
+        inputs = numpify(eval_preds.inputs)
 
         preds = np.where(preds != IGNORE_INDEX, preds, self.tokenizer.pad_token_id)
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
         
         self.tokenizer.padding_side = "left"
-        preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
+        # preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
+        preds = [continuation_text(p, x) for p, x in zip(preds, inputs)]
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
  
@@ -117,7 +127,7 @@ class ComputeSimilarity:
             print("SRC (after):", source)
             print("-" * 20)
             print("PRED (before)", pred)
-            pred = pred[9:]
+            pred = pred[10:]
             print("PRED (after)", pred)
             print("LABEL (after):", label)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
