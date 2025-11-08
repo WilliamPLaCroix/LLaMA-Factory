@@ -123,11 +123,9 @@ export WANDB_JOB_TYPE="infer"
 
 echo "staring run at $(date)"
 run_start_time=$(date +%s)
-ds_variations=(cleaned) # original augmented)
-for DATASET_VARIATION in "${ds_variations[@]}"; do
-  echo "[infer] dataset variation: ${DATASET_VARIATION}"
-  variation_start_time=$(date +%s)
-  for grade in {02..12}; do
+DATASET_VARIATION="cleaned"
+
+for grade in {02..12}; do
     grade_start_time=$(date +%s)
     echo "[infer]   grade: ${grade}"
 
@@ -151,32 +149,29 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
     #echo full command:
     echo "python3 scripts/vllm_infer_metrics.py \
-      --model_name_or_path '${BASE_MODEL}' \
-      --adapter_name_or_path '${OUT_ADAPTER}' \
-      --save_path '${LOG_DIR}' \
-      --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}' \
-      --template llama3 \
-      --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
-      --temperature 0 \
-      --grade '${grade}'"
+        --model_name_or_path '${BASE_MODEL}' \
+        --adapter_name_or_path '${OUT_ADAPTER}' \
+        --save_path '${LOG_DIR}' \
+        --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}' \
+        --template llama3 \
+        --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
+        --temperature 0 \
+        --grade '${grade}'"
 
     python3 scripts/vllm_infer_metrics.py \
-      --model_name_or_path "${BASE_MODEL}" \
-      --adapter_name_or_path "${OUT_ADAPTER}" \
-      --save_path "${LOG_DIR}" \
-      --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}" \
-      --template llama3 \
-      --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
-      --temperature 0 \
-      --grade "${grade}" \
-      > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}.log" 2>&1 || true
+        --model_name_or_path "${BASE_MODEL}" \
+        --adapter_name_or_path "${OUT_ADAPTER}" \
+        --save_path "${LOG_DIR}" \
+        --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}" \
+        --template llama3 \
+        --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
+        --temperature 0 \
+        --grade "${grade}" \
+        > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}${ITERATION}.log" 2>&1 || true
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
     grade_end_time=$(date +%s)
     echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
-  done
-    variation_end_time=$(date +%s)
-    echo "[infer] dataset variation ${DATASET_VARIATION} took $((variation_end_time - variation_start_time)) seconds"
 done
 
 end_time=$(date +%s)
@@ -184,6 +179,6 @@ echo "Total infer time: $((end_time - run_start_time)) seconds"
 echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
 
 echo "Done. Tips in W&B UI:
-  • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
-  • Color by run to keep train variants consistent.
-  • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
+• Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
+• Color by run to keep train variants consistent.
+• Filter by tag ds:<dataset> or grade:<n> to slice inference results."
