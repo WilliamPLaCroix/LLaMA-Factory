@@ -12,7 +12,7 @@ ITERATION="-8"
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greegy"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
