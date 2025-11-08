@@ -4,9 +4,9 @@
 universe                = vanilla
 initialdir              = /nethome/wlacroix/LLaMA-Factory/
 executable              = /nethome/wlacroix/LLaMA-Factory/experiments/debug.sh
-output                  = /scratch/wlacroix/logs/run.$(ClusterId).out
-error                   = /scratch/wlacroix/logs/err/run.$(ClusterId).err
-log                     = /scratch/wlacroix/logs/log/run.$(ClusterId).log
+output                  = /scratch/wlacroix/logs/debug.out
+error                   = /scratch/wlacroix/logs/err/debug.err
+log                     = /scratch/wlacroix/logs/log/debug.log
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
 #when_to_transfer_output = ON_EXIT

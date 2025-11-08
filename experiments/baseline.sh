@@ -165,8 +165,9 @@ for grade in {02..12}; do
         --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}" \
         --template llama3 \
         --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
-        --temperature 0 \
+        --temperature "0" \
         --grade "${grade}" \
+        --seed "42" \
         > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}${ITERATION}.log" 2>&1 || true
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
