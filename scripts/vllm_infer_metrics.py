@@ -106,6 +106,7 @@ def vllm_infer(
 
     run = wandb.init(**init_kwargs)
 
+    print(adapter_name_or_path)
     if adapter_name_or_path is not None:
         parent_id_path = os.path.join(adapter_name_or_path, "wandb_parent_id.txt")
         if os.path.exists(parent_id_path):
@@ -114,6 +115,7 @@ def vllm_infer(
             # store as config for filtering and as summary for quick viewing
             wandb.config.update({"parent_run_id": parent_id}, allow_val_change=True)
             wandb.run.summary["parent_run_id"] = parent_id
+    print(parent_id)
 
     model_args, data_args, _, generating_args = get_infer_args(
         dict(

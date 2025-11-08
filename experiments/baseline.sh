@@ -7,7 +7,7 @@ MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
-ITERATION="${1:?iteration variation required: 1|2|3|4|5|6|7|8|9|10}"  # used to distinguish repeated runs
+ITERATION="-${1:?iteration variation required: 1|2|3|4|5|6|7|8|9|10}"  # used to distinguish repeated runs
 
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
@@ -17,7 +17,7 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter/checkpoint-3536"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
@@ -149,6 +149,16 @@ for DATASET_VARIATION in "${ds_variations[@]}"; do
 
 
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
+    #echo full command:
+    echo "python3 scripts/vllm_infer_metrics.py \
+      --model_name_or_path '${BASE_MODEL}' \
+      --adapter_name_or_path '${OUT_ADAPTER}' \
+      --save_path '${LOG_DIR}' \
+      --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}' \
+      --template llama3 \
+      --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
+      --temperature 0 \
+      --grade '${grade}'"
 
     python3 scripts/vllm_infer_metrics.py \
       --model_name_or_path "${BASE_MODEL}" \
