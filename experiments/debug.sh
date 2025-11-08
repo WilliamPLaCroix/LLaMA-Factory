@@ -32,7 +32,7 @@ python3 scripts/vllm_infer_metrics.py \
     --template llama3 \
     --dataset debug \
     --temperature "0" \
-    --grade "7" \
+    --grade "12" \
     > experiments/logs/debug_infer.log 2>&1
 
 #or if you encounter error:

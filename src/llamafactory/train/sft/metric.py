@@ -93,13 +93,6 @@ class ComputeSimilarity:
 
         #preds = np.argmax(preds, axis=-1)
 
-        def continuation_text(pred_ids, inp_ids):
-            # prompt length = number of non-pad tokens in the input row
-            prompt_len = int((inp_ids != self.tokenizer.pad_token_id).sum())
-            cont_ids = pred_ids[prompt_len:]
-            text = self.tokenizer.decode(cont_ids, skip_special_tokens=True)
-            return text.split("<|eot_id|>", 1)[0]  # drop trailing EOT if present
-
         preds = numpify(eval_preds.predictions)
         labels = numpify(eval_preds.label_ids)
         inputs = numpify(eval_preds.inputs)
@@ -109,25 +102,20 @@ class ComputeSimilarity:
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
         
         self.tokenizer.padding_side = "left"
-        # preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
-        preds = [continuation_text(p, x) for p, x in zip(preds, inputs)]
+        preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
  
         grades = []
         for pred, label, source in zip(preds, labels, inputs):
             print("#" * 80)
-            print("SOURCE (full):", source)
             source = source.split("\n")
             grade = int(source[2].split(" ")[-1].strip('.'))
             grades.append(grade)
             print("GRADE:", grade)
-            print("SRC (before):", source)
             source = source[3][:-9]
             print("SRC (after):", source)
-            print("-" * 20)
-            print("PRED (before)", pred)
-            pred = pred[10:]
+            pred = pred[11:]
             print("PRED (after)", pred)
             print("LABEL (after):", label)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
