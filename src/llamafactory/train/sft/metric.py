@@ -76,7 +76,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl": [], "fkgl_lines": [], "fkgl_paragraph": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": []} # , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -118,11 +118,7 @@ class ComputeSimilarity:
 
         #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
-        fkgl_lines = textstat.flesch_kincaid_grade("\n".join(preds))
-        fkgl_paragraph = textstat.flesch_kincaid_grade(" ".join(preds))
         self.score_dict["fkgl"].append(fkgl)
-        self.score_dict["fkgl_lines"].append(fkgl_lines)
-        self.score_dict["fkgl_paragraph"].append(fkgl_paragraph)
         target_grade = sum(grades) / len(grades)
         fkgl_delta = abs(fkgl - target_grade)
         self.score_dict["fkgl-delta"].append(fkgl_delta)
@@ -134,32 +130,5 @@ class ComputeSimilarity:
 
         self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5))
 
-        # print(torch.cuda.memory_summary())
-
-        # import gc
-
-        # print(f"Memory allocated before cleanup: {torch.cuda.memory_allocated()} bytes")
-        # print(f"Memory reserved before cleanup: {torch.cuda.memory_reserved()} bytes")
-
-        # print("Before garbage collection:")
-        # for obj in gc.get_objects():
-        #     if torch.is_tensor(obj):
-        #         print(type(obj), obj.size(), obj.device)
-
-        # gc.collect()
-
-        # print("After garbage collection:")
-        # for obj in gc.get_objects():
-        #     if torch.is_tensor(obj):
-        #         print(type(obj), obj.size(), obj.device)
-        # torch.cuda.empty_cache()
-        
-        # # Detach and delete tensors to free memory
-        # del preds, preds, labels, inputs
-        # del loss_fn, source
-
-
-        # print(f"Memory allocated after cleanup: {torch.cuda.memory_allocated()} bytes")
-        # print(f"Memory reserved after cleanup: {torch.cuda.memory_reserved()} bytes")
         if compute_result:
             return self._dump()
