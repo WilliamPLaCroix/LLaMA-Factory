@@ -109,8 +109,11 @@ class ComputeSimilarity:
             source = source.split("\n")
             grade = int(source[2].split(" ")[-1].strip('.'))
             grades.append(grade)
-            print(source[3])
             source = source[3][:-9]
+            print("#" * 80)
+            print("SRC:", source)
+            print("PRED:", pred)
+            print("LABEL:", label)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
