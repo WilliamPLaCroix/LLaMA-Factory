@@ -76,7 +76,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl": [], "fkgl_lines": [], "fkgl_paragraph": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -108,22 +108,21 @@ class ComputeSimilarity:
  
         grades = []
         for pred, label, source in zip(preds, labels, inputs):
-            print("#" * 80)
-            source = source.split("\n")
-            grade = int(source[2].split(" ")[-1].strip('.'))
+            source = source.split("\n") # source includes system prompt and input, need to separate
+            grade = int(source[2].split(" ")[-1].strip('.')) # get the grade from the input prompt
             grades.append(grade)
-            print("GRADE:", grade)
-            source = source[3][:-9]
-            print("SRC (after):", source)
-            pred = pred[11:]
-            print("PRED (after)", pred)
-            print("LABEL (after):", label)
+            source = source[3][:-9] # remove the "assistant" on end of string
+            pred = pred[11:] # remove the "assistant" at beginning of string
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
         #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
         fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
+        fkgl_lines = textstat.flesch_kincaid_grade("\n".join(preds))
+        fkgl_paragraph = textstat.flesch_kincaid_grade(" ".join(preds))
         self.score_dict["fkgl"].append(fkgl)
+        self.score_dict["fkgl_lines"].append(fkgl_lines)
+        self.score_dict["fkgl_paragraph"].append(fkgl_paragraph)
         target_grade = sum(grades) / len(grades)
         fkgl_delta = abs(fkgl - target_grade)
         self.score_dict["fkgl-delta"].append(fkgl_delta)
