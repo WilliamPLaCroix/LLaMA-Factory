@@ -1,4 +1,12 @@
 {
+  "debug": {
+    "hf_hub_url": "williamplacroix/llamafactory_debug",
+    "columns": {
+	"prompt": "instruction",
+	"query": "input",
+	"response": "output"
+    }
+  },
   "judge_rephrase_dataset": {
     "file_name": "/nethome/wlacroix/false_refusal/data/judge_rephrase_dataset.jsonl",
     "columns": {
