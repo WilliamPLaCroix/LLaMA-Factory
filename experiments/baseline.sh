@@ -7,7 +7,7 @@ MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
-ITERATION="-7"
+ITERATION="-8"
 
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
