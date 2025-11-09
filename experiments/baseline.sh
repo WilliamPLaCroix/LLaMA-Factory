@@ -17,7 +17,7 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter/checkpoint-3536"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
@@ -76,10 +76,10 @@ nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
 
-# # --------------- TRAIN ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+# --------------- TRAIN ---------------
+echo "[train] will now run llamafactory-cli train ${CFG}"
+llamafactory-cli train "${CFG}" \
+  > "${LOG_DIR}/train.log" 2>&1
 
 # # # ------------- loop eval for all checkpoints -------------] 
 # # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
