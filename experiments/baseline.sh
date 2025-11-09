@@ -17,7 +17,7 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter${ITERATION}"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
