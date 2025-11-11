@@ -39,7 +39,6 @@ sari = load("sari")
 from bert_score import score
 #perplexity = load("perplexity", module_type="metric")
 #from readability import Readability
-
 import textstat
 
 import wandb
@@ -321,7 +320,7 @@ def vllm_infer(
         "gpu_memory_utilization": 0.5,
         "enforce_eager": True,
         "max_num_seqs": 1, # 256,  # Maximum number of sequences in batch
-        "max_num_batched_tokens": 2048,  # Maximum tokens per batch
+        "max_num_batched_tokens": 4096,  # Maximum tokens per batch
         "max_seq_len_to_capture": 8192,  # For CUDA graphs
     }
     if template_obj.mm_plugin.__class__.__name__ != "BasePlugin":
