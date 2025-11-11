@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+export VLLM_ENABLE_V1_MULTIPROCESSING=0
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
@@ -60,6 +60,7 @@ export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
 export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
+
 
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh

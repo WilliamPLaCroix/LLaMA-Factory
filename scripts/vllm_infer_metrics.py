@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
+os.environ["VLLM_ENABLE_V1_MULTIPROCESSING"] = "0"
 
 import json
 from typing import Optional
@@ -41,8 +43,7 @@ from bert_score import score
 import textstat
 
 import wandb
-import os
-os.environ["VLLM_ENABLE_V1_MULTIPROCESSING"] = "0"
+
 
 def vllm_infer(
     model_name_or_path: str,
