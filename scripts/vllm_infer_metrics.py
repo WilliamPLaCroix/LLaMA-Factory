@@ -311,7 +311,7 @@ def vllm_infer(
     engine_args = {
         "model": model_args.model_name_or_path,
         "trust_remote_code": True,
-        "dtype": "float32", # model_args.infer_dtype,
+        "dtype": "bfloat16", # model_args.infer_dtype,
         "max_model_len": cutoff_len + max_new_tokens,
         "tensor_parallel_size": (get_device_count() // pipeline_parallel_size) or 1,
         "pipeline_parallel_size": pipeline_parallel_size,
