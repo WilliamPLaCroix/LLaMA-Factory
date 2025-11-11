@@ -332,15 +332,20 @@ def vllm_infer(
 
     score_dict = {"sari": [], "perplexity": [], "fkgl": [], "dfkgl": [], "bert_F1": []}
 
-
+    
     # Debugging snapshot before generation
     print_repro_debug(LLM, tokenizer, sampling_params, prompts, label="BEFORE")
-    results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
+    #results = LLM(**engine_args).generate(inputs, sampling_params, lora_request=lora_request)
+    # preds = [result.outputs[0].text for result in results]
+    preds = []
+    for input in inputs:
+        try:
+            preds.append(LLM(**engine_args).generate([input], sampling_params, lora_request=lora_request).outputs[0].text)
+        except:
+            preds.append(LLM(**engine_args).generate([input], sampling_params, lora_request=lora_request)[0].outputs[0].text)
     # Debugging snapshot after generation
     print_repro_debug(LLM, tokenizer, sampling_params, prompts, label="AFTER")
 
-
-    preds = [result.outputs[0].text for result in results]
     
     system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
     sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
