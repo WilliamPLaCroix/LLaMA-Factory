@@ -128,9 +128,9 @@ def vllm_infer(
             max_samples=max_samples,
             preprocessing_num_workers=16,
             vllm_config=vllm_config,
-            temperature=0 # temperature,
-            top_p=1.0 # top_p,
-            top_k=- # top_k,
+            temperature=0, # temperature,
+            top_p=1.0, # top_p,
+            top_k=-1, # top_k,
             max_new_tokens=max_new_tokens,
             repetition_penalty=repetition_penalty,
         )
@@ -164,9 +164,9 @@ def vllm_infer(
 
     sampling_params = SamplingParams(
         repetition_penalty=generating_args.repetition_penalty or 1.0,  # repetition_penalty must > 0
-        temperature=0 # generating_args.temperature,
-        top_p=1.0 # generating_args.top_p or 1.0,  # top_p must > 0
-        top_k=-1 # generating_args.top_k or -1,  # top_k must > 0
+        temperature=0, # generating_args.temperature,
+        top_p=1.0, # generating_args.top_p or 1.0,  # top_p must > 0
+        top_k=-1, # generating_args.top_k or -1,  # top_k must > 0
         stop_token_ids=template_obj.get_stop_token_ids(tokenizer),
         max_tokens=generating_args.max_new_tokens,
         skip_special_tokens=skip_special_tokens,
