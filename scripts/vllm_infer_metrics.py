@@ -54,125 +54,122 @@ except Exception:
     vllm = None
     vllm_envs = None
 
-def _safe(obj, path, default=None):
-    cur = obj
-    for p in path.split("."):
-        if cur is None:
-            return default
-        cur = getattr(cur, p, None)
-    return cur if cur is not None else default
+def _get_attr_any(obj, names, default=None):
+    for n in names:
+        cur = obj
+        for part in n.split("."):
+            cur = getattr(cur, part, None)
+            if cur is None:
+                break
+        if cur is not None:
+            return cur
+    return default
 
-def _as_json(obj):
+def _jsonable(x):
     try:
-        return json.loads(json.dumps(obj, default=lambda x: str(x)))
+        return json.loads(json.dumps(x, default=str))
     except Exception:
-        return str(obj)
+        return str(x)
 
 def print_repro_debug(llm=None, tok=None, sp=None, prompts=None, label="BEFORE"):
     print("\n" + "="*30 + f" DEBUG SNAPSHOT [{label}] " + "="*30)
-
-    # 1) Environment and versions
-    env_keys = [
-        "CUDA_VISIBLE_DEVICES", "VLLM_ENABLE_V1_MULTIPROCESSING", "VLLM_WORKER_MULTIPROC_METHOD",
-        "VLLM_ATTENTION_BACKEND", "VLLM_USE_RAY", "VLLM_USE_MODELSCOPE",
-        "CUBLAS_WORKSPACE_CONFIG", "PYTORCH_CUDA_ALLOC_CONF",
-        "TOKENIZERS_PARALLELISM", "OMP_NUM_THREADS", "MKL_NUM_THREADS",
-        "CUDA_DEVICE_MAX_CONNECTIONS"
-    ]
-    env_report = {k: os.environ.get(k) for k in env_keys if k in os.environ}
-
-    vers_report = {
+    env = {
+        k: os.environ.get(k) for k in [
+            "CUDA_VISIBLE_DEVICES",
+            "VLLM_ENABLE_V1_MULTIPROCESSING",
+            "VLLM_WORKER_MULTIPROC_METHOD",
+            "VLLM_ATTENTION_BACKEND",
+            "VLLM_USE_RAY",
+            "CUBLAS_WORKSPACE_CONFIG",
+            "TOKENIZERS_PARALLELISM",
+            "OMP_NUM_THREADS", "MKL_NUM_THREADS",
+            "CUDA_DEVICE_MAX_CONNECTIONS"
+        ] if os.environ.get(k) is not None
+    }
+    vers = {
         "python": sys.version.split()[0],
         "platform": platform.platform(),
         "torch": getattr(torch, "__version__", None),
         "cuda_available": torch.cuda.is_available(),
         "cuda_device_count": torch.cuda.device_count(),
         "gpu_names": [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())] if torch.cuda.is_available() else [],
-        "vllm": getattr(vllm, "__version__", None),
+        "vllm": None,
     }
+    try:
+        import vllm
+        vers["vllm"] = getattr(vllm, "__version__", None)
+    except Exception:
+        pass
 
-    tf32 = {
+    torch_flags = {
         "matmul_allow_tf32": getattr(torch.backends.cuda.matmul, "allow_tf32", None),
         "cudnn_allow_tf32": getattr(torch.backends.cudnn, "allow_tf32", None),
         "deterministic_algs": getattr(torch, "are_deterministic_algorithms_enabled", lambda: None)(),
     }
 
-    # 2) Tokenizer info
-    tok_report = {}
+    tok_info = {}
     if tok is not None:
-        tok_report = {
+        tok_info = {
             "name_or_path": getattr(tok, "name_or_path", None),
             "pad_token_id": getattr(tok, "pad_token_id", None),
             "eos_token_id": getattr(tok, "eos_token_id", None),
             "bos_token_id": getattr(tok, "bos_token_id", None),
-            "chat_template_present": hasattr(tok, "chat_template") and tok.chat_template is not None,
-            "special_tokens_map": _as_json(getattr(tok, "special_tokens_map", {})),
+            "chat_template_present": bool(getattr(tok, "chat_template", None)),
+            "special_tokens_map": _jsonable(getattr(tok, "special_tokens_map", {})),
         }
 
-    # 3) Sampling params
-    sp_report = {}
+    sp_info = {}
     if sp is not None:
-        fields = [
-            "temperature", "top_p", "top_k", "repetition_penalty",
-            "max_tokens", "min_tokens", "n", "use_beam_search",
-            "best_of", "stop", "stop_token_ids", "seed",
-            "ignore_eos", "skip_special_tokens", "include_stop_str_in_output"
-        ]
-        sp_report = {f: _as_json(getattr(sp, f, None)) for f in fields}
+        fields = ["temperature","top_p","top_k","repetition_penalty","max_tokens","min_tokens",
+                  "n","use_beam_search","best_of","stop","stop_token_ids","seed",
+                  "ignore_eos","skip_special_tokens","include_stop_str_in_output"]
+        sp_info = {f: _jsonable(getattr(sp, f, None)) for f in fields}
 
-    # 4) vLLM engine internals (best effort, version tolerant)
-    engine_report = {}
+    engine_info = {}
     if llm is not None:
-        eng = getattr(llm, "llm_engine", None)
-        engine_report = {
-            "model": _safe(eng, "model_config.model"),
-            "dtype": str(_safe(eng, "model_config.dtype")),
-            "tensor_parallel_size": _safe(eng, "parallel_config.tensor_parallel_size")
-                                  or _safe(eng, "model_config.tensor_parallel_size"),
-            "max_model_len": _safe(eng, "model_config.max_model_len"),
-            "enforce_eager": _safe(eng, "engine_config.enforce_eager"),
-            "max_num_seqs": _safe(eng, "scheduler_config.max_num_seqs"),
-            "max_num_batched_tokens": _safe(eng, "scheduler_config.max_num_batched_tokens"),
-            "kv_cache_dtype": str(_safe(eng, "cache_config.cache_dtype")),
-            "gpu_memory_utilization": _safe(eng, "engine_config.gpu_memory_utilization"),
-            "spec_decode_enabled": bool(_safe(eng, "spec_decode_config") or _safe(eng, "engine_config.speculative_config")),
-        }
+        # vLLM 0.7.x keeps the engine on .engine or ._llm_engine
+        eng = _get_attr_any(llm, ["engine", "_llm_engine", "llm_engine"])
+        if eng is not None:
+            model_cfg = _get_attr_any(eng, ["model_config"]) or _get_attr_any(eng, ["_model_config"])
+            par_cfg   = _get_attr_any(eng, ["parallel_config"]) or _get_attr_any(eng, ["_parallel_config"])
+            sch_cfg   = _get_attr_any(eng, ["scheduler_config"]) or _get_attr_any(eng, ["_scheduler_config"])
+            cache_cfg = _get_attr_any(eng, ["cache_config"]) or _get_attr_any(eng, ["_cache_config"])
+            eng_cfg   = _get_attr_any(eng, ["engine_config"]) or _get_attr_any(eng, ["_engine_config"])
+            spec_cfg  = _get_attr_any(eng, ["spec_decode_config","_spec_decode_config","engine_config.speculative_config"])
 
-    # 5) vLLM envs snapshot
-    vllm_env_report = {}
-    if vllm_envs is not None:
-        try:
-            vllm_env_report = {
-                "VLLM_ENABLE_V1_MULTIPROCESSING": getattr(vllm_envs, "VLLM_ENABLE_V1_MULTIPROCESSING", None),
-                "VLLM_USE_RAY": getattr(vllm_envs, "VLLM_USE_RAY", None),
-                "VLLM_ATTENTION_BACKEND": getattr(vllm_envs, "VLLM_ATTENTION_BACKEND", None),
+            engine_info = {
+                "model": getattr(model_cfg, "model", None),
+                "dtype": str(getattr(model_cfg, "dtype", None)),
+                "tensor_parallel_size": getattr(par_cfg, "tensor_parallel_size", None),
+                "max_model_len": getattr(model_cfg, "max_model_len", None),
+                "kv_cache_dtype": str(getattr(cache_cfg, "cache_dtype", None)),
+                "gpu_memory_utilization": getattr(eng_cfg, "gpu_memory_utilization", None),
+                "enforce_eager": getattr(eng_cfg, "enforce_eager", None),
+                "use_cuda_graph": getattr(eng_cfg, "use_cuda_graph", None),
+                "max_num_seqs": getattr(sch_cfg, "max_num_seqs", None),
+                "max_num_batched_tokens": getattr(sch_cfg, "max_num_batched_tokens", None),
+                "spec_decode_enabled": bool(spec_cfg),
             }
-        except Exception as e:
-            vllm_env_report = {"error": str(e)}
 
-    # 6) Prompt shape quick check
-    prompt_report = {}
+    prompt_info = {}
     if prompts is not None:
-        sample_p = prompts[0] if isinstance(prompts, (list, tuple)) and prompts else prompts
-        prompt_report = {
+        sample = prompts[0] if isinstance(prompts, (list, tuple)) and prompts else prompts
+        prompt_info = {
             "num_prompts": len(prompts) if isinstance(prompts, (list, tuple)) else 1,
-            "first_prompt_preview": str(sample_p)[:280].replace("\n", "\\n"),
-            "first_prompt_len_chars": len(str(sample_p)),
+            "first_prompt_preview": str(sample)[:280].replace("\n","\\n"),
+            "first_prompt_len_chars": len(str(sample)),
         }
 
-    # 7) Aggregate and pretty print
-    report = {
+    print(json.dumps({
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "env": env_report,
-        "versions": vers_report,
-        "torch_flags": tf32,
-        "tokenizer": tok_report,
-        "sampling_params": sp_report,
-        "vllm_engine": engine_report,
-        "vllm_envs_parsed": vllm_env_report,
-        "prompt_info": prompt_report,
-    }
-    print(json.dumps(report, indent=2))
+        "env": env,
+        "versions": vers,
+        "torch_flags": torch_flags,
+        "tokenizer": tok_info,
+        "sampling_params": sp_info,
+        "vllm_engine": engine_info,
+        "prompt_info": prompt_info,
+    }, indent=2))
     print("="*30 + " END DEBUG SNAPSHOT " + "="*30 + "\n")
 
 # ---------------------------------- end debugging vLLM multiprocessing issues ----------------------------------
@@ -315,13 +312,17 @@ def vllm_infer(
     engine_args = {
         "model": model_args.model_name_or_path,
         "trust_remote_code": True,
-        "dtype": model_args.infer_dtype,
+        "dtype": "float32", # model_args.infer_dtype,
         "max_model_len": cutoff_len + max_new_tokens,
         "tensor_parallel_size": (get_device_count() // pipeline_parallel_size) or 1,
         "pipeline_parallel_size": pipeline_parallel_size,
         "disable_log_stats": True,
         "enable_lora": model_args.adapter_name_or_path is not None,
         "gpu_memory_utilization": 0.5,
+        "enforce_eager": True,
+        "max_num_seqs": 1, # 256,  # Maximum number of sequences in batch
+        "max_num_batched_tokens": 2048,  # Maximum tokens per batch
+        "max_seq_len_to_capture": 8192,  # For CUDA graphs
     }
     if template_obj.mm_plugin.__class__.__name__ != "BasePlugin":
         engine_args["limit_mm_per_prompt"] = {"image": 4, "video": 2}
