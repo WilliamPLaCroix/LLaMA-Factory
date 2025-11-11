@@ -77,9 +77,9 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # --------------- TRAIN ---------------
-echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train "${CFG}" \
-  > "${LOG_DIR}/train.log" 2>&1
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+# llamafactory-cli train "${CFG}" \
+#   > "${LOG_DIR}/train.log" 2>&1
 
 # # # ------------- loop eval for all checkpoints -------------] 
 # # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
@@ -155,7 +155,6 @@ for grade in {02..12}; do
         --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}' \
         --template llama3 \
         --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
-        --temperature 0 \
         --grade '${grade}'"
 
     python3 scripts/vllm_infer_metrics.py \
@@ -165,7 +164,6 @@ for grade in {02..12}; do
         --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}" \
         --template llama3 \
         --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
-        --temperature "0" \
         --grade "${grade}" \
         --seed "42" \
         > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}${ITERATION}.log" 2>&1 || true
