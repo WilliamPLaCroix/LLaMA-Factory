@@ -42,6 +42,7 @@ import textstat
 
 import wandb
 import os
+os.environ["VLLM_ENABLE_V1_MULTIPROCESSING"] = "0"
 
 def vllm_infer(
     model_name_or_path: str,
