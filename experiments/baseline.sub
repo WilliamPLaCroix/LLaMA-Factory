@@ -18,8 +18,8 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 queue iteration from (
-31
-32
-33
-34
+35
+36
+37
+38
 )
