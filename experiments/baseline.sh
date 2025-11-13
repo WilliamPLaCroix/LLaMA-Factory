@@ -7,12 +7,13 @@ MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
-ITERATION="-${1:?ITERATION}"  # used to distinguish repeated runs
+ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
+ITERATION="-${ITERATION_NUM}"
 
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greegy"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
