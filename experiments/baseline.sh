@@ -102,6 +102,7 @@ llamafactory-cli train \
   --predict_with_generate False \
   --do_sample False \
   --report_to wandb \
+  --run_name "${WANDB_NAME}${ITERATION}" \
   > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
 
 
