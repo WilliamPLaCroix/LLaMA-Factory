@@ -12,7 +12,7 @@ ITERATION="-${1:?iteration}"  # used to distinguish repeated runs
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greegy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
@@ -81,6 +81,15 @@ set -euo pipefail
 # echo "[train] will now run llamafactory-cli train ${CFG}"
 # llamafactory-cli train "${CFG}" \
 #   > "${LOG_DIR}/train.log" 2>&1
+
+# --------------- manual eval ---------------
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+llamafactory-cli train "cleaned_baseline.eval.yaml" \
+    model_name_or_path=${BASE_MODEL} \
+    adapter_name_or_path="${OUT_ADAPTER}" \
+    eval_dataset="${MODEL_VARIATION}_baseline_validation" \
+  > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
+
 
 # # # ------------- loop eval for all checkpoints -------------] 
 # # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
