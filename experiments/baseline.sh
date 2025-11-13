@@ -84,10 +84,26 @@ set -euo pipefail
 
 # --------------- manual eval ---------------
 # echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train "cleaned_baseline.eval.yaml" \
-    model_name_or_path=${BASE_MODEL} \
-    adapter_name_or_path="${OUT_ADAPTER}" \
-    eval_dataset="${MODEL_VARIATION}_baseline_validation" \
+llamafactory-cli train \
+    --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+    --adapter_name_or_path "${OUT_ADAPTER}" \
+    --trust_remote_code True \
+    --template llama3 \
+    --do_train False \
+    --do_eval True \
+    --finetuning_type lora \
+    --output_dir "${out}" \
+    --eval_dataset cleaned_baseline_validation \
+    --output_dir "${LOG_DIR}" \
+    --overwrite_output_dir True \
+    --cutoff_len 1024 \
+    --seed 42 \
+    --per_device_eval_batch_size 32 \
+    --bf16 True \
+    --predict_with_generate False \
+    --do_sample False \
+    --report_to wandb \
+    --run_name "${WANDB_NAME}" \
   > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
 
 
@@ -129,65 +145,65 @@ llamafactory-cli train "cleaned_baseline.eval.yaml" \
 # # # done
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
-export WANDB_JOB_TYPE="infer"
+# export WANDB_JOB_TYPE="infer"
 
-echo "staring run at $(date)"
-run_start_time=$(date +%s)
-DATASET_VARIATION="cleaned"
+# echo "staring run at $(date)"
+# run_start_time=$(date +%s)
+# DATASET_VARIATION="cleaned"
 
-for grade in {02..12}; do
-    grade_start_time=$(date +%s)
-    echo "[infer]   grade: ${grade}"
+# for grade in {02..12}; do
+#     grade_start_time=$(date +%s)
+#     echo "[infer]   grade: ${grade}"
 
-    # Keep SAME run id as training; do NOT create per-grade runs
-    export WANDB_RUN_ID
-    export WANDB_RESUME=allow
-    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"   # keep stable name for color-by-run
+#     # Keep SAME run id as training; do NOT create per-grade runs
+#     export WANDB_RUN_ID
+#     export WANDB_RESUME=allow
+#     export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"   # keep stable name for color-by-run
 
-    # Rich tags & notes for grouping/filtering in the UI
-    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
-    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
+#     # Rich tags & notes for grouping/filtering in the UI
+#     export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
+#     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
 
-    # If your inference script forwards env to W&B config, also export custom hints
-    export TRAIN_VARIANT="${MODEL_VARIATION}"
-    export INFER_VARIANT="${DATASET_VARIATION}"
-    export INFER_GRADE="${grade}"
+#     # If your inference script forwards env to W&B config, also export custom hints
+#     export TRAIN_VARIANT="${MODEL_VARIATION}"
+#     export INFER_VARIANT="${DATASET_VARIATION}"
+#     export INFER_GRADE="${grade}"
 
-    # echo the specific inference arguments
+#     # echo the specific inference arguments
 
 
-    # Call your inference (must use wandb.init(resume='allow') or respect env id)
-    #echo full command:
-    echo "python3 scripts/vllm_infer_metrics.py \
-        --model_name_or_path '${BASE_MODEL}' \
-        --adapter_name_or_path '${OUT_ADAPTER}' \
-        --save_path '${LOG_DIR}' \
-        --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}' \
-        --template llama3 \
-        --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
-        --grade '${grade}'"
+#     # Call your inference (must use wandb.init(resume='allow') or respect env id)
+#     #echo full command:
+#     echo "python3 scripts/vllm_infer_metrics.py \
+#         --model_name_or_path '${BASE_MODEL}' \
+#         --adapter_name_or_path '${OUT_ADAPTER}' \
+#         --save_path '${LOG_DIR}' \
+#         --save_name 'baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}' \
+#         --template llama3 \
+#         --dataset '${DATASET_VARIATION}_grade${grade}_validation' \
+#         --grade '${grade}'"
 
-    python3 scripts/vllm_infer_metrics.py \
-        --model_name_or_path "${BASE_MODEL}" \
-        --adapter_name_or_path "${OUT_ADAPTER}" \
-        --save_path "${LOG_DIR}" \
-        --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}" \
-        --template llama3 \
-        --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
-        --grade "${grade}" \
-        --seed "42" \
-        > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}${ITERATION}.log" 2>&1 || true
+#     python3 scripts/vllm_infer_metrics.py \
+#         --model_name_or_path "${BASE_MODEL}" \
+#         --adapter_name_or_path "${OUT_ADAPTER}" \
+#         --save_path "${LOG_DIR}" \
+#         --save_name "baseline_${MODEL_VARIATION}_g${grade}@${DATASET_VARIATION}${ITERATION}" \
+#         --template llama3 \
+#         --dataset "${DATASET_VARIATION}_grade${grade}_validation" \
+#         --grade "${grade}" \
+#         --seed "42" \
+#         > "${LOG_DIR}/logs/infer_g${grade}@${DATASET_VARIATION}${ITERATION}.log" 2>&1 || true
 
-    echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
-    grade_end_time=$(date +%s)
-    echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
-done
+#     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
+#     grade_end_time=$(date +%s)
+#     echo "[infer]   grade ${grade} took $((grade_end_time - grade_start_time)) seconds"
+# done
 
-end_time=$(date +%s)
-echo "Total infer time: $((end_time - run_start_time)) seconds"
-echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
+# end_time=$(date +%s)
+# echo "Total infer time: $((end_time - run_start_time)) seconds"
+# echo "[infer] completed all 3×3×11 calls into run ${WANDB_RUN_ID}"
 
-echo "Done. Tips in W&B UI:
-• Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
-• Color by run to keep train variants consistent.
-• Filter by tag ds:<dataset> or grade:<n> to slice inference results."
+# echo "Done. Tips in W&B UI:
+# • Group by group: ${EXPERIMENT_GROUP} to compare the three runs.
+# • Color by run to keep train variants consistent.
+# • Filter by tag ds:<dataset> or grade:<n> to slice inference results."
