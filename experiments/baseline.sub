@@ -1,7 +1,7 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/baseline.sh
-arguments       = $(ITERATION)
+arguments       = $ENV(ITERATION)
 log             = /scratch/wlacroix/logs/cleaned_baseline.log
 output          = /scratch/wlacroix/logs/cleaned_baseline.out
 error           = /scratch/wlacroix/logs/cleaned_baseline.err
