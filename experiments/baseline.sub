@@ -1,7 +1,7 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/baseline.sh
-# arguments       = $ENV(ITERATION)
+arguments       = $(ITERATION)
 log             = /scratch/wlacroix/logs/cleaned_baseline.log
 output          = /scratch/wlacroix/logs/cleaned_baseline.out
 error           = /scratch/wlacroix/logs/cleaned_baseline.err
@@ -17,8 +17,6 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +WantGPUHomeMounted     = true
 +MaxWallTime = 604800
 
-queue 1
-
-# queue iteration from (
-# 68
-# )
+queue iteration from (
+68
+)
