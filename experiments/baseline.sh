@@ -59,7 +59,7 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
-for ITERATION_NUM in {86..87}; do
+for ITERATION_NUM in {88..89}; do
     ITERATION="-${ITERATION_NUM}"
     echo "Starting experiment for iteration: ${ITERATION_NUM}"
     RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
