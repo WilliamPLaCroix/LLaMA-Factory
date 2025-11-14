@@ -108,11 +108,16 @@ class ComputeSimilarity:
  
         grades = []
         for pred, label, source in zip(preds, labels, inputs):
+            print("Prompt:", source)
             source = source.split("\n") # source includes system prompt and input, need to separate
             grade = int(source[2].split(" ")[-1].strip('.')) # get the grade from the input prompt
             grades.append(grade)
             source = source[3][:-9] # remove the "assistant" on end of string
+            print("Source:", source)
+            print("Input:", np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id))
             pred = pred[11:] # remove the "assistant" at beginning of string
+            print("Pred:", pred)
+            print("Label:", label)
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
