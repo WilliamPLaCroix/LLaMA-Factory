@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VLLM_ENABLE_V1_MULTIPROCESSING=0
+# export VLLM_ENABLE_V1_MULTIPROCESSING=0
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
@@ -117,14 +117,15 @@ for ITERATION_NUM in {76..80}; do
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     export WANDB_JOB_TYPE="infer"
-    echo "python3 scripts/vllm_infer_metrics.py \
-      --model_name_or_path '${BASE_MODEL}' \
-      --adapter_name_or_path '${OUT_ADAPTER}' \
-      --save_path '${LOG_DIR}' \
-      --save_name 'cleaned_baseline_validation${ITERATION}' \
-      --template llama3 \
-      --dataset cleaned_baseline_validation \
-      --grade '${grade}'"
+    python3 scripts/vllm_infer_metrics.py \
+        --model_name_or_path "${BASE_MODEL}" \
+        --adapter_name_or_path "${OUT_ADAPTER}" \
+        --save_path "${LOG_DIR}" \
+        --save_name "cleaned_baseline_validation${ITERATION}" \
+        --template llama3 \
+        --dataset "cleaned_baseline_validation" \
+        --seed "42" \
+        > "${LOG_DIR}/logs/cleaned_baseline_validation${ITERATION}.log" 2>&1
 done
 
 # # # ------------- loop eval for all checkpoints -------------] 
