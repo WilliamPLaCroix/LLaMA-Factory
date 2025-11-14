@@ -93,7 +93,7 @@ class ComputeSimilarity:
 
         #preds = np.argmax(preds, axis=-1)
 
-        raw_inputs = np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
+        raw_inputs = np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, numpify(eval_preds.inputs), self.tokenizer.pad_token_id)
 
         preds = numpify(eval_preds.predictions)
         labels = numpify(eval_preds.label_ids)
