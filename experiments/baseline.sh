@@ -90,7 +90,7 @@ for ITERATION_NUM in {83}; do
     # llamafactory-cli train "${CFG}" \
     #   > "${LOG_DIR}/train.log" 2>&1
 
-    --------------- manual eval ---------------
+    # --------------- manual eval ---------------
     echo "[train] will now run llamafactory-cli train ${CFG}"
     echo "starting manual eval"
     export WANDB_JOB_TYPE="eval"
