@@ -348,8 +348,10 @@ def vllm_infer(
     # print_repro_debug(LLM, tokenizer, sampling_params, prompts, label="AFTER")
 
     
-    system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
-    sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
+    # system_prompt = f"user\n\nRewrite this Input sentence to make it easily understandable by students in Grade {grade}"
+    # sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
+
+    sources = [prompt.split("\n")[3].removesuffix("assistant\n\n") for prompt in prompts]
 
     with open(f"{save_path}/generated_predictions/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
         for text, pred, label in zip(sources, preds, labels):
