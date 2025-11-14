@@ -59,7 +59,7 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
-for ITERATION_NUM in {83}; do
+for ITERATION_NUM in {84..85}; do
     ITERATION="-${ITERATION_NUM}"
     echo "Starting experiment for iteration: ${ITERATION_NUM}"
     RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
@@ -113,7 +113,7 @@ for ITERATION_NUM in {83}; do
     --do_sample False \
     --report_to wandb \
     --run_name "${WANDB_NAME}" \
-    > "${LOG_DIR}/cleaned_baseline_validation_${ITERATION}_eval.log" 2>&1
+    > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
     echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
