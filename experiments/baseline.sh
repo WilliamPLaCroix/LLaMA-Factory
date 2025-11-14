@@ -59,7 +59,7 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
-for ITERATION_NUM in {70..75}; do
+for ITERATION_NUM in {76..80}; do
     ITERATION="-${ITERATION_NUM}"
     echo "Starting experiment for iteration: ${ITERATION_NUM}"
     RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
@@ -92,27 +92,39 @@ for ITERATION_NUM in {70..75}; do
 
     # --------------- manual eval ---------------
     # echo "[train] will now run llamafactory-cli train ${CFG}"
-    llamafactory-cli train \
-    --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-    --adapter_name_or_path "${OUT_ADAPTER}" \
-    --trust_remote_code True \
-    --template llama3 \
-    --do_train False \
-    --do_eval True \
-    --finetuning_type lora \
-    --eval_dataset cleaned_baseline_validation \
-    --output_dir "${LOG_DIR}" \
-    --overwrite_output_dir True \
-    --cutoff_len 1024 \
-    --seed 42 \
-    --per_device_eval_batch_size 32 \
-    --bf16 True \
-    --predict_with_generate False \
-    --do_sample False \
-    --report_to wandb \
-    --run_name "${WANDB_NAME}" \
-    > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
-    echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+    # export WANDB_JOB_TYPE="eval"
+    # llamafactory-cli train \
+    # --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+    # --adapter_name_or_path "${OUT_ADAPTER}" \
+    # --trust_remote_code True \
+    # --template llama3 \
+    # --do_train False \
+    # --do_eval True \
+    # --finetuning_type lora \
+    # --eval_dataset cleaned_baseline_validation \
+    # --output_dir "${LOG_DIR}" \
+    # --overwrite_output_dir True \
+    # --cutoff_len 1024 \
+    # --seed 42 \
+    # --per_device_eval_batch_size 32 \
+    # --bf16 True \
+    # --predict_with_generate False \
+    # --do_sample False \
+    # --report_to wandb \
+    # --run_name "${WANDB_NAME}" \
+    # > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
+    # echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+
+    # --------------- INFER (same run; tag infer dataset + grade) ---------------
+    export WANDB_JOB_TYPE="infer"
+    echo "python3 scripts/vllm_infer_metrics.py \
+      --model_name_or_path '${BASE_MODEL}' \
+      --adapter_name_or_path '${OUT_ADAPTER}' \
+      --save_path '${LOG_DIR}' \
+      --save_name 'cleaned_baseline_validation${ITERATION}' \
+      --template llama3 \
+      --dataset cleaned_baseline_validation \
+      --grade '${grade}'"
 done
 
 # # # ------------- loop eval for all checkpoints -------------] 
