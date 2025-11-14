@@ -7,105 +7,112 @@ MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
-ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
-ITERATION="-${ITERATION_NUM}"
-
-# ---------------- Paths & env ----------------
-source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
-REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
-CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
-LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
-CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
-mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
-
-# ---------------- Config choose: fresh vs resume ----------------
-if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
-  echo "[train] Resuming with ${CFG}"
-else
-  CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
-  echo "[train] Fresh start with ${CFG}"
-fi
-
-# ---------------- Stable W&B run id per train variant ----------------
-ID_DIR="${HOME}/.llf_wandb_ids"
-mkdir -p "${ID_DIR}"
-WBRUN_FILE="${ID_DIR}/${RUN_KEY}.id"
-
-if [[ -f "${WBRUN_FILE}" ]]; then
-  export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
-else
-  # short stable id
-  export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
-' | cut -c1-12)"
-  echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
-fi
-
-# -------------------- Persist for other scripts and future resumes
-printf '%s
-' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
-printf '%s
-' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
-
-# An experiment group id to compare the trio {original,cleaned,augmented} together
-EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
-
-# ---------------- Core W&B env ----------------
-export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
-[[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
-export WANDB_DIR="${LOG_DIR}"
-export WANDB_RESUME=allow
-export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
-export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
-export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
+#ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
+#ITERATION="-${ITERATION_NUM}"
 
 
-# --------------- System info ---------------
-source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
-conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
-cd "$REPO"
+# for loop to iterate through evals by ITERATION
+iter_range=("{69..75}")
+for ITERATION_NUM in ${iter_range[@]}; do
+    ITERATION="-${ITERATION_NUM}"
+    echo "Starting experiment for iteration: ${ITERATION_NUM}"
+    # ---------------- Paths & env ----------------
+    source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
+    REPO="/nethome/wlacroix/LLaMA-Factory"
+    BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
+    CACHE="/scratch/wlacroix/.cache/llama_factory"
+    RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
+    LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
+    CFG_DIR="${REPO}/experiments/configs"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+    mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
-# if ! python -c "import bert_score" >/dev/null 2>&1; then
-#   python -m pip install -U bert-score
-# fi
+    # ---------------- Config choose: fresh vs resume ----------------
+    if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
+    CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+    echo "[train] Resuming with ${CFG}"
+    else
+    CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
+    echo "[train] Fresh start with ${CFG}"
+    fi
 
-echo "=== ENV ==="
-echo "Conda: $CONDA_DEFAULT_ENV"; which python
-nvidia-smi || true; nvcc --version || true
+    # ---------------- Stable W&B run id per train variant ----------------
+    ID_DIR="${HOME}/.llf_wandb_ids"
+    mkdir -p "${ID_DIR}"
+    WBRUN_FILE="${ID_DIR}/${RUN_KEY}.id"
 
-set -euo pipefail
+    if [[ -f "${WBRUN_FILE}" ]]; then
+    export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
+    else
+    # short stable id
+    export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
+    ' | cut -c1-12)"
+    echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
+    fi
 
-# --------------- TRAIN ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+    # -------------------- Persist for other scripts and future resumes
+    printf '%s
+    ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+    printf '%s
+    ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
-# --------------- manual eval ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train \
-  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-  --adapter_name_or_path "${OUT_ADAPTER}" \
-  --trust_remote_code True \
-  --template llama3 \
-  --do_train False \
-  --do_eval True \
-  --finetuning_type lora \
-  --eval_dataset cleaned_baseline_validation \
-  --output_dir "${LOG_DIR}" \
-  --overwrite_output_dir True \
-  --cutoff_len 1024 \
-  --seed 42 \
-  --per_device_eval_batch_size 32 \
-  --bf16 True \
-  --predict_with_generate False \
-  --do_sample False \
-  --report_to wandb \
-  --run_name "${WANDB_NAME}" \
-  > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
+    # An experiment group id to compare the trio {original,cleaned,augmented} together
+    EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
 
+    # ---------------- Core W&B env ----------------
+    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
+    [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
+    export WANDB_DIR="${LOG_DIR}"
+    export WANDB_RESUME=allow
+    export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
+    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
+    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
+
+
+    # --------------- System info ---------------
+    source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
+    conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
+    cd "$REPO"
+
+    # if ! python -c "import bert_score" >/dev/null 2>&1; then
+    #   python -m pip install -U bert-score
+    # fi
+
+    echo "=== ENV ==="
+    echo "Conda: $CONDA_DEFAULT_ENV"; which python
+    nvidia-smi || true; nvcc --version || true
+
+    set -euo pipefail
+
+    # --------------- TRAIN ---------------
+    # echo "[train] will now run llamafactory-cli train ${CFG}"
+    # llamafactory-cli train "${CFG}" \
+    #   > "${LOG_DIR}/train.log" 2>&1
+
+    # --------------- manual eval ---------------
+    # echo "[train] will now run llamafactory-cli train ${CFG}"
+    llamafactory-cli train \
+    --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+    --adapter_name_or_path "${OUT_ADAPTER}" \
+    --trust_remote_code True \
+    --template llama3 \
+    --do_train False \
+    --do_eval True \
+    --finetuning_type lora \
+    --eval_dataset cleaned_baseline_validation \
+    --output_dir "${LOG_DIR}" \
+    --overwrite_output_dir True \
+    --cutoff_len 1024 \
+    --seed 42 \
+    --per_device_eval_batch_size 32 \
+    --bf16 True \
+    --predict_with_generate False \
+    --do_sample False \
+    --report_to wandb \
+    --run_name "${WANDB_NAME}" \
+    > "${LOG_DIR}/eval${ITERATION}.log" 2>&1
+    echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+done
 
 # # # ------------- loop eval for all checkpoints -------------] 
 # # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do

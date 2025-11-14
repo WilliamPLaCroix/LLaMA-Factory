@@ -17,6 +17,8 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +WantGPUHomeMounted     = true
 +MaxWallTime = 604800
 
-queue iteration from (
-68
-)
+queue 1
+
+# queue iteration from (
+# 69
+# )
