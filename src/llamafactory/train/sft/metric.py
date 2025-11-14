@@ -109,7 +109,7 @@ class ComputeSimilarity:
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
  
         grades = []
-        for pred, label, source, input, raw_input in zip(preds, labels, inputs, raw_inputs):
+        for pred, label, source, raw_input in zip(preds, labels, inputs, raw_inputs):
             source = source.split("\n") # source includes system prompt and input, need to separate
             grade = int(source[2].split(" ")[-1].strip('.')) # get the grade from the input prompt
             grades.append(grade)
