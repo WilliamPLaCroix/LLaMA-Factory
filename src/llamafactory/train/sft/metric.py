@@ -93,6 +93,8 @@ class ComputeSimilarity:
 
         #preds = np.argmax(preds, axis=-1)
 
+        raw_inputs = np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
+
         preds = numpify(eval_preds.predictions)
         labels = numpify(eval_preds.label_ids)
         inputs = numpify(eval_preds.inputs)
@@ -107,13 +109,14 @@ class ComputeSimilarity:
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
  
         grades = []
-        for pred, label, source in zip(preds, labels, inputs):
+        for pred, label, source, input, raw_input in zip(preds, labels, inputs, raw_inputs):
             source = source.split("\n") # source includes system prompt and input, need to separate
             grade = int(source[2].split(" ")[-1].strip('.')) # get the grade from the input prompt
             grades.append(grade)
             source = source[3][:-9] # remove the "assistant" on end of string
-            print('{'+f'"prompt": "{source}", "predict": "{pred}", "label": "{label}"'+'}')
-            pred = pred[11:] # remove the "assistant" at beginning of string
+            pred = pred.split("\n\n")[1] # remove the "assistant" at beginning of string
+            print("Prompt:", input, "\nSource:", source, "\nInput:", raw_input, "Pred:", pred, "Label:", label, "\n", "-"*80) # mimic vllm infer log output
+            # print('{'+f'"prompt": "{source}", "predict": "{pred}", "label": "{label}"'+'}') # mimic jsonl format for analysis
             sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
             self.score_dict["sari"].append(sari_score['sari'])
 
