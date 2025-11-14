@@ -114,7 +114,7 @@ class ComputeSimilarity:
             grades.append(grade)
             source = source[3][:-9] # remove the "assistant" on end of string
             print("Source:", source)
-            print("Input:", np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id))
+            print("Input:", np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id))
             pred = pred[11:] # remove the "assistant" at beginning of string
             print("Pred:", pred)
             print("Label:", label)
