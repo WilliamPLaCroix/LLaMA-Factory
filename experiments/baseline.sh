@@ -12,7 +12,7 @@ ENTITY=""                              # optional W&B entity
 
 
 # for loop to iterate through evals by ITERATION
-iter_range=("{69..75}")
+iter_range={69..75}
 for ITERATION_NUM in ${iter_range[@]}; do
     ITERATION="-${ITERATION_NUM}"
     echo "Starting experiment for iteration: ${ITERATION_NUM}"
