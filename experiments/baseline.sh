@@ -10,30 +10,60 @@ ENTITY=""                              # optional W&B entity
 #ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
 #ITERATION="-${ITERATION_NUM}"
 
+# ---------------- Paths & env ----------------
+source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
+REPO="/nethome/wlacroix/LLaMA-Factory"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
+CACHE="/scratch/wlacroix/.cache/llama_factory"
+
+LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
+CFG_DIR="${REPO}/experiments/configs"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
+
+# ---------------- Config choose: fresh vs resume ----------------
+if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
+CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+echo "[train] Resuming with ${CFG}"
+else
+CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
+echo "[train] Fresh start with ${CFG}"
+fi
+
+# An experiment group id to compare the trio {original,cleaned,augmented} together
+EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
+
+# ---------------- Core W&B env ----------------
+export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
+[[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
+export WANDB_DIR="${LOG_DIR}"
+export WANDB_RESUME=allow
+export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
+
+export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
+
+
+# --------------- System info ---------------
+source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
+conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
+cd "$REPO"
+
+# if ! python -c "import bert_score" >/dev/null 2>&1; then
+#   python -m pip install -U bert-score
+# fi
+
+echo "=== ENV ==="
+echo "Conda: $CONDA_DEFAULT_ENV"; which python
+nvidia-smi || true; nvcc --version || true
+
+set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
-for ITERATION_NUM in {69..75}; do
+for ITERATION_NUM in {70..75}; do
     ITERATION="-${ITERATION_NUM}"
     echo "Starting experiment for iteration: ${ITERATION_NUM}"
-    # ---------------- Paths & env ----------------
-    source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
-    REPO="/nethome/wlacroix/LLaMA-Factory"
-    BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
-    CACHE="/scratch/wlacroix/.cache/llama_factory"
     RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
-    LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
-    CFG_DIR="${REPO}/experiments/configs"
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
-    mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
-
-    # ---------------- Config choose: fresh vs resume ----------------
-    if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-    CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
-    echo "[train] Resuming with ${CFG}"
-    else
-    CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
-    echo "[train] Fresh start with ${CFG}"
-    fi
+    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
 
     # ---------------- Stable W&B run id per train variant ----------------
     ID_DIR="${HOME}/.llf_wandb_ids"
@@ -54,34 +84,6 @@ for ITERATION_NUM in {69..75}; do
     ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
     printf '%s
     ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
-
-    # An experiment group id to compare the trio {original,cleaned,augmented} together
-    EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
-
-    # ---------------- Core W&B env ----------------
-    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
-    [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
-    export WANDB_DIR="${LOG_DIR}"
-    export WANDB_RESUME=allow
-    export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
-    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
-    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
-
-
-    # --------------- System info ---------------
-    source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
-    conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
-    cd "$REPO"
-
-    # if ! python -c "import bert_score" >/dev/null 2>&1; then
-    #   python -m pip install -U bert-score
-    # fi
-
-    echo "=== ENV ==="
-    echo "Conda: $CONDA_DEFAULT_ENV"; which python
-    nvidia-smi || true; nvcc --version || true
-
-    set -euo pipefail
 
     # --------------- TRAIN ---------------
     # echo "[train] will now run llamafactory-cli train ${CFG}"
