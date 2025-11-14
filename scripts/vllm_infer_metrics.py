@@ -177,7 +177,7 @@ import wandb
 
 def vllm_infer(
     model_name_or_path: str,
-    adapter_name_or_path: str = None,
+    adapter_name_or_path: str,
     dataset: str = "alpaca_en_demo",
     dataset_dir: str = "data",
     template: str = "default",
