@@ -59,76 +59,78 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
-for ITERATION_NUM in {95..96}; do
-    ITERATION="-${ITERATION_NUM}"
-    echo "Starting experiment for iteration: ${ITERATION_NUM}"
-    RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
-    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
+# for ITERATION_NUM in {97..98}; do
+ITERATION_NUM=97
 
-    # ---------------- Stable W&B run id per train variant ----------------
-    ID_DIR="${HOME}/.llf_wandb_ids"
-    mkdir -p "${ID_DIR}"
-    WBRUN_FILE="${ID_DIR}/${RUN_KEY}.id"
+ITERATION="-${ITERATION_NUM}"
+echo "Starting experiment for iteration: ${ITERATION_NUM}"
+RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
+export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
 
-    if [[ -f "${WBRUN_FILE}" ]]; then
-    export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
-    else
-    # short stable id
-    export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
-    ' | cut -c1-12)"
-    echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
-    fi
+# ---------------- Stable W&B run id per train variant ----------------
+ID_DIR="${HOME}/.llf_wandb_ids"
+mkdir -p "${ID_DIR}"
+WBRUN_FILE="${ID_DIR}/${RUN_KEY}.id"
 
-    # -------------------- Persist for other scripts and future resumes
-    printf '%s
-    ' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
-    printf '%s
-    ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
+if [[ -f "${WBRUN_FILE}" ]]; then
+export WANDB_RUN_ID="$(cat "${WBRUN_FILE}")"
+else
+# short stable id
+export WANDB_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' 
+' | cut -c1-12)"
+echo "${WANDB_RUN_ID}" > "${WBRUN_FILE}"
+fi
 
-    # --------------- TRAIN ---------------
-    # echo "[train] will now run llamafactory-cli train ${CFG}"
-    # llamafactory-cli train "${CFG}" \
-    #   > "${LOG_DIR}/train.log" 2>&1
+# -------------------- Persist for other scripts and future resumes
+printf '%s
+' "${WANDB_RUN_ID}" > "${OUT_ADAPTER}/wandb_parent_id.txt"
+printf '%s
+' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
-    # --------------- manual eval ---------------
-    echo "[train] will now run llamafactory-cli train ${CFG}"
-    # echo "starting manual eval"
-    # export WANDB_JOB_TYPE="eval"
-    # llamafactory-cli train \
-    # --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-    # --adapter_name_or_path "${OUT_ADAPTER}" \
-    # --trust_remote_code True \
-    # --template llama3 \
-    # --do_train False \
-    # --do_eval True \
-    # --finetuning_type lora \
-    # --eval_dataset cleaned_baseline_validation \
-    # --output_dir "${LOG_DIR}" \
-    # --overwrite_output_dir True \
-    # --cutoff_len 1024 \
-    # --seed 42 \
-    # --per_device_eval_batch_size 32 \
-    # --bf16 True \
-    # --predict_with_generate False \
-    # --do_sample False \
-    # --report_to wandb \
-    # --run_name "${WANDB_NAME}" \
-    # > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
-    # echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+# --------------- TRAIN ---------------
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+# llamafactory-cli train "${CFG}" \
+#   > "${LOG_DIR}/train.log" 2>&1
 
-    # --------------- INFER (same run; tag infer dataset + grade) ---------------
-    echo "starting vllm eval"
-    export WANDB_JOB_TYPE="infer"
-    python3 scripts/vllm_infer_metrics.py \
-        --model_name_or_path "${BASE_MODEL}" \
-        --adapter_name_or_path "${OUT_ADAPTER}" \
-        --save_path "${LOG_DIR}" \
-        --save_name "cleaned_baseline_validation${ITERATION}_infer" \
-        --template llama3 \
-        --dataset "cleaned_baseline_validation" \
-        --seed "42" \
-        > "${LOG_DIR}/logs/cleaned_baseline_validation${ITERATION}.log" 2>&1
-done
+# --------------- manual eval ---------------
+echo "[train] will now run llamafactory-cli train ${CFG}"
+# echo "starting manual eval"
+# export WANDB_JOB_TYPE="eval"
+# llamafactory-cli train \
+# --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+# --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
+# --trust_remote_code True \
+# --template llama3 \
+# --do_train False \
+# --do_eval True \
+# --finetuning_type lora \
+# --eval_dataset cleaned_baseline_validation \
+# --output_dir "${LOG_DIR}" \
+# --overwrite_output_dir True \
+# --cutoff_len 1024 \
+# --seed 42 \
+# --per_device_eval_batch_size 32 \
+# --bf16 True \
+# --predict_with_generate False \
+# --do_sample False \
+# --report_to wandb \
+# --run_name "${WANDB_NAME}" \
+# > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
+# echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+
+# --------------- INFER (same run; tag infer dataset + grade) ---------------
+echo "starting vllm eval"
+export WANDB_JOB_TYPE="infer"
+python3 scripts/vllm_infer_metrics.py \
+    --model_name_or_path "${BASE_MODEL}" \
+    --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
+    --save_path "${LOG_DIR}" \
+    --save_name "cleaned_baseline_validation${ITERATION}_infer" \
+    --template llama3 \
+    --dataset "cleaned_baseline_validation" \
+    --seed "42" \
+    > "${LOG_DIR}/logs/cleaned_baseline_validation${ITERATION}.log" 2>&1
+
 
 # # # ------------- loop eval for all checkpoints -------------] 
 # # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
