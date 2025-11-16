@@ -305,7 +305,7 @@ def vllm_infer(
         seed=seed,
     )
     if model_args.adapter_name_or_path is not None:
-        lora_request = LoRARequest("default", 1, model_args.adapter_name_or_path)
+        lora_request = LoRARequest("default", 1, model_args.adapter_name_or_path[0])
     else:
         lora_request = None
 
@@ -352,11 +352,13 @@ def vllm_infer(
     # sources = [prompt.removeprefix(system_prompt).removesuffix("assistant\n\n") for prompt in prompts]
 
     sources = [prompt.split("\n")[3][:-9] for prompt in prompts]
+    sari_labels = [[label] for label in labels]
+
+    sari_score = sari.compute(sources=sources, predictions=preds, references=sari_labels)
+    score_dict["sari"].append(sari_score['sari'])
 
     with open(f"{save_path}/generated_predictions/{save_name}_source-pred-label.jsonl", "w", encoding="utf-8") as f:
         for text, pred, label in zip(sources, preds, labels):
-            sari_score = sari.compute(sources=[text], predictions=[pred], references=[[label]])
-            score_dict["sari"].append(sari_score['sari'])
             f.write(json.dumps({"prompt": text, "predict": pred, "label": label}, ensure_ascii=False) + "\n")
 
     print("*" * 70)
