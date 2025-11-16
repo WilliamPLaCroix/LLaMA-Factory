@@ -18,7 +18,7 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter/checkpoint-1768"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
@@ -60,7 +60,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=97
+ITERATION_NUM=98
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -123,7 +123,7 @@ echo "starting vllm eval"
 export WANDB_JOB_TYPE="infer"
 python3 scripts/vllm_infer_metrics.py \
     --model_name_or_path "${BASE_MODEL}" \
-    --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
+    --adapter_name_or_path "${OUT_ADAPTER}" \
     --save_path "${LOG_DIR}" \
     --save_name "cleaned_baseline_validation${ITERATION}_infer" \
     --template llama3 \
