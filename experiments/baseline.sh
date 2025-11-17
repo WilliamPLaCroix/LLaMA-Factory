@@ -101,7 +101,6 @@ llamafactory-cli export \
   --trust_remote_code true \
   --template llama3 \
   --export_dir ${MERGED_MODEL} \
-  --export_legacy_format: false \
   --export_size 5 \
   --export_device cpu \
   > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
