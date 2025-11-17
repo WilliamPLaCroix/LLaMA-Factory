@@ -144,7 +144,7 @@ python3 scripts/vllm_infer_metrics.py \
   --template llama3 \
   --dataset "cleaned_baseline_validation" \
   --seed "42" \
-  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}.log" 2>&1
+  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_infer.log" 2>&1
 
 
 # # # ------------- loop eval for all checkpoints -------------] 
