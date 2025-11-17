@@ -61,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=100
+ITERATION_NUM=101
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -94,16 +94,16 @@ printf '%s
 #   > "${LOG_DIR}/train.log" 2>&1
 
 # --------------- MERGE ---------------
-echo "Begin Merge"
-llamafactory-cli export \
-  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-  --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter \
-  --trust_remote_code true \
-  --template llama3 \
-  --export_dir ${MERGED_MODEL} \
-  --export_size 5 \
-  --export_device cpu \
-  > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
+# echo "Begin Merge"
+# llamafactory-cli export \
+#   --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+#   --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter \
+#   --trust_remote_code true \
+#   --template llama3 \
+#   --export_dir ${MERGED_MODEL} \
+#   --export_size 5 \
+#   --export_device cpu \
+#   > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
 
 # --------------- manual eval ---------------
 echo "[train] will now run llamafactory-cli train ${CFG} eval only"
