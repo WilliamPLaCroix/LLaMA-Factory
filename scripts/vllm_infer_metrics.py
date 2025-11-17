@@ -248,7 +248,7 @@ def vllm_infer(
             # store as config for filtering and as summary for quick viewing
             wandb.config.update({"parent_run_id": parent_id}, allow_val_change=True)
             wandb.run.summary["parent_run_id"] = parent_id
-    print("Run parent id:", parent_id)
+            print("Run parent id:", parent_id)
 
     model_args, data_args, _, generating_args = get_infer_args(
         dict(
