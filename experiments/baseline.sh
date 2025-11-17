@@ -18,7 +18,8 @@ CACHE="/scratch/wlacroix/.cache/llama_factory"
 
 LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
 CFG_DIR="${REPO}/experiments/configs"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter/checkpoint-1768"
+MERGED_MODEL="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}_merged"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
@@ -60,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=98
+ITERATION_NUM=100
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -92,44 +93,59 @@ printf '%s
 # llamafactory-cli train "${CFG}" \
 #   > "${LOG_DIR}/train.log" 2>&1
 
+# --------------- MERGE ---------------
+echo "Begin Merge"
+llamafactory-cli export \
+  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+  --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter \
+  --trust_remote_code true \
+  --template llama3 \
+  --export_dir ${MERGED_MODEL} \
+  --export_legacy_format: false \
+  --export_size 5 \
+  --export_device cpu \
+  > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
+
 # --------------- manual eval ---------------
-echo "[train] will now run llamafactory-cli train ${CFG}"
-# echo "starting manual eval"
-# export WANDB_JOB_TYPE="eval"
-# llamafactory-cli train \
+echo "[train] will now run llamafactory-cli train ${CFG} eval only"
+echo "starting manual eval"
+export WANDB_JOB_TYPE="eval"
 # --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
 # --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
-# --trust_remote_code True \
-# --template llama3 \
-# --do_train False \
-# --do_eval True \
-# --finetuning_type lora \
-# --eval_dataset cleaned_baseline_validation \
-# --output_dir "${LOG_DIR}" \
-# --overwrite_output_dir True \
-# --cutoff_len 1024 \
-# --seed 42 \
-# --per_device_eval_batch_size 32 \
-# --bf16 True \
-# --predict_with_generate False \
-# --do_sample False \
-# --report_to wandb \
-# --run_name "${WANDB_NAME}" \
-# > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
-# echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+llamafactory-cli train \
+  --model_name_or_path "${MERGED_MODEL}" \
+  --trust_remote_code True \
+  --template llama3 \
+  --do_train False \
+  --do_eval True \
+  --finetuning_type lora \
+  --eval_dataset cleaned_baseline_validation \
+  --output_dir "${LOG_DIR}" \
+  --overwrite_output_dir True \
+  --cutoff_len 1024 \
+  --seed 42 \
+  --per_device_eval_batch_size 32 \
+  --bf16 True \
+  --predict_with_generate False \
+  --do_sample False \
+  --report_to wandb \
+  --run_name "${WANDB_NAME}" \
+  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
+echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
 echo "starting vllm eval"
 export WANDB_JOB_TYPE="infer"
+    # --model_name_or_path "${BASE_MODEL}" \
+    # --adapter_name_or_path "${OUT_ADAPTER}" \
 python3 scripts/vllm_infer_metrics.py \
-    --model_name_or_path "${BASE_MODEL}" \
-    --adapter_name_or_path "${OUT_ADAPTER}" \
-    --save_path "${LOG_DIR}" \
-    --save_name "cleaned_baseline_validation${ITERATION}_infer" \
-    --template llama3 \
-    --dataset "cleaned_baseline_validation" \
-    --seed "42" \
-    > "${LOG_DIR}/logs/cleaned_baseline_validation${ITERATION}.log" 2>&1
+  --model_name_or_path "${MERGED_MODEL}" \
+  --save_path "${LOG_DIR}" \
+  --save_name "cleaned_baseline_validation${ITERATION}_infer" \
+  --template llama3 \
+  --dataset "cleaned_baseline_validation" \
+  --seed "42" \
+  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}.log" 2>&1
 
 
 # # # ------------- loop eval for all checkpoints -------------] 
