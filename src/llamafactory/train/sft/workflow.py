@@ -126,7 +126,11 @@ def run_sft(
 ):
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
-    tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
+    if training_args.do_eval:
+        tokenizer.padding_side = "right"
+        tokenizer.truncation_side = "right"
+    else:
+        tokenizer.padding_side = 'left' # padding to right (otherwise SFTTrainer shows warning)
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
     dataset_module = get_dataset(template, model_args, data_args, training_args, stage="sft", **tokenizer_module)
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
@@ -163,8 +167,20 @@ def run_sft(
     metric_module = {}
     metric_module["compute_metrics"] = ComputeSimilarity(tokenizer=tokenizer)
 
+
+    ### ------------------ Force greedy Gen kwargs ------------------ ###
+    gen_cfg = generating_args
+    gen_cfg.do_sample = False
+    gen_cfg.num_beams = 1
+    gen_cfg.temperature = 0.0
+    gen_cfg.top_p = 1.0
+    gen_cfg.top_k = -1
+    gen_cfg.repetition_penalty = 1.0
+    gen_cfg.max_new_tokens = 1024
+    gen_cfg.max_length = None  # let max_new_tokens control length
+    # ------------------------------------------------------------ ###
     # Keyword arguments for `model.generate`
-    gen_kwargs = generating_args.to_dict(obey_generation_config=True)
+    gen_kwargs = gen_cfg.to_dict(obey_generation_config=True)
     gen_kwargs["eos_token_id"] = [tokenizer.eos_token_id] + tokenizer.additional_special_tokens_ids
     gen_kwargs["pad_token_id"] = tokenizer.pad_token_id
     gen_kwargs["logits_processor"] = get_logits_processor()

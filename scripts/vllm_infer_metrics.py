@@ -232,15 +232,16 @@ def vllm_infer(
                 list(filter(lambda x: x != IGNORE_INDEX, sample["labels"])), skip_special_tokens=skip_special_tokens
             )
         )
-
+    stop_ids = [128001, 128008, 128009]
     sampling_params = SamplingParams(
-        repetition_penalty=generating_args.repetition_penalty or 1.0,  # repetition_penalty must > 0
-        temperature=generating_args.temperature,
-        top_p=generating_args.top_p or 1.0,  # top_p must > 0
-        top_k=generating_args.top_k or -1,  # top_k must > 0
+        repetition_penalty=1.0, # generating_args.repetition_penalty or 1.0,  # repetition_penalty must > 0
+        temperature=0, # generating_args.temperature,
+        top_p=1.0, # generating_args.top_p or 1.0,  # top_p must > 0
+        top_k=-1, # generating_args.top_k or -1,  # top_k must > 0
         stop_token_ids=template_obj.get_stop_token_ids(tokenizer),
-        max_tokens=generating_args.max_new_tokens,
+        max_tokens=1024, # generating_args.max_new_tokens,
         skip_special_tokens=skip_special_tokens,
+        stop_token_ids=stop_ids,
         seed=seed,
     )
     if model_args.adapter_name_or_path is not None:
