@@ -26,6 +26,10 @@ from ...model import load_model, load_tokenizer
 from ..trainer_utils import create_modelcard_and_push
 from .metric import ComputeAccuracy, ComputeSimilarity
 from .trainer import CustomSeq2SeqTrainer
+import json
+import os
+from dataclasses import asdict
+from datetime import datetime
 
 
 if TYPE_CHECKING:
@@ -35,6 +39,81 @@ if TYPE_CHECKING:
 
 
 logger = get_logger(__name__)
+
+def save_debug_state(payload, save_dir, filename_prefix):
+    os.makedirs(save_dir, exist_ok=True)
+    timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    filename = f"{filename_prefix}_{timestamp}.json"
+    path = os.path.join(save_dir, filename)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, sort_keys=True)
+    print(f"[debug] wrote debug state to {path}")
+    return path
+
+def dump_llamafactory_state_to_json(
+    model,
+    tokenizer,
+    model_args,
+    data_args,
+    training_args,
+    generating_args,
+    save_dir,
+    filename_prefix="llamafactory",
+    example_prompt=None,
+):
+    # GeneratingArguments as dict
+    gen_args_dict = asdict(generating_args)
+
+    # Training arguments, only generation related fields
+    training_gen = {
+        "per_device_eval_batch_size": getattr(training_args, "per_device_eval_batch_size", None),
+        "per_device_train_batch_size": getattr(training_args, "per_device_train_batch_size", None),
+        "predict_with_generate": getattr(training_args, "predict_with_generate", None),
+        "generation_max_length": getattr(training_args, "generation_max_length", None),
+        "generation_num_beams": getattr(training_args, "generation_num_beams", None),
+    }
+
+    # Model generation config
+    try:
+        gen_config = model.generation_config.to_dict()
+    except Exception:
+        try:
+            gen_config = dict(model.generation_config)
+        except Exception:
+            gen_config = str(model.generation_config)
+
+    # Tokenizer info
+    tok_info = {
+        "bos_token_id": tokenizer.bos_token_id,
+        "eos_token_id": tokenizer.eos_token_id,
+        "pad_token_id": tokenizer.pad_token_id,
+        "unk_token_id": tokenizer.unk_token_id,
+        "padding_side": getattr(tokenizer, "padding_side", None),
+        "truncation_side": getattr(tokenizer, "truncation_side", None),
+        "model_max_length": getattr(tokenizer, "model_max_length", None),
+    }
+
+    # Model config
+    try:
+        model_cfg = model.config.to_dict()
+    except Exception:
+        model_cfg = str(model.config)
+
+    payload = {
+        "backend": "llamafactory",
+        "model_name_or_path": getattr(model_args, "model_name_or_path", None),
+        "adapter_name_or_path": getattr(model_args, "adapter_name_or_path", None),
+        "merged_model": True,   # set manually if you know this run uses merged weights
+        "data_args": asdict(data_args),
+        "training_args_generation": training_gen,
+        "generating_args": gen_args_dict,
+        "model_generation_config": gen_config,
+        "model_config": model_cfg,
+        "tokenizer_info": tok_info,
+        "example_prompt": example_prompt,
+    }
+
+    return save_debug_state(payload, save_dir, filename_prefix)
 
 
 def run_sft(
@@ -102,6 +181,20 @@ def run_sft(
         **tokenizer_module,
         **metric_module,
     )
+
+    ### ------------------ Debug: dump state to json ------------------ ###
+    example_prompt = None
+    save_dir = "/nethome/wlacroix/LLaMA-Factory/experiments/logs/debug"
+    dump_llamafactory_state_to_json(model,
+                                    tokenizer,
+                                    model_args,
+                                    data_args,
+                                    training_args,
+                                    generating_args,
+                                    save_dir,
+                                    filename_prefix="LF",
+                                    example_prompt=example_prompt)
+    ### --------------------------------------------------------------- ###
 
     # Training
     if training_args.do_train:
