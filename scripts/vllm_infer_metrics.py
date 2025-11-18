@@ -238,10 +238,9 @@ def vllm_infer(
         temperature=0, # generating_args.temperature,
         top_p=1.0, # generating_args.top_p or 1.0,  # top_p must > 0
         top_k=-1, # generating_args.top_k or -1,  # top_k must > 0
-        stop_token_ids=template_obj.get_stop_token_ids(tokenizer),
+        stop_token_ids=stop_ids, # template_obj.get_stop_token_ids(tokenizer),
         max_tokens=1024, # generating_args.max_new_tokens,
         skip_special_tokens=skip_special_tokens,
-        stop_token_ids=stop_ids,
         seed=seed,
     )
     if model_args.adapter_name_or_path is not None:
