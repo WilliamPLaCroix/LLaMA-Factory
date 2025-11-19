@@ -61,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=109
+ITERATION_NUM=110
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -109,6 +109,7 @@ printf '%s
 echo "[train] will now run llamafactory-cli train ${CFG} eval only"
 echo "starting manual eval"
 export WANDB_JOB_TYPE="eval"
+export LF_DUMP_JSONL="${OUTPUT_DIR}/eval_predictions${ITERATION}.jsonl"
 # --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
 # --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
 llamafactory-cli train \
