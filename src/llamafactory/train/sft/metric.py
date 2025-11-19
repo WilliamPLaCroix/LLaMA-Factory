@@ -143,7 +143,7 @@ class ComputeSimilarity:
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
         # print(preds)
-        # preds = [pred.split("\n\n")[1] for pred in preds] # remove the "assistant" at beginning of string
+        preds = [pred.removeprefix("assistant").removeprefix("\n").removeprefix("\n") for pred in preds] # remove the "assistant" at beginning of string
         labels = [[label] for label in labels]
 
         self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=labels)['sari']
@@ -186,10 +186,10 @@ class ComputeSimilarity:
                     for i, p in enumerate(preds):
                         row = {
                             "id": i,
+                            "tgt_grade": grades[i],
                             "source": sources[i],
-                            "grade": grades[i],
-                            "prediction": _try_parse_json(p),
-                            "reference": labels[i],
+                            "pred": _try_parse_json(p),
+                            "label": labels[i][0],
                         }
                         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
