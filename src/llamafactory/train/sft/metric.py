@@ -111,7 +111,7 @@ class ComputeSimilarity:
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
         print(preds)
-        preds = [pred.split("\n\n")[1] for pred in preds] # remove the "assistant" at beginning of string
+        # preds = [pred.split("\n\n")[1] for pred in preds] # remove the "assistant" at beginning of string
         labels = [[label] for label in labels]
 
         self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=labels)['sari']
