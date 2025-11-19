@@ -103,13 +103,14 @@ class ComputeSimilarity:
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
         
-        self.tokenizer.padding_side = "left"
+        # self.tokenizer.padding_side = "left"
         preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
+        print(preds)
         preds = [pred.split("\n\n")[1] for pred in preds] # remove the "assistant" at beginning of string
         labels = [[label] for label in labels]
 
