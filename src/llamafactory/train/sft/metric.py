@@ -37,6 +37,38 @@ import textstat
 import torch.nn as nn
 import math
 
+### ----------------- Helpers for dumping predicitons -------------------------- ### 
+import os, json
+from pathlib import Path
+
+def _is_main_process() -> bool:
+    # works for single-GPU, DDP, FSDP
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        return torch.distributed.get_rank() == 0
+    return True
+
+def _decode_preds_like_hf(tokenizer, predictions: np.ndarray) -> list[str]:
+    # Handle either token ids or logits
+    if isinstance(predictions, tuple):
+        predictions = predictions[0]
+    if predictions.ndim == 3:
+        # [bsz, seq, vocab] -> greedy ids
+        predictions = predictions.argmax(-1)
+    predictions = np.where(predictions != IGNORE_INDEX, predictions, tokenizer.pad_token_id)
+    return tokenizer.batch_decode(predictions, skip_special_tokens=True)
+
+def _decode_labels(tokenizer, labels: np.ndarray) -> list[str]:
+    labels = np.where(labels != IGNORE_INDEX, labels, tokenizer.pad_token_id)
+    return tokenizer.batch_decode(labels, skip_special_tokens=True)
+
+def _try_parse_json(s: str):
+    try:
+        return json.loads(s)
+    except Exception:
+        return s
+##################################################################################
+
+
 @dataclass
 class ComputeAccuracy:
     r"""Compute accuracy and support `batch_eval_metrics`."""
@@ -110,7 +142,7 @@ class ComputeSimilarity:
 
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
-        print(preds)
+        # print(preds)
         # preds = [pred.split("\n\n")[1] for pred in preds] # remove the "assistant" at beginning of string
         labels = [[label] for label in labels]
 
@@ -143,6 +175,23 @@ class ComputeSimilarity:
             return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl_delta
 
         self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5))
+
+        # NEW: one-shot JSONL dump at the end of eval, main process only
+        if compute_result and _is_main_process():
+            dump_path = os.getenv("LF_DUMP_JSONL")  # e.g., export LF_DUMP_JSONL=$OUTPUT_DIR/eval_predictions.jsonl
+            if dump_path:
+                out = Path(dump_path)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                with out.open("w", encoding="utf-8") as f:
+                    for i, p in enumerate(preds):
+                        row = {
+                            "id": i,
+                            "source": sources[i],
+                            "grade": grades[i],
+                            "prediction": _try_parse_json(p),
+                            "reference": labels[i],
+                        }
+                        f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
         if compute_result:
             return self._dump()
