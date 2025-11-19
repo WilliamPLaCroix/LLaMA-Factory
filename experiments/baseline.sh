@@ -61,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=108
+ITERATION_NUM=109
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -117,7 +117,7 @@ llamafactory-cli train \
   --template llama3 \
   --do_train False \
   --do_eval True \
-  --do_predict True \
+  --do_predict False \
   --finetuning_type lora \
   --eval_dataset cleaned_baseline_validation \
   --output_dir "${LOG_DIR}" \
@@ -126,7 +126,7 @@ llamafactory-cli train \
   --seed 42 \
   --per_device_eval_batch_size 32 \
   --bf16 True \
-  --predict_with_generate True \
+  --predict_with_generate False \
   --do_sample False \
   --report_to wandb \
   --run_name "${WANDB_NAME}" \
