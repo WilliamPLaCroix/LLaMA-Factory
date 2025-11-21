@@ -109,7 +109,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_f1": []} # , "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_F1": []} # , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -141,12 +141,14 @@ class ComputeSimilarity:
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
+        
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
         # print(preds)
         preds = [pred.removeprefix("assistant").removeprefix("\n").removeprefix("\n") for pred in preds] # remove the "assistant" at beginning of string
         labels = [[label] for label in labels]
 
+        # After decoding and extracting sources, preds, labels, compute metrics here
         self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=labels)['sari']
         bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
         self.score_dict["bert_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
@@ -163,14 +165,39 @@ class ComputeSimilarity:
         #     sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
         #     self.score_dict["sari"].append(sari_score['sari'])
 
+        grade_groups = {}
+        for i, grade in enumerate(grades):
+            if grade not in grade_groups:
+                grade_groups[grade] = []
+            grade_groups[grade].append(i)
+
+        # Compute FKGL and delta per grade group
+        grade_deltas = []
         
+        for target_grade, indices in grade_groups.items():
+            # Get predictions for this target_grade group
+            grade_preds = [preds[i] for i in indices]
+            grade_text = "\n".join(grade_preds)
+            
+            # Compute FKGL for this target_grade group
+            grade_fkgl = textstat.flesch_kincaid_grade(grade_text)
+            grade_delta = abs(grade_fkgl - target_grade)
+            
+            # Weight by number of samples in this grade
+            weight = len(indices) / len(preds)
+            grade_deltas.append(grade_delta * weight)
+
+        # Weighted average across all grades
+        fkgl_delta = sum(grade_deltas)
+        
+        self.score_dict["fkgl-delta"].append(fkgl_delta)
 
         #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-        fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
-        self.score_dict["fkgl"].append(fkgl)
-        target_grade = sum(grades) / len(grades)
-        fkgl_delta = abs(fkgl - target_grade)
-        self.score_dict["fkgl-delta"].append(fkgl_delta)
+        # fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
+        # self.score_dict["fkgl"].append(fkgl)
+        # target_grade = sum(grades) / len(grades)
+        # fkgl_delta = abs(fkgl - target_grade)
+        # self.score_dict["fkgl-delta"].append(fkgl_delta)
 
         def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
             sari_mean = np.mean(self.score_dict["sari"])
