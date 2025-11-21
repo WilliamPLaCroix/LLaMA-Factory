@@ -143,11 +143,10 @@ export WANDB_JOB_TYPE="train"
 for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
     if [[ -d "${checkpoint_dir}" ]]; then
         checkpoint_name="$(basename "${checkpoint_dir}")"
-        step_number=$(echo "${checkpoint_name}" | sed 's/checkpoint-//')
-
-        echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${step_number}"
         
-        export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_checkpoint-${checkpoint_name}.jsonl"
+        echo "[eval] Processing checkpoint: ${checkpoint_name}"
+        
+        export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
         
         llamafactory-cli train \
           --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
@@ -168,10 +167,10 @@ for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
           --predict_with_generate False \
           --do_sample False \
           --report_to wandb \
-          --run_name "${WANDB_NAME}-checkpoint-${step_number}" \
-          > "${LOG_DIR}/cleaned_baseline_validation_checkpoint-${checkpoint_name}_eval.log" 2>&1
+          --run_name "${WANDB_NAME}-${checkpoint_name}" \
+          > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
         
-        echo "[eval] completed eval for checkpoint ${step_number} into run ${WANDB_RUN_ID}"
+        echo "[eval] completed eval for ${checkpoint_name} into run ${WANDB_RUN_ID}"
     fi
 done
 
