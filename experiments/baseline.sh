@@ -147,6 +147,11 @@ for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
 
         echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
         
+        # Create unique run ID for each checkpoint
+        CHECKPOINT_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
+        export WANDB_RUN_ID="${CHECKPOINT_RUN_ID}"
+        export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-eval-step-${checkpoint_step}"
+        
         export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
         
         llamafactory-cli train \
@@ -168,10 +173,10 @@ for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
           --predict_with_generate False \
           --do_sample False \
           --report_to wandb \
-          --run_name "${WANDB_NAME}-${checkpoint_step}" \
+          --run_name "${WANDB_NAME}" \
           > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
         
-        echo "[eval] completed eval for ${checkpoint_name} into run ${WANDB_RUN_ID}"
+        echo "[eval] completed eval for ${checkpoint_name} into run ${CHECKPOINT_RUN_ID}"
     fi
 done
 # --------------- END loop eval for all checkpoints ---------------
