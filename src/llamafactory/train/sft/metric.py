@@ -109,7 +109,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_F1": []} # , "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_F1": []} # , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
