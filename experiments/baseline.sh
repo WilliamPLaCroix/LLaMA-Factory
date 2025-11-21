@@ -39,7 +39,7 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
-export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}"          # shared across the 3 variants for this run of experiments
+export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}" # shared across the 3 variants for this run of experiments
 
 export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
 
@@ -61,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM=113
+ITERATION_NUM="checkpoint"
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -143,8 +143,9 @@ export WANDB_JOB_TYPE="train"
 for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
     if [[ -d "${checkpoint_dir}" ]]; then
         checkpoint_name="$(basename "${checkpoint_dir}")"
-        
-        echo "[eval] Processing checkpoint: ${checkpoint_name}"
+        checkpoint_step="$(echo "${checkpoint_name}" | cut -d'-' -f2)"
+
+        echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
         
         export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
         
@@ -167,14 +168,13 @@ for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
           --predict_with_generate False \
           --do_sample False \
           --report_to wandb \
-          --run_name "${WANDB_NAME}-${checkpoint_name}" \
+          --run_name "${WANDB_NAME}-${checkpoint_step}" \
           > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
         
         echo "[eval] completed eval for ${checkpoint_name} into run ${WANDB_RUN_ID}"
     fi
 done
-
-
+# --------------- END loop eval for all checkpoints ---------------
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
 # echo "starting vllm eval"
