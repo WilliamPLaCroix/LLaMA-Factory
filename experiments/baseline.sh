@@ -147,10 +147,13 @@ for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
 
         echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
         
-        # Create unique run ID for each checkpoint
-        CHECKPOINT_RUN_ID="$(head -c16 /dev/urandom | od -An -tx1 | tr -d ' \n' | cut -c1-12)"
+        # Create completely unique run ID and name for each checkpoint
+        CHECKPOINT_RUN_ID="eval-$(date +%Y%m%d-%H%M%S)-step${checkpoint_step}-$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')"
         export WANDB_RUN_ID="${CHECKPOINT_RUN_ID}"
         export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-eval-step-${checkpoint_step}"
+        
+        # Add tags to group related runs
+        export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},eval,step:${checkpoint_step},parent:${RUN_KEY}"
         
         export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
         
