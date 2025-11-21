@@ -105,34 +105,77 @@ printf '%s
 #   --export_device cpu \
 #   > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
 
-# --------------- manual eval ---------------
-echo "[train] will now run llamafactory-cli train ${CFG} eval only"
+# --------------- single manual eval ---------------
+# echo "[train] will now run llamafactory-cli train ${CFG} eval only"
+# echo "starting manual eval"
+# export WANDB_JOB_TYPE="eval"
+# export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval${ITERATION}.jsonl"
+# # --model_name_or_path "${MERGED_MODEL}" \
+# llamafactory-cli train \
+#   --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+#   --adapter_name_or_path "${OUT_ADAPTER}/${CHECKPOINT}" \
+#   --trust_remote_code True \
+#   --template llama3 \
+#   --do_train False \
+#   --do_eval True \
+#   --do_predict False \
+#   --finetuning_type lora \
+#   --eval_dataset cleaned_baseline_validation \
+#   --output_dir "${LOG_DIR}" \
+#   --overwrite_output_dir True \
+#   --cutoff_len 1024 \
+#   --seed 42 \
+#   --per_device_eval_batch_size 32 \
+#   --bf16 True \
+#   --predict_with_generate False \
+#   --do_sample False \
+#   --report_to wandb \
+#   --run_name "${WANDB_NAME}" \
+#   > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
+# echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+# --------------- END manual eval ---------------
+
+# --------------- loop eval for all checkpoints ---------------
+echo "[train] will now run llamafactory-cli train eval only, no pred for all checkpoints in ${OUT_ADAPTER}"
 echo "starting manual eval"
-export WANDB_JOB_TYPE="eval"
-export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval${ITERATION}.jsonl"
-# --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-# --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-1768" \
-llamafactory-cli train \
-  --model_name_or_path "${MERGED_MODEL}" \
-  --trust_remote_code True \
-  --template llama3 \
-  --do_train False \
-  --do_eval True \
-  --do_predict False \
-  --finetuning_type lora \
-  --eval_dataset cleaned_baseline_validation \
-  --output_dir "${LOG_DIR}" \
-  --overwrite_output_dir True \
-  --cutoff_len 1024 \
-  --seed 42 \
-  --per_device_eval_batch_size 32 \
-  --bf16 True \
-  --predict_with_generate False \
-  --do_sample False \
-  --report_to wandb \
-  --run_name "${WANDB_NAME}" \
-  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
-echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+export WANDB_JOB_TYPE="train"
+
+for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
+    if [[ -d "${checkpoint_dir}" ]]; then
+        checkpoint_name="$(basename "${checkpoint_dir}")"
+        step_number=$(echo "${checkpoint_name}" | sed 's/checkpoint-//')
+
+        echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${step_number}"
+        
+        export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_checkpoint-${checkpoint_name}.jsonl"
+        
+        llamafactory-cli train \
+          --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+          --adapter_name_or_path "${checkpoint_dir}" \
+          --trust_remote_code True \
+          --template llama3 \
+          --do_train False \
+          --do_eval True \
+          --do_predict False \
+          --finetuning_type lora \
+          --eval_dataset cleaned_baseline_validation \
+          --output_dir "${LOG_DIR}" \
+          --overwrite_output_dir True \
+          --cutoff_len 1024 \
+          --seed 42 \
+          --per_device_eval_batch_size 32 \
+          --bf16 True \
+          --predict_with_generate False \
+          --do_sample False \
+          --report_to wandb \
+          --run_name "${WANDB_NAME}-checkpoint-${step_number}" \
+          > "${LOG_DIR}/cleaned_baseline_validation_checkpoint-${checkpoint_name}_eval.log" 2>&1
+        
+        echo "[eval] completed eval for checkpoint ${step_number} into run ${WANDB_RUN_ID}"
+    fi
+done
+
+
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
 # echo "starting vllm eval"
