@@ -33,9 +33,10 @@ from evaluate import load
 sari = load("sari")
 
 import textstat
+from bert_score import score
 
-import torch.nn as nn
-import math
+# import torch.nn as nn
+# import math
 
 ### ----------------- Helpers for dumping predicitons -------------------------- ### 
 import os, json
@@ -108,7 +109,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": []} # , "loss": [], "perplexity": []}
+        self.score_dict = {"fkgl": [], "fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_f1": []} # , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -147,6 +148,8 @@ class ComputeSimilarity:
         labels = [[label] for label in labels]
 
         self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=labels)['sari']
+        bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
+        self.score_dict["bert_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
 
         # for pred, label, source, raw_input in zip(preds, labels, inputs, raw_inputs):
         #     prompt = source
