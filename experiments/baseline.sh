@@ -4,7 +4,7 @@
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v1"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
 BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
 #ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
@@ -61,7 +61,7 @@ set -euo pipefail
 
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM="i1-checkpoint"
+ITERATION_NUM="1"
 
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
@@ -89,9 +89,9 @@ printf '%s
 ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 # --------------- TRAIN ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/train.log" 2>&1
+echo "[train] will now run llamafactory-cli train ${CFG}"
+llamafactory-cli train "${CFG}" \
+  > "${LOG_DIR}/baseline_train.log" 2>&1
 
 # --------------- MERGE ---------------
 # echo "Begin Merge"
@@ -106,82 +106,84 @@ printf '%s
 #   > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
 
 # --------------- single manual eval ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG} eval only"
-# echo "starting manual eval"
-# export WANDB_JOB_TYPE="eval"
-# export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval${ITERATION}.jsonl"
+echo "[train] will now run llamafactory-cli train ${CFG} eval only"
+echo "starting manual eval"
+export WANDB_JOB_TYPE="eval"
+export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval${ITERATION}.jsonl"
 # # --model_name_or_path "${MERGED_MODEL}" \
-# llamafactory-cli train \
-#   --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-#   --adapter_name_or_path "${OUT_ADAPTER}/${CHECKPOINT}" \
-#   --trust_remote_code True \
-#   --template llama3 \
-#   --do_train False \
-#   --do_eval True \
-#   --do_predict False \
-#   --finetuning_type lora \
-#   --eval_dataset cleaned_baseline_validation \
-#   --output_dir "${LOG_DIR}" \
-#   --overwrite_output_dir True \
-#   --cutoff_len 1024 \
-#   --seed 42 \
-#   --per_device_eval_batch_size 32 \
-#   --bf16 True \
-#   --predict_with_generate False \
-#   --do_sample False \
-#   --report_to wandb \
-#   --run_name "${WANDB_NAME}" \
-#   > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
-# echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
+llamafactory-cli train \
+  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+  --adapter_name_or_path "${OUT_ADAPTER}" \
+  --trust_remote_code True \
+  --template llama3 \
+  --do_train False \
+  --do_eval True \
+  --do_predict False \
+  --finetuning_type lora \
+  --eval_dataset cleaned_baseline_validation \
+  --output_dir "${LOG_DIR}" \
+  --overwrite_output_dir True \
+  --cutoff_len 1024 \
+  --seed 42 \
+  --per_device_eval_batch_size 32 \
+  --bf16 True \
+  --predict_with_generate False \
+  --do_sample False \
+  --report_to wandb \
+  --run_name "${WANDB_NAME}" \
+  > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_eval.log" 2>&1
+echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
 # --------------- END manual eval ---------------
 
-# --------------- loop eval for all checkpoints ---------------
-echo "[train] will now run llamafactory-cli train eval only, no pred for all checkpoints in ${OUT_ADAPTER}"
-echo "starting manual eval"
-export WANDB_JOB_TYPE="train"
+# # --------------- loop eval for all checkpoints ---------------
+# echo "[train] will now run llamafactory-cli train eval only, no pred for all checkpoints in ${OUT_ADAPTER}"
+# echo "starting manual eval"
+# export WANDB_JOB_TYPE="train"
 
-for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
-    if [[ -d "${checkpoint_dir}" ]]; then
-        checkpoint_name="$(basename "${checkpoint_dir}")"
-        checkpoint_step="$(echo "${checkpoint_name}" | cut -d'-' -f2)"
+# for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
+#     if [[ -d "${checkpoint_dir}" ]]; then
+#         checkpoint_name="$(basename "${checkpoint_dir}")"
+#         checkpoint_step="$(echo "${checkpoint_name}" | cut -d'-' -f2)"
 
-        echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
+#         echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
         
-        # Create completely unique run ID and name for each checkpoint
-        CHECKPOINT_RUN_ID="eval-$(date +%Y%m%d-%H%M%S)-step${checkpoint_step}-$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-        export WANDB_RUN_ID="${CHECKPOINT_RUN_ID}"
-        export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-eval-step-${checkpoint_step}"
+#         # Create completely unique run ID and name for each checkpoint
+#         CHECKPOINT_RUN_ID="eval-$(date +%Y%m%d-%H%M%S)-step${checkpoint_step}-$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+#         export WANDB_RUN_ID="${CHECKPOINT_RUN_ID}"
+#         export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-eval-step-${checkpoint_step}"
         
-        # Add tags to group related runs
-        export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},eval,step:${checkpoint_step},parent:${RUN_KEY}"
+#         # Add tags to group related runs
+#         export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},eval,step:${checkpoint_step},parent:${RUN_KEY}"
         
-        export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
+#         export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
         
-        llamafactory-cli train \
-          --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-          --adapter_name_or_path "${checkpoint_dir}" \
-          --trust_remote_code True \
-          --template llama3 \
-          --do_train False \
-          --do_eval True \
-          --do_predict False \
-          --finetuning_type lora \
-          --eval_dataset cleaned_baseline_validation \
-          --output_dir "${LOG_DIR}" \
-          --overwrite_output_dir True \
-          --cutoff_len 1024 \
-          --seed 42 \
-          --per_device_eval_batch_size 32 \
-          --bf16 True \
-          --predict_with_generate False \
-          --do_sample False \
-          --report_to wandb \
-          --run_name "${WANDB_NAME}" \
-          > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
+#         llamafactory-cli train \
+#           --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+#           --adapter_name_or_path "${checkpoint_dir}" \
+#           --trust_remote_code True \
+#           --template llama3 \
+#           --do_train False \
+#           --do_eval True \
+#           --do_predict False \
+#           --finetuning_type lora \
+#           --eval_dataset cleaned_baseline_validation \
+#           --output_dir "${LOG_DIR}" \
+#           --overwrite_output_dir True \
+#           --cutoff_len 1024 \
+#           --seed 42 \
+#           --per_device_eval_batch_size 32 \
+#           --bf16 True \
+#           --predict_with_generate False \
+#           --do_sample False \
+#           --report_to wandb \
+#           --run_name "${WANDB_NAME}" \
+#           > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
         
-        echo "[eval] completed eval for ${checkpoint_name} into run ${CHECKPOINT_RUN_ID}"
-    fi
-done
+#         echo "[eval] completed eval for ${checkpoint_name} into run ${CHECKPOINT_RUN_ID}"
+#         # Small delay to avoid API rate limiting
+#         sleep 2
+#     fi
+# done
 # --------------- END loop eval for all checkpoints ---------------
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
