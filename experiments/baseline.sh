@@ -89,9 +89,9 @@ printf '%s
 ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 # --------------- TRAIN ---------------
-echo "[train] will now run llamafactory-cli train ${CFG}"
-llamafactory-cli train "${CFG}" \
-  > "${LOG_DIR}/baseline_train.log" 2>&1
+# echo "[train] will now run llamafactory-cli train ${CFG}"
+# llamafactory-cli train "${CFG}" \
+#   > "${LOG_DIR}/baseline_train.log" 2>&1
 
 # --------------- MERGE ---------------
 # echo "Begin Merge"
