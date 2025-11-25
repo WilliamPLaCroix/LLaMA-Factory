@@ -146,9 +146,9 @@ class ComputeSimilarity:
         preds = [pred.removeprefix("assistant").removeprefix("\n").removeprefix("\n") for pred in preds] # remove the "assistant" at beginning of string
 
         # After decoding and extracting sources, preds, labels, compute metrics here
-        self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=[[label] for label in labels])['sari']
+        self.score_dict["SARI"].append(sari.compute(sources=sources, predictions=preds, references=[[label] for label in labels])['sari'])
         bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
-        self.score_dict["BERTScore_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
+        self.score_dict["BERTScore_F1"].append(round(float(np.mean(bert_F1.numpy() * 100)), 2))
 
         # Compute FKGL and delta per grade group
         tgt_grade_deltas = []
@@ -164,9 +164,9 @@ class ComputeSimilarity:
             label_grade_deltas.append(abs(label_fkgl - target_grade))
             pred_label_deltas.append(abs(pred_fkgl - label_fkgl))
         
-        self.score_dict["pred-tgt-dFKGL"] = np.mean(tgt_grade_deltas)
-        self.score_dict["label-tgt-dFKGL"] = np.mean(label_grade_deltas)
-        self.score_dict["pred-label-dFKGL"] = np.mean(pred_label_deltas)
+        self.score_dict["pred-tgt-dFKGL"].append(np.mean(tgt_grade_deltas))
+        self.score_dict["label-tgt-dFKGL"].append(np.mean(label_grade_deltas))
+        self.score_dict["pred-label-dFKGL"].append(np.mean(pred_label_deltas))
 
         def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
             sari_mean = np.mean(self.score_dict["SARI"])
