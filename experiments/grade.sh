@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 # ---------------- User knobs ----------------
-# MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
 ENTITY=""                              # optional W&B entity
 
@@ -38,7 +36,7 @@ total_start_time=$(date +%s)
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
 ITERATION_NUM="2"
 ITERATION="-${ITERATION_NUM}"
-RUN_KEY="graded-from-${MODEL_VARIATION}-baseline${ITERATION_NUM}"
+RUN_KEY="graded-from-baseline${ITERATION_NUM}"
 
 echo "Processing iteration: ${ITERATION_NUM}"
 for GRADE in "${GRADES[@]}"; do
@@ -46,7 +44,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
 
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_grade${GRADE}-adapter"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_grade${GRADE}-adapter"
     mkdir -p "${OUT_ADAPTER}"
 
     # ---------------- Separate W&B run IDs for train vs infer ----------------
@@ -86,13 +84,10 @@ for GRADE in "${GRADES[@]}"; do
 
     # --------------- TRAIN ---------------
     # Set training-specific W&B config
-    # if [[ "${GRADE}" == "02" ]]; then
-    #     echo "[train] Skipping training for grade ${GRADE} - already completed"
-    # else
     export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded-train"
-    export WANDB_NAME="model=grade${GRADE}-from-${MODEL_VARIATION}-baseline"
-    export WANDB_TAGS="${GRADE},${MODEL_VARIATION},train"
+    export WANDB_NAME="model=grade${GRADE}-from-baseline"
+    export WANDB_TAGS="${GRADE},train"
     export WANDB_JOB_TYPE="train"
 
     CFG="${CFG_DIR}/grade${GRADE}.yaml"
@@ -100,21 +95,20 @@ for GRADE in "${GRADES[@]}"; do
     echo "[train] will now run llamafactory-cli train ${CFG}"
     llamafactory-cli train "${CFG}" \
     > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
-    # fi
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     # Switch to shared inference W&B config
     grade_start_time=$(date +%s)
-    DATASET_VARIATION="${MODEL_VARIATION}" # original augmented)
+    DATASET_VARIATION="cleaned" # original augmented)
 
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
-    export WANDB_NAME="model=graded-from-${MODEL_VARIATION}-baseline"
-    export WANDB_TAGS="${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${GRADE}"
-    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE}; train_variant=${MODEL_VARIATION}"
+    export WANDB_NAME="model=graded-from-baseline"
+    export WANDB_TAGS="ds:${DATASET_VARIATION},grade:${GRADE}"
+    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE};"
     export WANDB_JOB_TYPE="infer"
 
-    export TRAIN_VARIANT="${MODEL_VARIATION}"
+    export TRAIN_VARIANT="cleaned"
     export INFER_VARIANT="${DATASET_VARIATION}"
     export INFER_GRADE="${GRADE}"
 
@@ -127,7 +121,7 @@ for GRADE in "${GRADES[@]}"; do
     # -------------- INFERENCE CALL --------------
     llamafactory-cli train \
       --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-      --adapter_name_or_path "${OUT_ADAPTER}" \
+      --adapter_name_or_path "${CACHE}/${PROJECT_VERSION}_baseline-adapter" \
       --trust_remote_code True \
       --template llama3 \
       --do_train False \
@@ -135,7 +129,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_predict False \
       --finetuning_type lora \
       --eval_dataset cleaned_grade${grade}_validation \
-      --output_dir "${LOG_DIR}" \
+      --output_dir "${OUT_ADAPTER}" \
       --overwrite_output_dir True \
       --cutoff_len 1024 \
       --seed 42 \
@@ -145,7 +139,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/cleaned_graded_grade${grade}_validation${ITERATION}_eval.log" 2>&1
+      > "${LOG_DIR}/graded_grade${grade}_validation${ITERATION}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"

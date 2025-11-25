@@ -3,12 +3,8 @@
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
-BASE_GROUP="baseline"                  # logical family for this run
 ENTITY=""                              # optional W&B entity
-#ITERATION_NUM="${1:?ITERATION number required}"  # Get the raw number
-#ITERATION="-${ITERATION_NUM}"
 
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
@@ -16,18 +12,18 @@ REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 
-LOG_DIR="${REPO}/experiments/logs/${MODEL_VARIATION}"
+LOG_DIR="${REPO}/experiments/logs/cleaned"
 CFG_DIR="${REPO}/experiments/configs"
-MERGED_MODEL="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}_merged"
-OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_${MODEL_VARIATION}_${BASE_GROUP}-adapter"
+MERGED_MODEL="${CACHE}/${PROJECT_VERSION}_cleaned_baseline_merged"
+OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_baseline-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
 
 # ---------------- Config choose: fresh vs resume ----------------
 if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.resume.yaml"
+CFG="${CFG_DIR}/cleaned_baseline.resume.yaml"
 echo "[train] Resuming with ${CFG}"
 else
-CFG="${CFG_DIR}/${MODEL_VARIATION}_${BASE_GROUP}.init.yaml"
+CFG="${CFG_DIR}/cleaned_baseline.init.yaml"
 echo "[train] Fresh start with ${CFG}"
 fi
 
@@ -41,7 +37,7 @@ export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}" # shared across the 3 variants for this run of experiments
 
-export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION}"
+export WANDB_TAGS="baseline,cleaned"
 
 
 # --------------- System info ---------------
@@ -62,11 +58,10 @@ set -euo pipefail
 # for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
 ITERATION_NUM="2"
-
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
-RUN_KEY="${MODEL_VARIATION}-${BASE_GROUP}-v1${ITERATION}"
-export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}${ITERATION}"           # stable name per train variant
+RUN_KEY="cleaned-baseline-v1${ITERATION}"
+export WANDB_NAME="cleaned-baseline${ITERATION}"           # stable name per train variant
 
 # ---------------- Stable W&B run id per train variant ----------------
 ID_DIR="${HOME}/.llf_wandb_ids"
@@ -135,108 +130,6 @@ printf '%s
 # echo "[eval] completed eval for iteration ${ITERATION} into run ${WANDB_RUN_ID}"
 # --------------- END manual eval ---------------
 
-# # --------------- loop eval for all checkpoints ---------------
-# echo "[train] will now run llamafactory-cli train eval only, no pred for all checkpoints in ${OUT_ADAPTER}"
-# echo "starting manual eval"
-# export WANDB_JOB_TYPE="train"
-
-# for checkpoint_dir in "${OUT_ADAPTER}"/checkpoint-*; do
-#     if [[ -d "${checkpoint_dir}" ]]; then
-#         checkpoint_name="$(basename "${checkpoint_dir}")"
-#         checkpoint_step="$(echo "${checkpoint_name}" | cut -d'-' -f2)"
-
-#         echo "[eval] Processing checkpoint: ${checkpoint_name} at step ${checkpoint_step}"
-        
-#         # Create completely unique run ID and name for each checkpoint
-#         CHECKPOINT_RUN_ID="eval-$(date +%Y%m%d-%H%M%S)-step${checkpoint_step}-$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-#         export WANDB_RUN_ID="${CHECKPOINT_RUN_ID}"
-#         export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-eval-step-${checkpoint_step}"
-        
-#         # Add tags to group related runs
-#         export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},eval,step:${checkpoint_step},parent:${RUN_KEY}"
-        
-#         export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval_${checkpoint_name}.jsonl"
-        
-#         llamafactory-cli train \
-#           --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-#           --adapter_name_or_path "${checkpoint_dir}" \
-#           --trust_remote_code True \
-#           --template llama3 \
-#           --do_train False \
-#           --do_eval True \
-#           --do_predict False \
-#           --finetuning_type lora \
-#           --eval_dataset cleaned_baseline_validation \
-#           --output_dir "${LOG_DIR}" \
-#           --overwrite_output_dir True \
-#           --cutoff_len 1024 \
-#           --seed 42 \
-#           --per_device_eval_batch_size 32 \
-#           --bf16 True \
-#           --predict_with_generate False \
-#           --do_sample False \
-#           --report_to wandb \
-#           --run_name "${WANDB_NAME}" \
-#           > "${LOG_DIR}/cleaned_baseline_validation_${checkpoint_name}_eval.log" 2>&1
-        
-#         echo "[eval] completed eval for ${checkpoint_name} into run ${CHECKPOINT_RUN_ID}"
-#         # Small delay to avoid API rate limiting
-#         sleep 2
-#     fi
-# done
-# --------------- END loop eval for all checkpoints ---------------
-
-# --------------- INFER (same run; tag infer dataset + grade) ---------------
-# echo "starting vllm eval"
-# export WANDB_JOB_TYPE="infer"
-#     # --model_name_or_path "${BASE_MODEL}" \
-#     # --adapter_name_or_path "${OUT_ADAPTER}" \
-# python3 scripts/vllm_infer_metrics.py \
-#   --model_name_or_path "${MERGED_MODEL}" \
-#   --save_path "${LOG_DIR}" \
-#   --save_name "cleaned_baseline_validation${ITERATION}_infer" \
-#   --template llama3 \
-#   --dataset "cleaned_baseline_validation" \
-#   --seed "42" \
-#   > "${LOG_DIR}/cleaned_baseline_validation${ITERATION}_infer.log" 2>&1
-
-
-# # # ------------- loop eval for all checkpoints -------------] 
-# # # for checkpoint in ${OUT_ADAPTER}/checkpoint-*; do
-# # #   checkpoint_name="$(basename "${checkpoint}")"
-# # #   out="${OUT_ADAPTER}/${checkpoint_name}"
-# # #   echo "[eval] Processing checkpoint: ${checkpoint_name}"
-# # #   echo "[eval] Checkpoint path: ${checkpoint}"
-# # #   echo "[eval] Output directory: ${out}"
-  
-# # #   # Create a temporary config file for this checkpoint evaluation
-# # #   temp_cfg="${CFG_DIR}/temp_eval_$(basename "${checkpoint}").yaml"
-  
-# # #   # Copy the base config and modify for evaluation
-# # #   cp "${CFG}" "${temp_cfg}"
-# # #   echo "[eval] Original config content (relevant lines):"
-# # #   grep -E "(do_train|output_dir|adapter_name_or_path)" "${CFG}" || echo "No matching lines found in original config"
-  
-  
-# # #   # Modify the config for evaluation using sed or yq
-# # #   sed -i "s|do_train: True|do_train: False|g" "${temp_cfg}"
-# # #   sed -i "s|output_dir: .*|output_dir: ${out}|g" "${temp_cfg}"
-# # #   sed -i "s|^adapter_name_or_path:.*|adapter_name_or_path: ${checkpoint}|g" "${temp_cfg}"
-    
-# # #   echo "[eval] Modified config content (relevant lines):"
-# # #   grep -E "(do_train|output_dir|adapter_name_or_path|resume_from_checkpoint)" "${temp_cfg}" || echo "No matching lines found in modified config"
-  
-# # #   echo "[eval] Full temporary config file contents:"
-# # #   echo "--- START CONFIG ---"
-# # #   cat "${temp_cfg}"
-# # #   echo "--- END CONFIG ---"
-
-# # #   llamafactory-cli train "${temp_cfg}" \
-# # #     > "${LOG_DIR}/logs/eval_$(basename "${checkpoint}").log" 2>&1
-  
-# # #   # Clean up temporary file
-# # #   rm "${temp_cfg}"
-# # # done
 
 # --------------- INFER (same run; tag infer dataset + grade) ---------------
 export WANDB_JOB_TYPE="infer"
@@ -252,14 +145,14 @@ for grade in {02..12}; do
     # Keep SAME run id as training; do NOT create per-grade runs
     export WANDB_RUN_ID
     export WANDB_RESUME=allow
-    export WANDB_NAME="${MODEL_VARIATION}-${BASE_GROUP}-grade${grade}${ITERATION}"   # keep stable name for color-by-run
+    export WANDB_NAME="cleaned-baseline-grade${grade}${ITERATION}"   # keep stable name for color-by-run
 
     # Rich tags & notes for grouping/filtering in the UI
-    export WANDB_TAGS="${BASE_GROUP},${MODEL_VARIATION},ds:${DATASET_VARIATION},grade:${grade}"
-    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=${MODEL_VARIATION}"
+    export WANDB_TAGS="baseline,cleaned,ds:${DATASET_VARIATION},grade:${grade}"
+    export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${grade}; train_variant=cleaned"
 
     # If your inference script forwards env to W&B config, also export custom hints
-    export TRAIN_VARIANT="${MODEL_VARIATION}"
+    export TRAIN_VARIANT="cleaned"
     export INFER_VARIANT="${DATASET_VARIATION}"
     export INFER_GRADE="${grade}"
 
@@ -287,7 +180,7 @@ for grade in {02..12}; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/cleaned_baseline_grade${grade}_validation${ITERATION}_eval.log" 2>&1
+      > "${LOG_DIR}/baseline_grade${grade}_validation${ITERATION}_eval.log" 2>&1
     echo "[eval] completed grade${grade} eval for into run ${WANDB_RUN_ID}"
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
