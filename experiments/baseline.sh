@@ -90,7 +90,6 @@ llamafactory-cli train \
   --train_on_prompt False \
   --overwrite_cache True \
   --dataset cleaned_baseline_train \
-  --resume_from_checkpoint False \
   --output_dir /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_baseline-adapter \
   --logging_strategy steps \
   --logging_steps 10 \
