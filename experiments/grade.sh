@@ -3,7 +3,7 @@
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
