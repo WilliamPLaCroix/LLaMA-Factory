@@ -2,9 +2,9 @@ universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/grade.sh
 # arguments       = $(grade)
-log             = /scratch/wlacroix/logs/graded/cleaned_individual_grades.log
-output          = /scratch/wlacroix/logs/graded/cleaned_individual_grades.out
-error           = /scratch/wlacroix/logs/graded/cleaned_individual_grades.err
+log             = /scratch/wlacroix/logs/graded.log
+output          = /scratch/wlacroix/logs/graded.out
+error           = /scratch/wlacroix/logs/graded.err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
