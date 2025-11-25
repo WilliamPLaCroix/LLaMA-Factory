@@ -50,7 +50,7 @@ eval_steps: 1768 # this works out to twice per epoch, so 10 models with 5 epochs
 predict_with_generate: False
 do_sample: False
 
-metric_for_best_model: "eval_cleaned_baseline_validation_dfkgl_sari"
+metric_for_best_model: "eval_cleaned_baseline_validation_fkgl-delta"
 # save_strategy: epoch
 save_strategy: "steps"
 save_steps: 1768
