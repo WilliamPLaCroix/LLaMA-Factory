@@ -34,6 +34,7 @@ sari = load("sari")
 
 import textstat
 from bert_score import score
+from tqdm import tqdm
 
 # import torch.nn as nn
 # import math
@@ -174,21 +175,14 @@ class ComputeSimilarity:
         # Compute FKGL and delta per grade group
         grade_deltas = []
         
-        for target_grade, indices in grade_groups.items():
-            # Get predictions for this target_grade group
-            grade_preds = [preds[i] for i in indices]
-            grade_text = "\n".join(grade_preds)
-            
-            # Compute FKGL for this target_grade group
-            grade_fkgl = textstat.flesch_kincaid_grade(grade_text)
-            grade_delta = abs(grade_fkgl - target_grade)
-            
-            # Weight by number of samples in this grade
-            weight = len(indices) / len(preds)
-            grade_deltas.append(grade_delta * weight)
+        for pred, target_grade in tqdm(zip(preds, grades)):
+            # Compute FKGL for individual prediction
+            pred_fkgl = textstat.flesch_kincaid_grade(pred)
+            grade_delta = abs(pred_fkgl - target_grade)
+            grade_deltas.append(grade_delta)
 
-        # Weighted average across all grades
-        fkgl_delta = sum(grade_deltas)
+        # Average across all samples
+        fkgl_delta = np.mean(grade_deltas)
         
         self.score_dict["fkgl-delta"].append(fkgl_delta)
 
