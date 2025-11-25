@@ -44,11 +44,11 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM="4"
+ITERATION_NUM="5"
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
-RUN_KEY="cleaned-baseline-${PROJECT_VERSION}${ITERATION}"
-export WANDB_NAME="cleaned-baseline${ITERATION}"           # stable name per train variant
+RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"
+export WANDB_NAME="baseline${ITERATION}"           # stable name per train variant
 
 # ---------------- Stable W&B run id per train variant ----------------
 ID_DIR="${HOME}/.llf_wandb_ids"
@@ -102,10 +102,10 @@ llamafactory-cli train \
   --gradient_accumulation_steps 4 \
   --max_grad_norm 0.5 \
   --learning_rate 1.0e-5 \
-  --num_train_epochs 10 \
+  --num_train_epochs 5 \
   --bf16 True \
   --lr_scheduler_type cosine \
-  --warmup_ratio 0.1 \
+  --warmup_ratio 0.2 \
   --do_eval True \
   --eval_dataset cleaned_baseline_validation \
   --eval_strategy steps \
