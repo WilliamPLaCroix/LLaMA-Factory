@@ -23,7 +23,7 @@ overwrite_cache: True
 dataset: cleaned_baseline_train
 
 resume_from_checkpoint: False
-output_dir: /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter
+output_dir: /scratch/wlacroix/.cache/llama_factory/v2_cleaned_baseline-adapter
 logging_strategy: "steps"
 logging_steps: 10
 plot_loss: True

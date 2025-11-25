@@ -11,7 +11,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="graded-from-cleaned-baseline"
+
 LOG_DIR="${REPO}/experiments/logs/graded"
 CFG_DIR="${REPO}/experiments/configs"
 
@@ -36,7 +36,11 @@ echo "Starting sequential grade processing at $(date)"
 total_start_time=$(date +%s)
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
+ITERATION_NUM="2"
+ITERATION="-${ITERATION_NUM}"
+RUN_KEY="graded-from-${MODEL_VARIATION}-baseline${ITERATION_NUM}"
 
+echo "Processing iteration: ${ITERATION_NUM}"
 for GRADE in "${GRADES[@]}"; do
     echo "----- Starting grade ${GRADE} -----"
     echo "staring run at $(date)"
