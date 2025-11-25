@@ -3,7 +3,7 @@
 
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v3"                 # used in WANDB_PROJECT
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
@@ -13,19 +13,9 @@ BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
 
 LOG_DIR="${REPO}/experiments/logs/cleaned"
-CFG_DIR="${REPO}/experiments/configs"
 MERGED_MODEL="${CACHE}/${PROJECT_VERSION}_cleaned_baseline_merged"
 OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_baseline-adapter"
 mkdir -p "${OUT_ADAPTER}" "${LOG_DIR}" "${LOG_DIR}/logs" "${LOG_DIR}/generated_predictions"
-
-# ---------------- Config choose: fresh vs resume ----------------
-if compgen -G "${OUT_ADAPTER}/checkpoint-*" > /dev/null; then
-CFG="${CFG_DIR}/cleaned_baseline.resume.yaml"
-echo "[train] Resuming with ${CFG}"
-else
-CFG="${CFG_DIR}/cleaned_baseline.init.yaml"
-echo "[train] Fresh start with ${CFG}"
-fi
 
 # An experiment group id to compare the trio {original,cleaned,augmented} together
 EXPERIMENT_GROUP="exp-$(date +%Y%m%d-%H%M%S)"
@@ -36,9 +26,7 @@ export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
 export WANDB_DIR="${LOG_DIR}"
 export WANDB_RESUME=allow
 export WANDB_RUN_GROUP="${EXPERIMENT_GROUP}" # shared across the 3 variants for this run of experiments
-
 export WANDB_TAGS="baseline,cleaned"
-
 
 # --------------- System info ---------------
 source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
@@ -55,12 +43,11 @@ nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
 
-# for loop to iterate through evals by ITERATION
 # for ITERATION_NUM in {97..98}; do
 ITERATION_NUM="2"
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
-RUN_KEY="cleaned-baseline-v1${ITERATION}"
+RUN_KEY="cleaned-baseline-${PROJECT_VERSION}${ITERATION}"
 export WANDB_NAME="cleaned-baseline${ITERATION}"           # stable name per train variant
 
 # ---------------- Stable W&B run id per train variant ----------------
@@ -84,15 +71,62 @@ printf '%s
 ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 # --------------- TRAIN ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG}"
-# llamafactory-cli train "${CFG}" \
-#   > "${LOG_DIR}/baseline_train.log" 2>&1
+echo "[train] will now run llamafactory-cli train"
+llamafactory-cli train \
+  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+  --trust_remote_code True \
+  --seed 42 \
+  --use_fast_tokenizer True \
+  --stage sft \
+  --do_train True \
+  --finetuning_type lora \
+  --lora_rank 8 \
+  --lora_alpha 16 \
+  --lora_target all \
+  --lora_dropout 0.05 \
+  --cutoff_len 1024 \
+  --template llama3 \
+  --preprocessing_num_workers 16 \
+  --train_on_prompt False \
+  --overwrite_cache True \
+  --dataset cleaned_baseline_train \
+  --resume_from_checkpoint False \
+  --output_dir /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_baseline-adapter \
+  --logging_strategy steps \
+  --logging_steps 10 \
+  --plot_loss True \
+  --overwrite_output_dir True \
+  --report_to wandb \
+  --run_name baseline \
+  --per_device_train_batch_size 8 \
+  --per_device_eval_batch_size 32 \
+  --gradient_accumulation_steps 4 \
+  --max_grad_norm 0.5 \
+  --learning_rate 1.0e-5 \
+  --num_train_epochs 10 \
+  --bf16 True \
+  --lr_scheduler_type cosine \
+  --warmup_ratio 0.1 \
+  --do_eval True \
+  --eval_dataset cleaned_baseline_validation \
+  --eval_strategy steps \
+  --eval_steps 1768 \
+  --predict_with_generate False \
+  --do_sample False \
+  --metric_for_best_model eval_cleaned_baseline_validation_fkgl-delta \
+  --save_strategy steps \
+  --save_steps 1768 \
+  --save_total_limit 20 \
+  --load_best_model_at_end True \
+  --greater_is_better False \
+  > "${LOG_DIR}/baseline_train.log" 2>&1
+
 
 # --------------- MERGE ---------------
 # echo "Begin Merge"
 # llamafactory-cli export \
 #   --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-#   --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter \
+#   --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_cleaned_baseline-adapter \
 #   --trust_remote_code true \
 #   --template llama3 \
 #   --export_dir ${MERGED_MODEL} \
@@ -101,7 +135,7 @@ printf '%s
 #   > "${LOG_DIR}/merge_cleaned_baseline.log" 2>&1
 
 # --------------- single manual eval ---------------
-# echo "[train] will now run llamafactory-cli train ${CFG} eval only"
+# echo "[train] will now run llamafactory-cli train eval only"
 # echo "starting manual eval"
 # export WANDB_JOB_TYPE="eval"
 # export LF_DUMP_JSONL="${LOG_DIR}/generated_predictions_eval${ITERATION}.jsonl"
@@ -162,7 +196,7 @@ for grade in {02..12}; do
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
     llamafactory-cli train \
       --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-      --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-5304" \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
       --trust_remote_code True \
       --template llama3 \
       --do_train False \

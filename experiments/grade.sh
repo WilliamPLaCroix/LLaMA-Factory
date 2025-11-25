@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ---------------- User knobs ----------------
-PROJECT_VERSION="v2"                 # used in WANDB_PROJECT
+PROJECT_VERSION="v3"                 # used in WANDB_PROJECT
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
@@ -110,7 +110,7 @@ for GRADE in "${GRADES[@]}"; do
       --train_on_prompt False \
       --overwrite_cache True \
       --dataset cleaned_grade03_train \
-      --output_dir /scratch/wlacroix/.cache/llama_factory/v2_grade${GRADE}-adapter \
+      --output_dir /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_grade${GRADE}-adapter \
       --logging_strategy steps \
       --logging_steps 10 \
       --save_steps 100 \
@@ -134,7 +134,7 @@ for GRADE in "${GRADES[@]}"; do
       --save_strategy epoch \
       --save_total_limit 20 \
       --load_best_model_at_end True \
-      --greater_is_better True \
+      --greater_is_better False \
       > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
