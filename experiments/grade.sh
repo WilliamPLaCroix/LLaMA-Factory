@@ -120,29 +120,28 @@ for GRADE in "${GRADES[@]}"; do
     echo "[infer] dataset variation: ${DATASET_VARIATION}"
     echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
 
-    # -------------- INFERENCE ECHO --------------
-    echo the script call for debug
-    echo "python3 scripts/vllm_infer_metrics.py "
-    echo "    --model_name_or_path \'${BASE_MODEL}\' "
-    echo "    --adapter_name_or_path \'${OUT_ADAPTER}\' "
-    echo "    --save_path \'${LOG_DIR}\' "
-    echo "    --save_name \'graded_${MODEL_VARIATION}_grade${GRADE}@${DATASET_VARIATION}\' "
-    echo "    --template llama3 "
-    echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
-    echo "    --temperature 0 "
-    echo "    --grade \'${GRADE}\' "
-    echo " > \'${LOG_DIR}/logs/infer_grade${GRADE}.log\' 2>&1"
     # -------------- INFERENCE CALL --------------
-    python3 scripts/vllm_infer_metrics.py \
-        --model_name_or_path "${BASE_MODEL}" \
-        --adapter_name_or_path "${OUT_ADAPTER}" \
-        --save_path "${LOG_DIR}" \
-        --save_name "graded_${MODEL_VARIATION}_grade${GRADE}@${DATASET_VARIATION}" \
-        --template llama3 \
-        --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
-        --temperature 0 \
-        --grade "${GRADE}" \
-        > "${LOG_DIR}/logs/infer_grade${GRADE}.log" 2>&1
+    llamafactory-cli train \
+      --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
+      --trust_remote_code True \
+      --template llama3 \
+      --do_train False \
+      --do_eval True \
+      --do_predict False \
+      --finetuning_type lora \
+      --eval_dataset cleaned_grade${grade}_validation \
+      --output_dir "${LOG_DIR}" \
+      --overwrite_output_dir True \
+      --cutoff_len 1024 \
+      --seed 42 \
+      --per_device_eval_batch_size 32 \
+      --bf16 True \
+      --predict_with_generate False \
+      --do_sample False \
+      --report_to wandb \
+      --run_name "${WANDB_NAME}" \
+      > "${LOG_DIR}/cleaned_graded_grade${grade}_validation${ITERATION}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
