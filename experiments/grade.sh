@@ -130,7 +130,7 @@ for GRADE in "${GRADES[@]}"; do
       --eval_strategy epoch \
       --predict_with_generate False \
       --do_sample False \
-      --metric_for_best_model eval_cleaned_grade${GRADE}_validation_fkgl-delta \
+      --metric_for_best_model eval_cleaned_grade${GRADE}_validation_pred-tgt-dFKGL \
       --save_strategy epoch \
       --save_total_limit 20 \
       --load_best_model_at_end True \

@@ -112,7 +112,7 @@ llamafactory-cli train \
   --eval_steps 1768 \
   --predict_with_generate False \
   --do_sample False \
-  --metric_for_best_model eval_cleaned_baseline_validation_fkgl-delta \
+  --metric_for_best_model eval_cleaned_baseline_validation_pred-tgt-dFKGL \
   --save_strategy steps \
   --save_steps 1768 \
   --save_total_limit 20 \
