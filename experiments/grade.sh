@@ -34,7 +34,7 @@ echo "Starting sequential grade processing at $(date)"
 total_start_time=$(date +%s)
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
-ITERATION_NUM="3"
+ITERATION_NUM="4"
 ITERATION="-${ITERATION_NUM}"
 RUN_KEY="graded-from-baseline${ITERATION_NUM}"
 
@@ -169,7 +169,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_eval True \
       --do_predict False \
       --finetuning_type lora \
-      --eval_dataset cleaned_grade${grade}_validation \
+      --eval_dataset cleaned_grade${GRADE}_validation \
       --output_dir "${OUT_ADAPTER}" \
       --overwrite_output_dir True \
       --cutoff_len 1024 \
@@ -180,7 +180,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/graded_grade${grade}_validation${ITERATION}_eval.log" 2>&1
+      > "${LOG_DIR}/graded_grade${GRADE}_validation${ITERATION}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
