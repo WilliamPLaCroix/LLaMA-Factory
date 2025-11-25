@@ -90,11 +90,54 @@ for GRADE in "${GRADES[@]}"; do
     export WANDB_TAGS="${GRADE},train"
     export WANDB_JOB_TYPE="train"
 
-    CFG="${CFG_DIR}/grade${GRADE}.yaml"
-    echo "[train] Fresh start with ${CFG}"
-    echo "[train] will now run llamafactory-cli train ${CFG}"
-    llamafactory-cli train "${CFG}" \
-    > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
+    
+
+    echo "[train] will now run llamafactory-cli train"
+    llamafactory-cli train \
+      --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+      --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_baseline-adapter/checkpoint-5304 \
+      --trust_remote_code True \
+      --seed 42 \
+      --use_fast_tokenizer True \
+      --stage sft \
+      --do_train True \
+      --finetuning_type lora \
+      --lora_rank 8 \
+      --lora_alpha 16 \
+      --lora_target all \
+      --lora_dropout 0.05 \
+      --cutoff_len 1024 \
+      --template llama3 \
+      --preprocessing_num_workers 16 \
+      --train_on_prompt False \
+      --overwrite_cache True \
+      --dataset cleaned_grade03_train \
+      --output_dir /scratch/wlacroix/.cache/llama_factory/v2_grade${GRADE}-adapter \
+      --logging_strategy steps \
+      --logging_steps 10 \
+      --save_steps 100 \
+      --plot_loss True \
+      --overwrite_output_dir True \
+      --report_to wandb \
+      --run_name model=grade${GRADE}-from-baseline \
+      --per_device_train_batch_size 8 \
+      --per_device_eval_batch_size 32 \
+      --gradient_accumulation_steps 4 \
+      --learning_rate 1.0e-4 \
+      --num_train_epochs 5 \
+      --bf16 True \
+      --lr_scheduler_type cosine \
+      --do_eval True \
+      --eval_dataset cleaned_grade${GRADE}_validation \
+      --eval_strategy epoch \
+      --predict_with_generate False \
+      --do_sample False \
+      --metric_for_best_model eval_cleaned_grade${GRADE}_validation_fkgl-delta \
+      --save_strategy epoch \
+      --save_total_limit 20 \
+      --load_best_model_at_end True \
+      --greater_is_better True \
+      > "${LOG_DIR}/train_grade${GRADE}.log" 2>&1
 
     # --------------- INFER (same run; tag infer dataset + grade) ---------------
     # Switch to shared inference W&B config

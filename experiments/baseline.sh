@@ -145,7 +145,7 @@ for grade in {02..12}; do
     # Keep SAME run id as training; do NOT create per-grade runs
     export WANDB_RUN_ID
     export WANDB_RESUME=allow
-    export WANDB_NAME="cleaned-baseline-grade${grade}${ITERATION}"   # keep stable name for color-by-run
+    export WANDB_NAME="baseline-graded-eval${ITERATION}"   # keep stable name for color-by-run
 
     # Rich tags & notes for grouping/filtering in the UI
     export WANDB_TAGS="baseline,cleaned,ds:${DATASET_VARIATION},grade:${grade}"
@@ -162,7 +162,7 @@ for grade in {02..12}; do
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
     llamafactory-cli train \
       --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-      --adapter_name_or_path "${OUT_ADAPTER}" \
+      --adapter_name_or_path "${OUT_ADAPTER}/checkpoint-5304" \
       --trust_remote_code True \
       --template llama3 \
       --do_train False \
