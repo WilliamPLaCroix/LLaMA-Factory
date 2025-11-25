@@ -110,7 +110,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"fkgl-delta": [], "sari": [], "dfkgl_sari": [], "bert_F1": []} # , "loss": [], "perplexity": []}
+        self.score_dict = {"pred-tgt-dFKGL": [], "label-tgt-dFKGL": [], "pred-label-dFKGL": [], "SARI": [], "dFKGL_SARI": [], "BERTScore_F1": []} # , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -127,7 +127,7 @@ class ComputeSimilarity:
 
         #preds = np.argmax(preds, axis=-1)
 
-        raw_inputs = np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, numpify(eval_preds.inputs), self.tokenizer.pad_token_id)
+        # raw_inputs = np.where(numpify(eval_preds.inputs) != IGNORE_INDEX, numpify(eval_preds.inputs), self.tokenizer.pad_token_id)
 
         preds = numpify(eval_preds.predictions)
         labels = numpify(eval_preds.label_ids)
@@ -137,68 +137,43 @@ class ComputeSimilarity:
         labels = np.where(labels != IGNORE_INDEX, labels, self.tokenizer.pad_token_id)
         inputs = np.where(inputs != IGNORE_INDEX, inputs, self.tokenizer.pad_token_id)
         
-        # self.tokenizer.padding_side = "left"
         preds = self.tokenizer.batch_decode(preds, skip_special_tokens=True)
         labels = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
         inputs = self.tokenizer.batch_decode(inputs, skip_special_tokens=True)
 
-        
         sources = [source.split("\n")[3][:-9] for source in inputs] # remove the "assistant" on end of string
         grades = [int(source.split("\n")[2].split(" ")[-1].strip('.')) for source in inputs] # get the grade from the input prompt
-        # print(preds)
         preds = [pred.removeprefix("assistant").removeprefix("\n").removeprefix("\n") for pred in preds] # remove the "assistant" at beginning of string
-        labels = [[label] for label in labels]
 
         # After decoding and extracting sources, preds, labels, compute metrics here
-        self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=labels)['sari']
+        self.score_dict["sari"] = sari.compute(sources=sources, predictions=preds, references=[[label] for label in labels])['sari']
         bert_precision, bert_recall, bert_F1 = score(preds, sources, lang='en', verbose=True)
-        self.score_dict["bert_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
-
-        # for pred, label, source, raw_input in zip(preds, labels, inputs, raw_inputs):
-        #     prompt = source
-        #     source = source.split("\n") # source includes system prompt and input, need to separate
-        #     grade = int(source[2].split(" ")[-1].strip('.')) # get the grade from the input prompt
-        #     grades.append(grade)
-        #     source = source[3][:-9] # remove the "assistant" on end of string
-        #     pred = pred.split("\n\n")[1] # remove the "assistant" at beginning of string
-        #     print("Prompt:", prompt, "\nSource:", source, "\nInput:", raw_input, "\nPred:", pred, "\nLabel:", label, "\n", "-"*80) # mimic vllm infer log output
-        #     # print('{'+f'"prompt": "{source}", "predict": "{pred}", "label": "{label}"'+'}') # mimic jsonl format for analysis
-        #     sari_score = sari.compute(sources=[source], predictions=[pred], references=[[label]])
-        #     self.score_dict["sari"].append(sari_score['sari'])
-
-        grade_groups = {}
-        for i, grade in enumerate(grades):
-            if grade not in grade_groups:
-                grade_groups[grade] = []
-            grade_groups[grade].append(i)
+        self.score_dict["BERTScore_F1"] = round(float(np.mean(bert_F1.numpy() * 100)), 2)
 
         # Compute FKGL and delta per grade group
-        grade_deltas = []
+        tgt_grade_deltas = []
+        label_grade_deltas = []
+        pred_label_deltas = []
         
-        for pred, target_grade in tqdm(zip(preds, grades)):
-            # Compute FKGL for individual prediction
+        for pred, target_grade, label in tqdm(zip(preds, grades, labels)):
+            # Compute FKGL for pred and label
             pred_fkgl = textstat.flesch_kincaid_grade(pred)
-            grade_delta = abs(pred_fkgl - target_grade)
-            grade_deltas.append(grade_delta)
-
-        # Average across all samples
-        fkgl_delta = np.mean(grade_deltas)
+            label_fkgl = textstat.flesch_kincaid_grade(label)
+            # Compute and append deltas
+            tgt_grade_deltas.append(abs(pred_fkgl - target_grade))
+            label_grade_deltas.append(abs(label_fkgl - target_grade))
+            pred_label_deltas.append(abs(pred_fkgl - label_fkgl))
         
-        self.score_dict["fkgl-delta"].append(fkgl_delta)
-
-        #self.score_dict = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
-        # fkgl = textstat.flesch_kincaid_grade("\n".join(preds))
-        # self.score_dict["fkgl"].append(fkgl)
-        # target_grade = sum(grades) / len(grades)
-        # fkgl_delta = abs(fkgl - target_grade)
-        # self.score_dict["fkgl-delta"].append(fkgl_delta)
+        self.score_dict["pred-tgt-dFKGL"] = np.mean(tgt_grade_deltas)
+        self.score_dict["label-tgt-dFKGL"] = np.mean(label_grade_deltas)
+        self.score_dict["pred-label-dFKGL"] = np.mean(pred_label_deltas)
 
         def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
-            sari_mean = np.mean(self.score_dict["sari"])
+            sari_mean = np.mean(self.score_dict["SARI"])
             sari_beta = 1 - fkgl_alpha
             return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl_delta
 
-        self.score_dict["dfkgl_sari"].append(compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5))
+        self.score_dict["dFKGL_SARI"].append(compute_fkgl_x_sari(self.score_dict["pred-tgt-dFKGL"], fkgl_alpha=0.5))
 
         # NEW: one-shot JSONL dump at the end of eval, main process only
         if compute_result and _is_main_process():
