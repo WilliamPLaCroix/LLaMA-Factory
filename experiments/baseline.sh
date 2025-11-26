@@ -47,7 +47,8 @@ set -euo pipefail
 ITERATION_NUM="5"
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
-RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"
+#RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"
+RUN_KEY="off_the_shelf-${PROJECT_VERSION}${ITERATION}"
 export WANDB_NAME="baseline${ITERATION}"           # stable name per train variant
 
 # ---------------- Stable W&B run id per train variant ----------------
@@ -71,54 +72,54 @@ printf '%s
 ' "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
 # --------------- TRAIN ---------------
-echo "[train] will now run llamafactory-cli train"
-llamafactory-cli train \
-  --model_name_or_path "${BASE_MODEL}" \
-  --trust_remote_code True \
-  --seed 42 \
-  --use_fast_tokenizer True \
-  --stage sft \
-  --do_train True \
-  --finetuning_type lora \
-  --lora_rank 8 \
-  --lora_alpha 16 \
-  --lora_target all \
-  --lora_dropout 0.05 \
-  --cutoff_len 1024 \
-  --template llama3 \
-  --preprocessing_num_workers 16 \
-  --train_on_prompt False \
-  --overwrite_cache True \
-  --dataset cleaned_baseline_train \
-  --output_dir "${OUT_ADAPTER}" \
-  --logging_strategy steps \
-  --logging_steps 10 \
-  --plot_loss True \
-  --overwrite_output_dir True \
-  --report_to wandb \
-  --run_name baseline \
-  --per_device_train_batch_size 8 \
-  --per_device_eval_batch_size 32 \
-  --gradient_accumulation_steps 4 \
-  --max_grad_norm 0.5 \
-  --learning_rate 1.0e-5 \
-  --num_train_epochs 5 \
-  --bf16 True \
-  --lr_scheduler_type cosine \
-  --warmup_ratio 0.2 \
-  --do_eval True \
-  --eval_dataset cleaned_baseline_validation \
-  --eval_strategy steps \
-  --eval_steps 1768 \
-  --predict_with_generate False \
-  --do_sample False \
-  --metric_for_best_model eval_cleaned_baseline_validation_pred-tgt-dFKGL \
-  --save_strategy steps \
-  --save_steps 1768 \
-  --save_total_limit 20 \
-  --load_best_model_at_end True \
-  --greater_is_better False \
-  > "${LOG_DIR}/baseline_train.log" 2>&1
+# echo "[train] will now run llamafactory-cli train"
+# llamafactory-cli train \
+#   --model_name_or_path "${BASE_MODEL}" \
+#   --trust_remote_code True \
+#   --seed 42 \
+#   --use_fast_tokenizer True \
+#   --stage sft \
+#   --do_train True \
+#   --finetuning_type lora \
+#   --lora_rank 8 \
+#   --lora_alpha 16 \
+#   --lora_target all \
+#   --lora_dropout 0.05 \
+#   --cutoff_len 1024 \
+#   --template llama3 \
+#   --preprocessing_num_workers 16 \
+#   --train_on_prompt False \
+#   --overwrite_cache True \
+#   --dataset cleaned_baseline_train \
+#   --output_dir "${OUT_ADAPTER}" \
+#   --logging_strategy steps \
+#   --logging_steps 10 \
+#   --plot_loss True \
+#   --overwrite_output_dir True \
+#   --report_to wandb \
+#   --run_name baseline \
+#   --per_device_train_batch_size 8 \
+#   --per_device_eval_batch_size 32 \
+#   --gradient_accumulation_steps 4 \
+#   --max_grad_norm 0.5 \
+#   --learning_rate 1.0e-5 \
+#   --num_train_epochs 5 \
+#   --bf16 True \
+#   --lr_scheduler_type cosine \
+#   --warmup_ratio 0.2 \
+#   --do_eval True \
+#   --eval_dataset cleaned_baseline_validation \
+#   --eval_strategy steps \
+#   --eval_steps 1768 \
+#   --predict_with_generate False \
+#   --do_sample False \
+#   --metric_for_best_model eval_cleaned_baseline_validation_pred-tgt-dFKGL \
+#   --save_strategy steps \
+#   --save_steps 1768 \
+#   --save_total_limit 20 \
+#   --load_best_model_at_end True \
+#   --greater_is_better False \
+#   > "${LOG_DIR}/baseline_train.log" 2>&1
 
 
 # --------------- MERGE ---------------
@@ -178,7 +179,8 @@ for grade in {02..12}; do
     # Keep SAME run id as training; do NOT create per-grade runs
     export WANDB_RUN_ID
     export WANDB_RESUME=allow
-    export WANDB_NAME="baseline-graded-eval${ITERATION}"   # keep stable name for color-by-run
+    # export WANDB_NAME="baseline-graded-eval${ITERATION}"   # keep stable name for color-by-run
+    export WANDB_NAME="off_the_shelf-graded-eval${ITERATION}"
 
     # Rich tags & notes for grouping/filtering in the UI
     export WANDB_TAGS="baseline,cleaned,ds:${DATASET_VARIATION},grade:${grade}"
@@ -193,9 +195,9 @@ for grade in {02..12}; do
 
 
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
+    # --adapter_name_or_path "${OUT_ADAPTER}" \
     llamafactory-cli train \
       --model_name_or_path "${BASE_MODEL}" \
-      --adapter_name_or_path "${OUT_ADAPTER}" \
       --trust_remote_code True \
       --template llama3 \
       --do_train False \
@@ -213,7 +215,8 @@ for grade in {02..12}; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/baseline_grade${grade}_validation${ITERATION}_eval.log" 2>&1
+      > "${LOG_DIR}/off_the_shelf_grade${grade}_eval${ITERATION}.log" 2>&1
+      # > "${LOG_DIR}/baseline_grade${grade}_eval${ITERATION}.log" 2>&1
     echo "[eval] completed grade${grade} eval for into run ${WANDB_RUN_ID}"
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
