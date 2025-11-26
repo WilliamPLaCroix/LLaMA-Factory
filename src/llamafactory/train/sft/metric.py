@@ -168,12 +168,12 @@ class ComputeSimilarity:
         self.score_dict["label-tgt-dFKGL"].append(np.mean(label_grade_deltas))
         self.score_dict["pred-label-dFKGL"].append(np.mean(pred_label_deltas))
 
-        def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
-            sari_mean = np.mean(self.score_dict["SARI"])
-            sari_beta = 1 - fkgl_alpha
-            return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl_delta
+        # def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
+        #     sari_mean = np.mean(self.score_dict["SARI"])
+        #     sari_beta = 1 - fkgl_alpha
+        #     return 100 - sari_beta * (100 - sari_mean) - 10 * fkgl_alpha * fkgl_delta
 
-        self.score_dict["dFKGL_SARI"].append(compute_fkgl_x_sari(self.score_dict["pred-tgt-dFKGL"], fkgl_alpha=0.5))
+        # self.score_dict["dFKGL_SARI"].append(compute_fkgl_x_sari(self.score_dict["pred-tgt-dFKGL"], fkgl_alpha=0.5))
 
         # NEW: one-shot JSONL dump at the end of eval, main process only
         if compute_result and _is_main_process():
