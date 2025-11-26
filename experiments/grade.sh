@@ -181,7 +181,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/graded_grade${GRADE}_eval${ITERATION}.log" 2>&1
+      > "${LOG_DIR}/graded_grade${GRADE}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"

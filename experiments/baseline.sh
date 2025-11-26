@@ -216,8 +216,8 @@ for grade in {02..12}; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/off_the_shelf_grade${grade}_eval${ITERATION}.log" 2>&1
-      # > "${LOG_DIR}/baseline_grade${grade}_eval${ITERATION}.log" 2>&1
+      > "${LOG_DIR}/off_the_shelf_grade${grade}_eval.log" 2>&1
+      # > "${LOG_DIR}/baseline_grade${grade}_eval.log" 2>&1
     echo "[eval] completed grade${grade} eval for into run ${WANDB_RUN_ID}"
 
     echo "[infer] completed grade ${grade} into run ${WANDB_RUN_ID}"
