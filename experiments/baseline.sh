@@ -47,9 +47,10 @@ set -euo pipefail
 ITERATION_NUM="5"
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
-#RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"
+# RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"
 RUN_KEY="off_the_shelf-${PROJECT_VERSION}${ITERATION}"
-export WANDB_NAME="baseline${ITERATION}"           # stable name per train variant
+# export WANDB_NAME="baseline${ITERATION}"           # stable name per train variant
+export WANDB_NAME="off_the_shelf${ITERATION}"
 
 # ---------------- Stable W&B run id per train variant ----------------
 ID_DIR="${HOME}/.llf_wandb_ids"
