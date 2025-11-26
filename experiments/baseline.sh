@@ -44,7 +44,7 @@ nvidia-smi || true; nvcc --version || true
 set -euo pipefail
 
 # for ITERATION_NUM in {97..98}; do
-ITERATION_NUM="5"
+ITERATION_NUM="6"
 ITERATION="-${ITERATION_NUM}"
 echo "Starting experiment for iteration: ${ITERATION_NUM}"
 # RUN_KEY="baseline-${PROJECT_VERSION}${ITERATION}"

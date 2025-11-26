@@ -35,7 +35,7 @@ echo "Starting sequential grade processing at $(date)"
 total_start_time=$(date +%s)
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
-ITERATION_NUM="5"
+ITERATION_NUM="6"
 ITERATION="-${ITERATION_NUM}"
 RUN_KEY="graded-from-baseline${ITERATION_NUM}"
 
@@ -122,8 +122,8 @@ for GRADE in "${GRADES[@]}"; do
       --per_device_train_batch_size 8 \
       --per_device_eval_batch_size 32 \
       --gradient_accumulation_steps 4 \
-      --learning_rate 1.0e-4 \
-      --num_train_epochs 5 \
+      --learning_rate 1.0e-5 \
+      --num_train_epochs 10 \
       --bf16 True \
       --lr_scheduler_type cosine \
       --do_eval True \
