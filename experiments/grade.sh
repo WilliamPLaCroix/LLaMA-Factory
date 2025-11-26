@@ -7,8 +7,9 @@ ENTITY=""                              # optional W&B entity
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
+BASELINE_ADAPTER="${CACHE}/${PROJECT_VERSION}_baseline-adapter"
 
 LOG_DIR="${REPO}/experiments/logs/graded"
 CFG_DIR="${REPO}/experiments/configs"
@@ -34,7 +35,7 @@ echo "Starting sequential grade processing at $(date)"
 total_start_time=$(date +%s)
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
-ITERATION_NUM="4"
+ITERATION_NUM="5"
 ITERATION="-${ITERATION_NUM}"
 RUN_KEY="graded-from-baseline${ITERATION_NUM}"
 
@@ -86,14 +87,14 @@ for GRADE in "${GRADES[@]}"; do
     # Set training-specific W&B config
     export WANDB_RUN_ID="${TRAIN_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded-train"
-    export WANDB_NAME="model=grade${GRADE}-from-baseline"
+    export WANDB_NAME="grade${GRADE}-from-baseline"
     export WANDB_TAGS="${GRADE},train"
     export WANDB_JOB_TYPE="train"
 
     echo "[train] will now run llamafactory-cli train"
     llamafactory-cli train \
-      --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-      --adapter_name_or_path /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_baseline-adapter/checkpoint-5304 \
+      --model_name_or_path "${BASE_MODEL}" \
+      --adapter_name_or_path "${BASELINE_ADAPTER}" \
       --trust_remote_code True \
       --seed 42 \
       --use_fast_tokenizer True \
@@ -109,15 +110,15 @@ for GRADE in "${GRADES[@]}"; do
       --preprocessing_num_workers 16 \
       --train_on_prompt False \
       --overwrite_cache True \
-      --dataset cleaned_grade03_train \
-      --output_dir /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_grade${GRADE}-adapter \
+      --dataset "cleaned_grade${GRADE}_train" \
+      --output_dir "${OUT_ADAPTER}" \
       --logging_strategy steps \
       --logging_steps 10 \
       --save_steps 100 \
       --plot_loss True \
       --overwrite_output_dir True \
       --report_to wandb \
-      --run_name model=grade${GRADE}-from-baseline \
+      --run_name "grade${GRADE}-from-baseline" \
       --per_device_train_batch_size 8 \
       --per_device_eval_batch_size 32 \
       --gradient_accumulation_steps 4 \
@@ -126,11 +127,11 @@ for GRADE in "${GRADES[@]}"; do
       --bf16 True \
       --lr_scheduler_type cosine \
       --do_eval True \
-      --eval_dataset cleaned_grade${GRADE}_validation \
+      --eval_dataset "cleaned_grade${GRADE}_validation" \
       --eval_strategy epoch \
       --predict_with_generate False \
       --do_sample False \
-      --metric_for_best_model eval_cleaned_grade${GRADE}_validation_pred-tgt-dFKGL \
+      --metric_for_best_model "eval_cleaned_grade${GRADE}_validation_pred-tgt-dFKGL" \
       --save_strategy epoch \
       --save_total_limit 20 \
       --load_best_model_at_end True \
@@ -144,7 +145,7 @@ for GRADE in "${GRADES[@]}"; do
 
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="graded"
-    export WANDB_NAME="model=graded-from-baseline"
+    export WANDB_NAME="graded-from-baseline"
     export WANDB_TAGS="ds:${DATASET_VARIATION},grade:${GRADE}"
     export WANDB_NOTES="infer_ds=${DATASET_VARIATION}; grade=${GRADE};"
     export WANDB_JOB_TYPE="infer"
@@ -161,16 +162,16 @@ for GRADE in "${GRADES[@]}"; do
 
     # -------------- INFERENCE CALL --------------
     llamafactory-cli train \
-      --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
-      --adapter_name_or_path "${CACHE}/${PROJECT_VERSION}_baseline-adapter" \
+      --model_name_or_path "${BASE_MODEL}" \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
       --trust_remote_code True \
       --template llama3 \
       --do_train False \
       --do_eval True \
       --do_predict False \
       --finetuning_type lora \
-      --eval_dataset cleaned_grade${GRADE}_validation \
-      --output_dir "${OUT_ADAPTER}" \
+      --eval_dataset "cleaned_grade${GRADE}_validation" \
+      --output_dir "${LOG_DIR}" \
       --overwrite_output_dir True \
       --cutoff_len 1024 \
       --seed 42 \
@@ -180,7 +181,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/graded_grade${GRADE}_validation${ITERATION}_eval.log" 2>&1
+      > "${LOG_DIR}/graded_grade${GRADE}_eval${ITERATION}.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"

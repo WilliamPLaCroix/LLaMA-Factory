@@ -73,7 +73,7 @@ printf '%s
 # --------------- TRAIN ---------------
 echo "[train] will now run llamafactory-cli train"
 llamafactory-cli train \
-  --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+  --model_name_or_path "${BASE_MODEL}" \
   --trust_remote_code True \
   --seed 42 \
   --use_fast_tokenizer True \
@@ -90,7 +90,7 @@ llamafactory-cli train \
   --train_on_prompt False \
   --overwrite_cache True \
   --dataset cleaned_baseline_train \
-  --output_dir /scratch/wlacroix/.cache/llama_factory/${PROJECT_VERSION}_baseline-adapter \
+  --output_dir "${OUT_ADAPTER}" \
   --logging_strategy steps \
   --logging_steps 10 \
   --plot_loss True \
@@ -194,7 +194,7 @@ for grade in {02..12}; do
 
     # Call your inference (must use wandb.init(resume='allow') or respect env id)
     llamafactory-cli train \
-      --model_name_or_path /scratch/common_models/Llama-3.2-3B-Instruct-greedy \
+      --model_name_or_path "${BASE_MODEL}" \
       --adapter_name_or_path "${OUT_ADAPTER}" \
       --trust_remote_code True \
       --template llama3 \
