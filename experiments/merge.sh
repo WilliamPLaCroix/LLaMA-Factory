@@ -5,7 +5,7 @@
 MERGE_METHOD="dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="6"
+ITERATION="7"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
@@ -153,7 +153,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_predict False \
       --finetuning_type lora \
       --eval_dataset "cleaned_grade${GRADE}_validation" \
-      --output_dir "${LOG_DIR}" \
+      --output_dir "${OUT_ADAPTER}" \
       --overwrite_output_dir True \
       --cutoff_len 1024 \
       --seed 42 \
