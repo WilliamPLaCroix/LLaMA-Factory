@@ -110,7 +110,7 @@ class ComputeSimilarity:
         if hasattr(self, "score_dict"):
             result = {k: float(np.mean(v)) for k, v in self.score_dict.items()}
             #result = self.score_dict
-        self.score_dict = {"pred-tgt-dFKGL": [], "label-tgt-dFKGL": [], "pred-label-dFKGL": [], "SARI": [], "dFKGL_SARI": [], "BERTScore_F1": []} # , "loss": [], "perplexity": []}
+        self.score_dict = {"pred-tgt-dFKGL": [], "label-tgt-dFKGL": [], "SARI": [], "BERTScore_F1": []} # , "dFKGL_SARI": [] , "loss": [], "perplexity": []}
         return result
 
     def __post_init__(self):
@@ -153,7 +153,6 @@ class ComputeSimilarity:
         # Compute FKGL and delta per grade group
         tgt_grade_deltas = []
         label_grade_deltas = []
-        pred_label_deltas = []
         
         for pred, target_grade, label in tqdm(zip(preds, grades, labels)):
             # Compute FKGL for pred and label
@@ -162,11 +161,9 @@ class ComputeSimilarity:
             # Compute and append deltas
             tgt_grade_deltas.append(abs(pred_fkgl - target_grade))
             label_grade_deltas.append(abs(label_fkgl - target_grade))
-            pred_label_deltas.append(abs(pred_fkgl - label_fkgl))
         
         self.score_dict["pred-tgt-dFKGL"].append(np.mean(tgt_grade_deltas))
         self.score_dict["label-tgt-dFKGL"].append(np.mean(label_grade_deltas))
-        self.score_dict["pred-label-dFKGL"].append(np.mean(pred_label_deltas))
 
         # def compute_fkgl_x_sari(fkgl_delta, fkgl_alpha=0.5):
         #     sari_mean = np.mean(self.score_dict["SARI"])
