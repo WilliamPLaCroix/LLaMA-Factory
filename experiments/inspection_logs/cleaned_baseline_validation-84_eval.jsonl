@@ -1,334 +1,4 @@
-[2025-11-14 16:02:44,530] [INFO] [real_accelerator.py:222:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-Warning: The cache directory for DeepSpeed Triton autotune, /nethome/wlacroix/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
-INFO 11-14 16:03:55 __init__.py:190] Automatically detected platform cuda.
-[INFO|2025-11-14 16:04:27] llamafactory.hparams.parser:383 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,938 >> loading file tokenizer.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,938 >> loading file tokenizer.model
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,938 >> loading file added_tokens.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,938 >> loading file special_tokens_map.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,939 >> loading file tokenizer_config.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:27,939 >> loading file chat_template.jinja
-[INFO|tokenization_utils_base.py:2323] 2025-11-14 16:04:28,245 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-[INFO|configuration_utils.py:697] 2025-11-14 16:04:28,246 >> loading configuration file /scratch/common_models/Llama-3.2-3B-Instruct-greedy/config.json
-[INFO|configuration_utils.py:771] 2025-11-14 16:04:28,247 >> Model config LlamaConfig {
-  "architectures": [
-    "LlamaForCausalLM"
-  ],
-  "attention_bias": false,
-  "attention_dropout": 0.0,
-  "bos_token_id": 128000,
-  "eos_token_id": [
-    128001,
-    128008,
-    128009
-  ],
-  "head_dim": 128,
-  "hidden_act": "silu",
-  "hidden_size": 3072,
-  "initializer_range": 0.02,
-  "intermediate_size": 8192,
-  "max_position_embeddings": 131072,
-  "mlp_bias": false,
-  "model_type": "llama",
-  "num_attention_heads": 24,
-  "num_hidden_layers": 28,
-  "num_key_value_heads": 8,
-  "pretraining_tp": 1,
-  "rms_norm_eps": 1e-05,
-  "rope_scaling": {
-    "factor": 32.0,
-    "high_freq_factor": 4.0,
-    "low_freq_factor": 1.0,
-    "original_max_position_embeddings": 8192,
-    "rope_type": "llama3"
-  },
-  "rope_theta": 500000.0,
-  "tie_word_embeddings": true,
-  "torch_dtype": "bfloat16",
-  "transformers_version": "4.50.0",
-  "use_cache": true,
-  "vocab_size": 128256
-}
-
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file tokenizer.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file tokenizer.model
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file added_tokens.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file special_tokens_map.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file tokenizer_config.json
-[INFO|tokenization_utils_base.py:2058] 2025-11-14 16:04:28,248 >> loading file chat_template.jinja
-[INFO|tokenization_utils_base.py:2323] 2025-11-14 16:04:28,551 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-[INFO|2025-11-14 16:04:28] llamafactory.data.template:143 >> Add pad token: <|eot_id|>
-[INFO|2025-11-14 16:04:28] llamafactory.data.template:143 >> Add <|eot_id|>,<|eom_id|> to stop words.
-[INFO|2025-11-14 16:04:28] llamafactory.data.loader:143 >> Loading dataset williamplacroix/graded_wikilarge...
-[INFO|configuration_utils.py:697] 2025-11-14 16:04:32,133 >> loading configuration file /scratch/common_models/Llama-3.2-3B-Instruct-greedy/config.json
-[INFO|configuration_utils.py:771] 2025-11-14 16:04:32,134 >> Model config LlamaConfig {
-  "architectures": [
-    "LlamaForCausalLM"
-  ],
-  "attention_bias": false,
-  "attention_dropout": 0.0,
-  "bos_token_id": 128000,
-  "eos_token_id": [
-    128001,
-    128008,
-    128009
-  ],
-  "head_dim": 128,
-  "hidden_act": "silu",
-  "hidden_size": 3072,
-  "initializer_range": 0.02,
-  "intermediate_size": 8192,
-  "max_position_embeddings": 131072,
-  "mlp_bias": false,
-  "model_type": "llama",
-  "num_attention_heads": 24,
-  "num_hidden_layers": 28,
-  "num_key_value_heads": 8,
-  "pretraining_tp": 1,
-  "rms_norm_eps": 1e-05,
-  "rope_scaling": {
-    "factor": 32.0,
-    "high_freq_factor": 4.0,
-    "low_freq_factor": 1.0,
-    "original_max_position_embeddings": 8192,
-    "rope_type": "llama3"
-  },
-  "rope_theta": 500000.0,
-  "tie_word_embeddings": true,
-  "torch_dtype": "bfloat16",
-  "transformers_version": "4.50.0",
-  "use_cache": true,
-  "vocab_size": 128256
-}
-
-eval example:
-input_ids:
-[128000, 128006, 882, 128007, 271, 59565, 1269, 420, 5688, 11914, 311, 1304, 433, 6847, 49839, 555, 4236, 304, 24749, 220, 17, 198, 57475, 8288, 4046, 263, 569, 482, 951, 12, 1255, 285, 374, 264, 79245, 304, 279, 13951, 1820, 9476, 304, 279, 5654, 315, 94708, 6953, 53926, 12, 4357, 556, 304, 10411, 38702, 944, 9822, 13, 128009, 128006, 78191, 128007, 271, 57475, 8288, 4046, 263, 569, 482, 951, 12, 1255, 285, 374, 264, 79245, 13, 128009]
-inputs:
-<|begin_of_text|><|start_header_id|>user<|end_header_id|>
-
-Rewrite this Input sentence to make it easily understandable by students in Grade 2
-Saint-L éonard - des-Bois is a commune in the Sarthe department in the region of Pays-de-la-Loire in north-western France.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-Saint-L éonard - des-Bois is a commune.<|eot_id|>
-label_ids:
-[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 57475, 8288, 4046, 263, 569, 482, 951, 12, 1255, 285, 374, 264, 79245, 13, 128009]
-labels:
-Saint-L éonard - des-Bois is a commune.<|eot_id|>
-[INFO|2025-11-14 16:04:32] llamafactory.model.patcher:143 >> Using KV cache for faster generation.
-[INFO|modeling_utils.py:1151] 2025-11-14 16:04:39,241 >> loading weights file /scratch/common_models/Llama-3.2-3B-Instruct-greedy/model.safetensors.index.json
-[INFO|modeling_utils.py:2170] 2025-11-14 16:04:39,241 >> Instantiating LlamaForCausalLM model under default dtype torch.bfloat16.
-[INFO|configuration_utils.py:1139] 2025-11-14 16:04:39,243 >> Generate config GenerationConfig {
-  "bos_token_id": 128000,
-  "eos_token_id": [
-    128001,
-    128008,
-    128009
-  ]
-}
-
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.03s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.65it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.50it/s]
-[INFO|modeling_utils.py:4987] 2025-11-14 16:04:40,606 >> All model checkpoint weights were used when initializing LlamaForCausalLM.
-
-[INFO|modeling_utils.py:4995] 2025-11-14 16:04:40,606 >> All the weights of LlamaForCausalLM were initialized from the model checkpoint at /scratch/common_models/Llama-3.2-3B-Instruct-greedy.
-If your task is similar to the task the model of the checkpoint was trained on, you can already use LlamaForCausalLM for predictions without further training.
-[INFO|configuration_utils.py:1092] 2025-11-14 16:04:40,623 >> loading configuration file /scratch/common_models/Llama-3.2-3B-Instruct-greedy/generation_config.json
-[INFO|configuration_utils.py:1139] 2025-11-14 16:04:40,624 >> Generate config GenerationConfig {
-  "bos_token_id": 128000,
-  "eos_token_id": [
-    128001,
-    128008,
-    128009
-  ]
-}
-
-[INFO|2025-11-14 16:04:40] llamafactory.model.model_utils.attention:143 >> Using torch SDPA for faster training and inference.
-[INFO|2025-11-14 16:04:42] llamafactory.model.adapter:143 >> Merged 1 adapter(s).
-[INFO|2025-11-14 16:04:42] llamafactory.model.adapter:143 >> Loaded adapter(s): /scratch/wlacroix/.cache/llama_factory/v1_cleaned_baseline-adapter
-[INFO|2025-11-14 16:04:42] llamafactory.model.loader:143 >> all params: 3,212,749,824
-[INFO|trainer.py:748] 2025-11-14 16:04:42,716 >> Using auto half precision backend
-[WARNING|2025-11-14 16:04:42] llamafactory.train.callbacks:154 >> Previous trainer log in this folder will be deleted.
-[INFO|trainer.py:4289] 2025-11-14 16:04:42,739 >> 
-***** Running Evaluation *****
-[INFO|trainer.py:4291] 2025-11-14 16:04:42,739 >>   Num examples = 5632
-[INFO|trainer.py:4294] 2025-11-14 16:04:42,739 >>   Batch size = 32
-[WARNING|utils.py:1939] 2025-11-14 16:04:42,751 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  0%|          | 0/176 [00:00<?, ?it/s][WARNING|utils.py:1939] 2025-11-14 16:04:43,862 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  1%|          | 2/176 [00:00<01:21,  2.13it/s][WARNING|utils.py:1939] 2025-11-14 16:04:44,800 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  2%|▏         | 3/176 [00:01<01:30,  1.91it/s][WARNING|utils.py:1939] 2025-11-14 16:04:45,403 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  2%|▏         | 4/176 [00:02<01:34,  1.82it/s][WARNING|utils.py:1939] 2025-11-14 16:04:45,996 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  3%|▎         | 5/176 [00:02<01:44,  1.64it/s][WARNING|utils.py:1939] 2025-11-14 16:04:46,721 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  3%|▎         | 6/176 [00:03<01:41,  1.67it/s][WARNING|utils.py:1939] 2025-11-14 16:04:47,299 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  4%|▍         | 7/176 [00:04<01:43,  1.64it/s][WARNING|utils.py:1939] 2025-11-14 16:04:47,930 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  5%|▍         | 8/176 [00:04<01:46,  1.58it/s][WARNING|utils.py:1939] 2025-11-14 16:04:48,607 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  5%|▌         | 9/176 [00:05<01:44,  1.60it/s][WARNING|utils.py:1939] 2025-11-14 16:04:49,221 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  6%|▌         | 10/176 [00:06<01:52,  1.47it/s][WARNING|utils.py:1939] 2025-11-14 16:04:50,024 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  6%|▋         | 11/176 [00:06<01:44,  1.57it/s][WARNING|utils.py:1939] 2025-11-14 16:04:50,561 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  7%|▋         | 12/176 [00:07<01:45,  1.56it/s][WARNING|utils.py:1939] 2025-11-14 16:04:51,216 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  7%|▋         | 13/176 [00:08<02:15,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:04:52,479 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  8%|▊         | 14/176 [00:09<02:12,  1.22it/s][WARNING|utils.py:1939] 2025-11-14 16:04:53,268 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  9%|▊         | 15/176 [00:09<01:58,  1.36it/s][WARNING|utils.py:1939] 2025-11-14 16:04:53,819 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-  9%|▉         | 16/176 [00:10<02:01,  1.31it/s][WARNING|utils.py:1939] 2025-11-14 16:04:54,633 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 10%|▉         | 17/176 [00:11<02:00,  1.32it/s][WARNING|utils.py:1939] 2025-11-14 16:04:55,375 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 10%|█         | 18/176 [00:12<02:11,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:04:56,393 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 11%|█         | 19/176 [00:13<02:03,  1.27it/s][WARNING|utils.py:1939] 2025-11-14 16:04:57,064 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 11%|█▏        | 20/176 [00:14<02:29,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:04:58,429 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 12%|█▏        | 21/176 [00:15<02:20,  1.10it/s][WARNING|utils.py:1939] 2025-11-14 16:04:59,221 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 12%|█▎        | 22/176 [00:16<02:26,  1.05it/s][WARNING|utils.py:1939] 2025-11-14 16:05:00,264 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 13%|█▎        | 23/176 [00:17<02:13,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:05:00,950 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 14%|█▎        | 24/176 [00:17<02:02,  1.24it/s][WARNING|utils.py:1939] 2025-11-14 16:05:01,605 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 14%|█▍        | 25/176 [00:18<02:07,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:05:02,548 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 15%|█▍        | 26/176 [00:19<02:00,  1.25it/s][WARNING|utils.py:1939] 2025-11-14 16:05:03,246 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 15%|█▌        | 27/176 [00:20<01:56,  1.28it/s][WARNING|utils.py:1939] 2025-11-14 16:05:03,987 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 16%|█▌        | 28/176 [00:20<01:57,  1.26it/s][WARNING|utils.py:1939] 2025-11-14 16:05:04,813 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 16%|█▋        | 29/176 [00:21<01:50,  1.33it/s][WARNING|utils.py:1939] 2025-11-14 16:05:05,462 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 17%|█▋        | 30/176 [00:22<01:47,  1.36it/s][WARNING|utils.py:1939] 2025-11-14 16:05:06,168 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 18%|█▊        | 31/176 [00:22<01:44,  1.39it/s][WARNING|utils.py:1939] 2025-11-14 16:05:06,839 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 18%|█▊        | 32/176 [00:23<01:56,  1.24it/s][WARNING|utils.py:1939] 2025-11-14 16:05:07,850 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 19%|█▉        | 33/176 [00:24<01:58,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:05:08,720 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 19%|█▉        | 34/176 [00:25<01:57,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:05:09,551 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 20%|█▉        | 35/176 [00:26<01:47,  1.32it/s][WARNING|utils.py:1939] 2025-11-14 16:05:10,153 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 20%|██        | 36/176 [00:27<01:53,  1.23it/s][WARNING|utils.py:1939] 2025-11-14 16:05:11,084 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 21%|██        | 37/176 [00:28<01:52,  1.24it/s][WARNING|utils.py:1939] 2025-11-14 16:05:11,886 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 22%|██▏       | 38/176 [00:28<01:53,  1.22it/s][WARNING|utils.py:1939] 2025-11-14 16:05:12,740 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 22%|██▏       | 39/176 [00:29<01:59,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:05:13,722 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 23%|██▎       | 40/176 [00:30<01:56,  1.17it/s][WARNING|utils.py:1939] 2025-11-14 16:05:14,552 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 23%|██▎       | 41/176 [00:31<02:00,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:05:15,517 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 24%|██▍       | 42/176 [00:32<01:55,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:05:16,314 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 24%|██▍       | 43/176 [00:33<01:52,  1.19it/s][WARNING|utils.py:1939] 2025-11-14 16:05:17,111 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 25%|██▌       | 44/176 [00:33<01:43,  1.27it/s][WARNING|utils.py:1939] 2025-11-14 16:05:17,769 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 26%|██▌       | 45/176 [00:34<01:38,  1.33it/s][WARNING|utils.py:1939] 2025-11-14 16:05:18,435 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 26%|██▌       | 46/176 [00:35<01:35,  1.36it/s][WARNING|utils.py:1939] 2025-11-14 16:05:19,126 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 27%|██▋       | 47/176 [00:36<01:37,  1.33it/s][WARNING|utils.py:1939] 2025-11-14 16:05:19,929 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 27%|██▋       | 48/176 [00:36<01:40,  1.28it/s][WARNING|utils.py:1939] 2025-11-14 16:05:20,779 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 28%|██▊       | 49/176 [00:37<01:40,  1.26it/s][WARNING|utils.py:1939] 2025-11-14 16:05:21,602 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 28%|██▊       | 50/176 [00:38<01:38,  1.28it/s][WARNING|utils.py:1939] 2025-11-14 16:05:22,354 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 29%|██▉       | 51/176 [00:39<01:36,  1.30it/s][WARNING|utils.py:1939] 2025-11-14 16:05:23,101 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 30%|██▉       | 52/176 [00:40<01:37,  1.28it/s][WARNING|utils.py:1939] 2025-11-14 16:05:23,911 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 30%|███       | 53/176 [00:40<01:37,  1.26it/s][WARNING|utils.py:1939] 2025-11-14 16:05:24,726 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 31%|███       | 54/176 [00:41<01:41,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:05:25,655 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 31%|███▏      | 55/176 [00:42<01:38,  1.23it/s][WARNING|utils.py:1939] 2025-11-14 16:05:26,413 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 32%|███▏      | 56/176 [00:43<01:39,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:05:27,299 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 32%|███▏      | 57/176 [00:44<01:41,  1.17it/s][WARNING|utils.py:1939] 2025-11-14 16:05:28,207 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 33%|███▎      | 58/176 [00:45<01:37,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:05:28,964 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 34%|███▎      | 59/176 [00:46<01:39,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:05:29,865 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 34%|███▍      | 60/176 [00:46<01:37,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:05:30,675 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 35%|███▍      | 61/176 [00:47<01:34,  1.22it/s][WARNING|utils.py:1939] 2025-11-14 16:05:31,457 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 35%|███▌      | 62/176 [00:48<01:38,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:05:32,421 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 36%|███▌      | 63/176 [00:49<01:39,  1.14it/s][WARNING|utils.py:1939] 2025-11-14 16:05:33,335 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 36%|███▋      | 64/176 [00:50<01:31,  1.22it/s][WARNING|utils.py:1939] 2025-11-14 16:05:34,015 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 37%|███▋      | 65/176 [00:51<01:34,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:05:34,934 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 38%|███▊      | 66/176 [00:51<01:33,  1.17it/s][WARNING|utils.py:1939] 2025-11-14 16:05:35,800 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 38%|███▊      | 67/176 [00:52<01:29,  1.22it/s][WARNING|utils.py:1939] 2025-11-14 16:05:36,543 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 39%|███▊      | 68/176 [00:53<01:29,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:05:37,391 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 39%|███▉      | 69/176 [00:54<01:27,  1.23it/s][WARNING|utils.py:1939] 2025-11-14 16:05:38,172 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 40%|███▉      | 70/176 [00:55<01:41,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:05:39,470 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 40%|████      | 71/176 [00:56<01:35,  1.10it/s][WARNING|utils.py:1939] 2025-11-14 16:05:40,265 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 41%|████      | 72/176 [00:57<01:38,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:05:41,291 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 41%|████▏     | 73/176 [00:58<01:43,  1.01s/it][WARNING|utils.py:1939] 2025-11-14 16:05:42,449 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 42%|████▏     | 74/176 [00:59<01:53,  1.11s/it][WARNING|utils.py:1939] 2025-11-14 16:05:43,801 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 43%|████▎     | 75/176 [01:00<01:45,  1.04s/it][WARNING|utils.py:1939] 2025-11-14 16:05:44,682 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 43%|████▎     | 76/176 [01:01<01:35,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:05:45,446 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 44%|████▍     | 77/176 [01:02<01:30,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:05:46,257 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 44%|████▍     | 78/176 [01:03<01:28,  1.10it/s][WARNING|utils.py:1939] 2025-11-14 16:05:47,149 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 45%|████▍     | 79/176 [01:04<01:29,  1.08it/s][WARNING|utils.py:1939] 2025-11-14 16:05:48,112 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 45%|████▌     | 80/176 [01:05<01:29,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:05:49,077 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 46%|████▌     | 81/176 [01:06<01:29,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:05:50,020 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 47%|████▋     | 82/176 [01:06<01:22,  1.14it/s][WARNING|utils.py:1939] 2025-11-14 16:05:50,748 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 47%|████▋     | 83/176 [01:07<01:25,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:05:51,765 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 48%|████▊     | 84/176 [01:08<01:19,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:05:52,500 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 48%|████▊     | 85/176 [01:09<01:21,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:05:53,473 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 49%|████▉     | 86/176 [01:10<01:20,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:05:54,346 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 49%|████▉     | 87/176 [01:11<01:20,  1.10it/s][WARNING|utils.py:1939] 2025-11-14 16:05:55,295 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 50%|█████     | 88/176 [01:12<01:18,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:05:56,147 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 51%|█████     | 89/176 [01:12<01:12,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:05:56,854 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 51%|█████     | 90/176 [01:13<01:14,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:05:57,794 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 52%|█████▏    | 91/176 [01:14<01:16,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:05:58,757 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 52%|█████▏    | 92/176 [01:15<01:12,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:05:59,537 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 53%|█████▎    | 93/176 [01:16<01:18,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:00,683 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 53%|█████▎    | 94/176 [01:17<01:20,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:06:01,727 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 54%|█████▍    | 95/176 [01:18<01:14,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:06:02,506 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 55%|█████▍    | 96/176 [01:19<01:14,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:03,484 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 55%|█████▌    | 97/176 [01:20<01:13,  1.08it/s][WARNING|utils.py:1939] 2025-11-14 16:06:04,393 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 56%|█████▌    | 98/176 [01:21<01:07,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:06:05,124 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 56%|█████▋    | 99/176 [01:22<01:10,  1.10it/s][WARNING|utils.py:1939] 2025-11-14 16:06:06,129 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 57%|█████▋    | 100/176 [01:23<01:13,  1.03it/s][WARNING|utils.py:1939] 2025-11-14 16:06:07,247 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 57%|█████▋    | 101/176 [01:24<01:13,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:06:08,252 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 58%|█████▊    | 102/176 [01:25<01:10,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:06:09,154 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 59%|█████▊    | 103/176 [01:26<01:06,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:06:09,965 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 59%|█████▉    | 104/176 [01:27<01:12,  1.00s/it][WARNING|utils.py:1939] 2025-11-14 16:06:11,174 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 60%|█████▉    | 105/176 [01:28<01:09,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:06:12,105 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 60%|██████    | 106/176 [01:29<01:06,  1.05it/s][WARNING|utils.py:1939] 2025-11-14 16:06:12,980 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 61%|██████    | 107/176 [01:30<01:10,  1.02s/it][WARNING|utils.py:1939] 2025-11-14 16:06:14,155 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 61%|██████▏   | 108/176 [01:31<01:04,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:14,936 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 62%|██████▏   | 109/176 [01:32<01:03,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:15,879 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 62%|██████▎   | 110/176 [01:33<01:04,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:06:16,944 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 63%|██████▎   | 111/176 [01:34<01:08,  1.05s/it][WARNING|utils.py:1939] 2025-11-14 16:06:18,157 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 64%|██████▎   | 112/176 [01:35<01:03,  1.01it/s][WARNING|utils.py:1939] 2025-11-14 16:06:18,998 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 64%|██████▍   | 113/176 [01:35<00:59,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:19,827 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 65%|██████▍   | 114/176 [01:36<00:55,  1.11it/s][WARNING|utils.py:1939] 2025-11-14 16:06:20,628 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 65%|██████▌   | 115/176 [01:37<00:52,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:06:21,402 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 66%|██████▌   | 116/176 [01:38<00:49,  1.21it/s][WARNING|utils.py:1939] 2025-11-14 16:06:22,139 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 66%|██████▋   | 117/176 [01:39<00:50,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:06:23,097 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 67%|██████▋   | 118/176 [01:40<00:49,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:06:23,905 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 68%|██████▊   | 119/176 [01:41<00:54,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:06:25,125 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 68%|██████▊   | 120/176 [01:42<00:51,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:06:25,948 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 69%|██████▉   | 121/176 [01:43<00:55,  1.01s/it][WARNING|utils.py:1939] 2025-11-14 16:06:27,186 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 69%|██████▉   | 122/176 [01:44<00:55,  1.02s/it][WARNING|utils.py:1939] 2025-11-14 16:06:28,216 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 70%|██████▉   | 123/176 [01:45<00:49,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:28,983 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 70%|███████   | 124/176 [01:46<00:48,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:29,893 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 71%|███████   | 125/176 [01:46<00:47,  1.08it/s][WARNING|utils.py:1939] 2025-11-14 16:06:30,803 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 72%|███████▏  | 126/176 [01:47<00:43,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:06:31,551 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 72%|███████▏  | 127/176 [01:48<00:41,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:06:32,332 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 73%|███████▎  | 128/176 [01:49<00:41,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:06:33,244 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 73%|███████▎  | 129/176 [01:50<00:40,  1.17it/s][WARNING|utils.py:1939] 2025-11-14 16:06:34,070 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 74%|███████▍  | 130/176 [01:51<00:39,  1.18it/s][WARNING|utils.py:1939] 2025-11-14 16:06:34,909 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 74%|███████▍  | 131/176 [01:51<00:37,  1.20it/s][WARNING|utils.py:1939] 2025-11-14 16:06:35,712 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 75%|███████▌  | 132/176 [01:52<00:39,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:06:36,744 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 76%|███████▌  | 133/176 [01:53<00:41,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:06:37,861 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 76%|███████▌  | 134/176 [01:55<00:43,  1.03s/it][WARNING|utils.py:1939] 2025-11-14 16:06:39,038 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 77%|███████▋  | 135/176 [01:56<00:40,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:06:39,902 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 77%|███████▋  | 136/176 [01:56<00:38,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:06:40,835 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 78%|███████▊  | 137/176 [01:57<00:36,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:41,710 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 78%|███████▊  | 138/176 [01:58<00:35,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:42,632 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 79%|███████▉  | 139/176 [01:59<00:32,  1.12it/s][WARNING|utils.py:1939] 2025-11-14 16:06:43,428 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 80%|███████▉  | 140/176 [02:00<00:32,  1.11it/s][WARNING|utils.py:1939] 2025-11-14 16:06:44,355 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 80%|████████  | 141/176 [02:01<00:30,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:06:45,145 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 81%|████████  | 142/176 [02:02<00:29,  1.16it/s][WARNING|utils.py:1939] 2025-11-14 16:06:46,003 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 81%|████████▏ | 143/176 [02:03<00:28,  1.15it/s][WARNING|utils.py:1939] 2025-11-14 16:06:46,885 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 82%|████████▏ | 144/176 [02:04<00:31,  1.00it/s][WARNING|utils.py:1939] 2025-11-14 16:06:48,184 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 82%|████████▏ | 145/176 [02:05<00:29,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:49,010 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 83%|████████▎ | 146/176 [02:06<00:28,  1.04it/s][WARNING|utils.py:1939] 2025-11-14 16:06:49,999 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 84%|████████▎ | 147/176 [02:07<00:29,  1.02s/it][WARNING|utils.py:1939] 2025-11-14 16:06:51,171 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 84%|████████▍ | 148/176 [02:08<00:26,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:51,913 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 85%|████████▍ | 149/176 [02:09<00:26,  1.03it/s][WARNING|utils.py:1939] 2025-11-14 16:06:52,942 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 85%|████████▌ | 150/176 [02:10<00:25,  1.03it/s][WARNING|utils.py:1939] 2025-11-14 16:06:53,925 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 86%|████████▌ | 151/176 [02:10<00:23,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:54,789 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 86%|████████▋ | 152/176 [02:11<00:22,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:06:55,720 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 87%|████████▋ | 153/176 [02:13<00:23,  1.01s/it][WARNING|utils.py:1939] 2025-11-14 16:06:56,895 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 88%|████████▊ | 154/176 [02:13<00:20,  1.06it/s][WARNING|utils.py:1939] 2025-11-14 16:06:57,701 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 88%|████████▊ | 155/176 [02:14<00:20,  1.01it/s][WARNING|utils.py:1939] 2025-11-14 16:06:58,788 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 89%|████████▊ | 156/176 [02:16<00:21,  1.08s/it][WARNING|utils.py:1939] 2025-11-14 16:07:00,088 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 89%|████████▉ | 157/176 [02:17<00:20,  1.06s/it][WARNING|utils.py:1939] 2025-11-14 16:07:01,098 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 90%|████████▉ | 158/176 [02:18<00:19,  1.08s/it][WARNING|utils.py:1939] 2025-11-14 16:07:02,227 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 90%|█████████ | 159/176 [02:19<00:19,  1.15s/it][WARNING|utils.py:1939] 2025-11-14 16:07:03,553 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 91%|█████████ | 160/176 [02:20<00:17,  1.12s/it][WARNING|utils.py:1939] 2025-11-14 16:07:04,588 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 91%|█████████▏| 161/176 [02:21<00:15,  1.04s/it][WARNING|utils.py:1939] 2025-11-14 16:07:05,444 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 92%|█████████▏| 162/176 [02:22<00:14,  1.03s/it][WARNING|utils.py:1939] 2025-11-14 16:07:06,436 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 93%|█████████▎| 163/176 [02:23<00:12,  1.03it/s][WARNING|utils.py:1939] 2025-11-14 16:07:07,284 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 93%|█████████▎| 164/176 [02:24<00:11,  1.02it/s][WARNING|utils.py:1939] 2025-11-14 16:07:08,269 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 94%|█████████▍| 165/176 [02:25<00:10,  1.05it/s][WARNING|utils.py:1939] 2025-11-14 16:07:09,152 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 94%|█████████▍| 166/176 [02:26<00:09,  1.09it/s][WARNING|utils.py:1939] 2025-11-14 16:07:09,987 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 95%|█████████▍| 167/176 [02:27<00:08,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:07:10,955 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 95%|█████████▌| 168/176 [02:28<00:08,  1.01s/it][WARNING|utils.py:1939] 2025-11-14 16:07:12,149 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 96%|█████████▌| 169/176 [02:29<00:07,  1.03s/it][WARNING|utils.py:1939] 2025-11-14 16:07:13,226 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 97%|█████████▋| 170/176 [02:30<00:06,  1.06s/it][WARNING|utils.py:1939] 2025-11-14 16:07:14,363 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 97%|█████████▋| 171/176 [02:31<00:04,  1.01it/s][WARNING|utils.py:1939] 2025-11-14 16:07:15,185 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 98%|█████████▊| 172/176 [02:32<00:03,  1.03it/s][WARNING|utils.py:1939] 2025-11-14 16:07:16,103 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 98%|█████████▊| 173/176 [02:33<00:02,  1.07it/s][WARNING|utils.py:1939] 2025-11-14 16:07:16,961 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 99%|█████████▉| 174/176 [02:33<00:01,  1.11it/s][WARNING|utils.py:1939] 2025-11-14 16:07:17,778 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 99%|█████████▉| 175/176 [02:34<00:00,  1.11it/s][WARNING|utils.py:1939] 2025-11-14 16:07:18,670 >> Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-100%|██████████| 176/176 [02:35<00:00,  1.11it/s]{"prompt": "Saint-L éonard - des-Bois is a commune in the Sarthe department in the region of Pays-de-la-Loire in north-western France.", "predict": "assistant
+{"prompt": "Saint-L éonard - des-Bois is a commune in the Sarthe department in the region of Pays-de-la-Loire in north-western France.", "predict": "assistant
 
 It is found in the region Pays de la Loire in the Sarthe department in the west of France.", "label": "Saint-L éonard - des-Bois is a commune."}
 {"prompt": "A comb or hair polarizer is a toothed device used in hair care for straightening and cleaning hair or other fibers.", "predict": "assistant
@@ -10505,7 +10175,8 @@ wandb: 🚀 View run at https://wandb.ai/uds/Thesis_Phase_v1/runs/d014e3e23a91
 wandb: Detected [huggingface_hub.inference, openai] in use.
 wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
 wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
-100%|██████████| 176/176 [03:19<00:00,  1.13s/it]
+
+100%|██████████| 176/176 [03:19<00:00,  1.13s/it]
 {"prompt": "Non-members have access to the blue and red puffles only, and may have no more than two; members may adopt up to nineteen puffles.", "predict": "assistant
 
 Non-members can only buy 2 (red and blue puffles), but members can adopt a total of 20.", "label": "Non-members can only buy 2 (red and blue puffles), but members can adopt a total of 20 in all colors and types."}
@@ -17241,15 +16912,3 @@ The effects of Hurricane Andrew on Florida wetlands were considerable.", "label"
 {"prompt": "Together, he and Ilse struggle against racist Army officers and policies to sustain a relationship that some white soldiers condemn (although there are also many friendly whites who help them).", "predict": "assistant
 
 He and Ilse fight against racist Army officers and policies to keep a relationship that some white soldiers condemn (although there are also many friendly whites who help them).", "label": "He and Ilse fight against racist Army officers and policies to sustain a relationship that some white soldiers condemn (although there are also many friendly whites who help them)."}
-***** eval metrics *****
-  eval_cleaned_baseline_validation_dfkgl_sari             =    77.5216
-  eval_cleaned_baseline_validation_fkgl                   =        8.9
-  eval_cleaned_baseline_validation_fkgl-delta             =        1.9
-  eval_cleaned_baseline_validation_model_preparation_time =     0.0027
-  eval_cleaned_baseline_validation_runtime                = 0:03:11.56
-  eval_cleaned_baseline_validation_samples_per_second     =     29.401
-  eval_cleaned_baseline_validation_sari                   =    74.0432
-  eval_cleaned_baseline_validation_steps_per_second       =      0.919
-[1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mcleaned-baseline-84[0m at: [34m[0m
-[1;34mwandb[0m: Find logs at: [1;35mexperiments/logs/cleaned/wandb/run-20251114_160755-d014e3e23a91/logs[0m
