@@ -4,14 +4,13 @@ from peft import PeftModel
 import fire
 
 
-def select_adapters(target_grade=None,
-                    grade_selection="all",
-                    adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v0-3_cleaned_grade{}-adapter",
+def select_adapters(target_grade="all",
+                    adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v3_cleaned_grade{}-adapter",
                     weight_method="uniform",
                     merge_method="linear",
                     window_size=1):
     trained_grades = list(range(2, 13))  # grades 2 to 12
-    if grade_selection == "all":
+    if target_grade == "all":
         grades = [str(f'{grade:02}') for grade in trained_grades]
         weights = generate_weights(weight_method, merge_method, grades)
     else:
@@ -98,29 +97,26 @@ def generate_weights(weight_method, merge_method, grades):
         raise NotImplementedError("Custom weight methods not implemented yet")
     return weights
 
-def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
-         merge_method="debug",
-         adapter_selection="all",
-         grade_selection="all",
+def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
+         merge_method="dare_ties",
+         target_grade="all",
          weight_method="uniform",
          density=None,
          majority_sign_method="total",
-         adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v0-3_cleaned_grade{}-adapter",
          output="/scratch/wlacroix/.cache/llama_factory",
-         project_version="v0-3",
          window_size=1,
+         project_version="v3"
          ):
 
-    adapters, grades, weights = select_adapters(adapter_selection=adapter_selection, 
-                                        grade_selection=grade_selection, 
-                                        adapter_path_format=adapter_path_format,
-                                        weight_method=weight_method,
-                                        merge_method=merge_method,
-                                        window_size=window_size)
+    adapter_path_format=f"/scratch/wlacroix/.cache/llama_factory/{project_version}"+"_cleaned_grade{}-adapter",
+    adapters, grades, weights = select_adapters(target_grade=target_grade, 
+                                                adapter_path_format=adapter_path_format,
+                                                weight_method=weight_method,
+                                                merge_method=merge_method,
+                                                window_size=window_size)
 
     print(f"model: {model}")
-    print(f"adapter_selection: {adapter_selection}")
-    print(f"grade_selection: {grade_selection}")
+    print(f"target_grade: {target_grade}")
     print(f"weight_method: {weight_method}")
     print(f"grades: {grades}")
 
@@ -138,7 +134,8 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
         _ = model.load_adapter(adapter_path, adapter_name=grade)
     loaded = time.time() - start
     
-    merged_adapter_name = f"{project_version}_merge@{merge_method}_g@{adapter_selection}_w@{weight_method}"
+    merged_adapter_name = f"{project_version}_merge@{merge_method}_grade@{target_grade}window@{window_size}_weight@{weight_method}"
+    
     print(f"Merging adapters into new adapter: {merged_adapter_name}")
     # set default density if needed
     if merge_method in {"ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"} and density is None:
@@ -148,10 +145,10 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct",
 
     # set majority_sign_method only for relevant methods
     if merge_method in {"ties", "dare_ties", "dare_ties_svd"}:
-        majority_sign_method = majority_sign_method
+        majority_sign = majority_sign_method
     else:
-        majority_sign_method = None  # not used for other methods
-    model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name, density=density)
+        majority_sign = None  # not used for other methods
+    model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=merge_method, adapter_name=merged_adapter_name, density=density, majority_sign_method=majority_sign)
 
     
     print(f"weights: {weights}")

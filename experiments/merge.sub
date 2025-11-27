@@ -1,10 +1,10 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/merge.sh
-arguments       = $(merge_method)
-log             = /scratch/wlacroix/logs/merged/merge_$(merge_method).log
-output          = /scratch/wlacroix/logs/merged/merge_$(merge_method).out
-error           = /scratch/wlacroix/logs/merged/merge_$(merge_method).err
+arguments       = $(window_size) $(weight_method)
+log             = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).log
+output          = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).out
+error           = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
@@ -18,10 +18,17 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +WantGPUHomeMounted     = true
 +MaxWallTime = 604800
 
-queue merge_method from (
-linear
-ties
-dare_ties
-dare_linear
-magnitude_prune
+queue window_size, weight_method from (
+all, uniform
 )
+
+# queue window_size, weight_method from (
+# 2, uniform
+# 2, proximity
+# 3, uniform
+# 3, proximity
+# 4, uniform
+# 4, proximity
+# 5, uniform
+# 5, proximity
+# )

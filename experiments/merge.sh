@@ -1,22 +1,27 @@
 #!/usr/bin/env bash
-
 # ---------------- User knobs ----------------
 # MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
-MERGE_METHOD="${1:?merge method required: debug|svd|linear|ties|ties_svd|dare_ties|dare_linear|dare_ties_svd|dare_linear_svd|magnitude_prune|magnitude_prune_svd}"
-ADAPTER_SELECTION="all"          # fixed for baseline runs
-WEIGHT_METHOD="uniform"         # fixed for baseline runs
+#MERGE_METHOD="${1:?merge method required: debug|svd|linear|ties|ties_svd|dare_ties|dare_linear|dare_ties_svd|dare_linear_svd|magnitude_prune|magnitude_prune_svd}"
+
+MERGE_METHOD="dare_ties"
+DENSITY=None
+MAJ_SIGN="total"
+ITERATION="6"
+TARGET_GRADE="all"
+
+WINDOW_SIZE="${1:?window size required: all|integer >=1}"
+WEIGHT_METHOD="${2:?weight method required: uniform|proximity}"
 
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v0-3"                 # used in WANDB_PROJECT  
+PROJECT_VERSION="v3"                 # used in WANDB_PROJECT  
 ENTITY=""                              # optional W&B entity
-
 
 # ---------------- Paths & env ----------------
 source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
-BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct"
+BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer-v2"
+RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
@@ -43,13 +48,19 @@ total_start_time=$(date +%s)
 # --------------- MERGE ADAPTERS --------------- 
 echo "Adapters already merged; skipping merge step."
 # Uncomment below to re-run merging
-# echo "Begin Merger"
-# python3 experiments/scripts/adapter_merging.py \
-# --merge_method="${MERGE_METHOD}" \
-# --adapter_selection="${ADAPTER_SELECTION}" \
-# --weight_method="${WEIGHT_METHOD}" \
-# --project_version="${PROJECT_VERSION}" \
-# > experiments/logs/merged/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_merge.log 2>&1
+echo "Begin Merger"
+python3 experiments/scripts/adapter_merging.py \
+  --model "${BASE_MODEL}" \
+  --density "${DENSITY}" \
+  --majority_sign_method "${MAJ_SIGN}" \
+  --output "${CACHE}" \
+  --window_size "${WINDOW_SIZE}" \
+  --project_version "${PROJECT_VERSION}" \
+  --merge_method "${MERGE_METHOD}" \
+  --target_grade "${TARGET_GRADE}" \
+  --weight_method "${WEIGHT_METHOD}" \
+  --project_version "${PROJECT_VERSION}" \
+  > "${LOG_DIR}/merge@${MERGE_METHOD}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
 # --------------- MERGE END ---------------
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
@@ -59,8 +70,8 @@ for GRADE in "${GRADES[@]}"; do
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
     
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge_${MERGE_METHOD}_g@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}"
-    mkdir -p "${OUT_ADAPTER}"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}"
+    #mkdir -p "${OUT_ADAPTER}"
 
     ID_DIR="${HOME}/.llf_wandb_ids"
     mkdir -p "${ID_DIR}"
@@ -90,7 +101,7 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="merged"
-    export WANDB_NAME="${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}-infer"
+    export WANDB_NAME="${MERGE_METHOD}_g@${TARGET_GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-infer"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
@@ -105,29 +116,39 @@ for GRADE in "${GRADES[@]}"; do
     echo "[infer] dataset variation: ${DATASET_VARIATION}"
     echo "[wandb] using project=${WANDB_PROJECT} id=${WANDB_RUN_ID} resume=${WANDB_RESUME}"
 
-    # -------------- INFERENCE ECHO --------------
-    echo the script call for debug
-    echo "python3 scripts/vllm_infer_metrics.py "
-    echo "    --model_name_or_path \'${BASE_MODEL}\' "
-    echo "    --adapter_name_or_path \'${OUT_ADAPTER}\' "
-    echo "    --save_path \'${LOG_DIR}/generated_predictions\' "
-    echo "    --save_name \'${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer\' "
-    echo "    --template llama3 "
-    echo "    --dataset \'${DATASET_VARIATION}_grade${GRADE}_validation\' "
-    echo "    --temperature 0 "
-    echo "    --grade \'${GRADE}\' "
-    echo " > \'${LOG_DIR}/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log\' 2>&1"
-    # -------------- INFERENCE CALL --------------
-    python3 scripts/vllm_infer_metrics.py \
-        --model_name_or_path "${BASE_MODEL}" \
-        --adapter_name_or_path "${OUT_ADAPTER}" \
-        --save_path "${LOG_DIR}/generated_predictions" \
-        --save_name "${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_grade${GRADE}-infer" \
-        --template llama3 \
-        --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
-        --temperature 0 \
-        --grade "${GRADE}" \
-        > "${LOG_DIR}/${MERGE_METHOD}_a@${ADAPTER_SELECTION}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log" 2>&1
+    # # -------------- INFERENCE CALL --------------
+    # python3 scripts/vllm_infer_metrics.py \
+    #     --model_name_or_path "${BASE_MODEL}" \
+    #     --adapter_name_or_path "${OUT_ADAPTER}" \
+    #     --save_path "${LOG_DIR}/generated_predictions" \
+    #     --save_name "${MERGE_METHOD}_a@${TARGET_GRADE}_w@${WEIGHT_METHOD}_grade${GRADE}-infer" \
+    #     --template llama3 \
+    #     --dataset "${DATASET_VARIATION}_grade${GRADE}_validation" \
+    #     --temperature 0 \
+    #     --grade "${GRADE}" \
+    #     > "${LOG_DIR}/${MERGE_METHOD}_a@${TARGET_GRADE}_w@${WEIGHT_METHOD}_infer_grade${GRADE}.log" 2>&1
+
+    llamafactory-cli train \
+      --model_name_or_path "${BASE_MODEL}" \
+      --adapter_name_or_path "${OUT_ADAPTER}" \
+      --trust_remote_code True \
+      --template llama3 \
+      --do_train False \
+      --do_eval True \
+      --do_predict False \
+      --finetuning_type lora \
+      --eval_dataset "cleaned_grade${GRADE}_validation" \
+      --output_dir "${LOG_DIR}" \
+      --overwrite_output_dir True \
+      --cutoff_len 1024 \
+      --seed 42 \
+      --per_device_eval_batch_size 32 \
+      --bf16 True \
+      --predict_with_generate False \
+      --do_sample False \
+      --report_to wandb \
+      --run_name "${WANDB_NAME}" \
+      > "${LOG_DIR}/${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
