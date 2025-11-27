@@ -6,7 +6,7 @@ MERGE_METHOD="dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
 ITERATION="6"
-TARGET_GRADE="all"
+# TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
 WEIGHT_METHOD="${2:?weight method required: uniform|proximity}"
@@ -44,27 +44,43 @@ set -euo pipefail
 echo "Starting adapter merging at $(date)"
 total_start_time=$(date +%s)
 
-# --------------- MERGE ADAPTERS --------------- 
-# Uncomment below to re-run merging
-echo "Begin Merger"
-python3 experiments/scripts/adapter_merging.py \
-  --model "${BASE_MODEL}" \
-  --density "${DENSITY}" \
-  --majority_sign_method "${MAJ_SIGN}" \
-  --output "${CACHE}" \
-  --window_size "${WINDOW_SIZE}" \
-  --project_version "${PROJECT_VERSION}" \
-  --merge_method "${MERGE_METHOD}" \
-  --target_grade "${TARGET_GRADE}" \
-  --weight_method "${WEIGHT_METHOD}" \
-  --project_version "${PROJECT_VERSION}" \
-  > "${LOG_DIR}/merge@${MERGE_METHOD}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
-# --------------- MERGE END ---------------
+# # --------------- MERGE ADAPTERS --------------- 
+# # Uncomment below to re-run  merging
+# echo "Begin Merger"
+# python3 experiments/scripts/adapter_merging.py \
+#   --model "${BASE_MODEL}" \
+#   --density "${DENSITY}" \
+#   --majority_sign_method "${MAJ_SIGN}" \
+#   --output "${CACHE}" \
+#   --window_size "${WINDOW_SIZE}" \
+#   --project_version "${PROJECT_VERSION}" \
+#   --merge_method "${MERGE_METHOD}" \
+#   --target_grade "${TARGET_GRADE}" \
+#   --weight_method "${WEIGHT_METHOD}" \
+#   --project_version "${PROJECT_VERSION}" \
+#   > "${LOG_DIR}/merge@${MERGE_METHOD}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
+# # --------------- MERGE END ---------------
 
 GRADES=(02 03 04 05 06 07 08 09 10 11 12)
 
 for GRADE in "${GRADES[@]}"; do
+    TARGET_GRADE="${GRADE}"
     echo "----- Starting grade ${GRADE} -----"
+    echo "Begin Merger"
+    # ----------- begin per-grade merging -----------
+    python3 experiments/scripts/adapter_merging.py \
+      --model "${BASE_MODEL}" \
+      --density "${DENSITY}" \
+      --majority_sign_method "${MAJ_SIGN}" \
+      --output "${CACHE}" \
+      --window_size "${WINDOW_SIZE}" \
+      --project_version "${PROJECT_VERSION}" \
+      --merge_method "${MERGE_METHOD}" \
+      --target_grade "${TARGET_GRADE}" \
+      --weight_method "${WEIGHT_METHOD}" \
+      --project_version "${PROJECT_VERSION}" \
+      > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
+    # ----------- end per-grade merging -----------
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
     
@@ -99,7 +115,8 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="merged"
-    export WANDB_NAME="${MERGE_METHOD}_g@${TARGET_GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-infer"
+    export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}"
+    # export WANDB_NAME="${MERGE_METHOD}_g@${TARGET_GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)

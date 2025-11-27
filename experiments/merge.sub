@@ -18,17 +18,16 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +WantGPUHomeMounted     = true
 +MaxWallTime = 604800
 
-queue window_size, weight_method from (
-all, uniform
-)
 
-# queue window_size, weight_method from (
-# 2, uniform
-# 2, proximity
-# 3, uniform
-# 3, proximity
-# 4, uniform
-# 4, proximity
-# 5, uniform
-# 5, proximity
-# )
+queue window_size, weight_method from (
+1, uniform
+1, proximity
+2, uniform
+2, proximity
+3, uniform
+3, proximity
+4, uniform
+4, proximity
+5, uniform
+5, proximity
+)
