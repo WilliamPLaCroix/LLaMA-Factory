@@ -18,7 +18,7 @@ def select_adapters(target_grade="all",
                                                         window_size=window_size,
                                                         weight_method=weight_method)
         grades = [str(f'{grade:02}') for grade in selected]
-    adapters = [adapter_path_format.format(grade) for grade in grades]    
+    adapters = [adapter_path_format.format(grade) for grade in grades]
     assert len(adapters) == len(grades), "Adapters, grades, and weights must have the same length"
     return adapters, grades, weights
 
@@ -108,7 +108,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
          project_version="v3"
          ):
 
-    adapter_path_format=f"/scratch/wlacroix/.cache/llama_factory/{project_version}"+"_cleaned_grade{}-adapter",
+    adapter_path_format=f"/scratch/wlacroix/.cache/llama_factory/{project_version}"+"_cleaned_grade{}-adapter"
     adapters, grades, weights = select_adapters(target_grade=target_grade, 
                                                 adapter_path_format=adapter_path_format,
                                                 weight_method=weight_method,
@@ -135,7 +135,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
     loaded = time.time() - start
     
     merged_adapter_name = f"{project_version}_merge@{merge_method}_grade@{target_grade}window@{window_size}_weight@{weight_method}"
-    
+
     print(f"Merging adapters into new adapter: {merged_adapter_name}")
     # set default density if needed
     if merge_method in {"ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"} and density is None:
