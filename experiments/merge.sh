@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # ---------------- User knobs ----------------
-# MODEL_VARIATION="${1:?model variation required: original|cleaned|augmented}"
 #MERGE_METHOD="${1:?merge method required: debug|svd|linear|ties|ties_svd|dare_ties|dare_linear|dare_ties_svd|dare_linear_svd|magnitude_prune|magnitude_prune_svd}"
 
 MERGE_METHOD="dare_ties"
@@ -46,7 +45,6 @@ echo "Starting adapter merging at $(date)"
 total_start_time=$(date +%s)
 
 # --------------- MERGE ADAPTERS --------------- 
-echo "Adapters already merged; skipping merge step."
 # Uncomment below to re-run merging
 echo "Begin Merger"
 python3 experiments/scripts/adapter_merging.py \

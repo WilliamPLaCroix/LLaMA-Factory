@@ -5,7 +5,7 @@ import fire
 
 
 def select_adapters(target_grade="all",
-                    adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v3_cleaned_grade{}-adapter",
+                    adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v3_grade{}-adapter",
                     weight_method="uniform",
                     merge_method="linear",
                     window_size=1):
@@ -108,7 +108,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
          project_version="v3"
          ):
 
-    adapter_path_format=f"/scratch/wlacroix/.cache/llama_factory/{project_version}"+"_cleaned_grade{}-adapter"
+    adapter_path_format=f"/scratch/wlacroix/.cache/llama_factory/{project_version}"+"_grade{}-adapter"
     adapters, grades, weights = select_adapters(target_grade=target_grade, 
                                                 adapter_path_format=adapter_path_format,
                                                 weight_method=weight_method,
