@@ -5,7 +5,7 @@
 MERGE_METHOD="dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="7"
+ITERATION="8"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
