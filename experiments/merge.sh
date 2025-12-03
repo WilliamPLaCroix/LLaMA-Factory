@@ -165,7 +165,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}_eval.log" 2>&1
+      > "${LOG_DIR}/${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"

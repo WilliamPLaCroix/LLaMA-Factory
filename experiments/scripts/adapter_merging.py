@@ -136,7 +136,7 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
         _ = model.load_adapter(adapter_path, adapter_name=grade)
     loaded = time.time() - start
     
-    merged_adapter_name = f"{project_version}_merge@{merge_method}_grade@{target_grade}_window@{window_size}_weight@{weight_method}"
+    merged_adapter_name = f"{project_version}_merge@{merge_method}_grade@{target_grade}_window@{window_size}_weight@{weight_method}-{weight_balance}"
 
     print(f"Merging adapters into new adapter: {merged_adapter_name}")
     # set default density if needed
