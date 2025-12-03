@@ -10,6 +10,7 @@ ITERATION="7"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
 WEIGHT_METHOD="${2:?weight method required: uniform|proximity}"
+WEIGHT_BALANCE="sum"  # sum|average
 
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v3"                 # used in WANDB_PROJECT  
@@ -20,7 +21,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${ITERATION}"
+RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}-${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
@@ -78,14 +79,14 @@ for GRADE in "${GRADES[@]}"; do
       --merge_method "${MERGE_METHOD}" \
       --target_grade "${TARGET_GRADE}" \
       --weight_method "${WEIGHT_METHOD}" \
-      --weight_balance "sum" \
+      --weight_balance "${WEIGHT_BALANCE}" \
       --project_version "${PROJECT_VERSION}" \
-      > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
+      > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_merge.log" 2>&1
     # ----------- end per-grade merging -----------
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
     
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     #mkdir -p "${OUT_ADAPTER}"
 
     ID_DIR="${HOME}/.llf_wandb_ids"
@@ -116,7 +117,7 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="merged"
-    export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}"
+    export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     # export WANDB_NAME="${MERGE_METHOD}_g@${TARGET_GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
