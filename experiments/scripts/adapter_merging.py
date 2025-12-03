@@ -8,16 +8,16 @@ def select_adapters(target_grade="all",
                     adapter_path_format="/scratch/wlacroix/.cache/llama_factory/v3_grade{}-adapter",
                     weight_method="uniform",
                     merge_method="linear",
-                    window_size=1):
-    trained_grades = list(range(2, 13))  # grades 2 to 12
+                    window_size=1,
+                    weight_balance="average"):
+    
     if target_grade == "all":
-        grades = [str(f'{grade:02}') for grade in trained_grades]
-        weights = generate_weights(weight_method, merge_method, grades)
-    else:
-        selected, weights = select_and_weight_adapters(target_grade=target_grade,
-                                                        window_size=window_size,
-                                                        weight_method=weight_method)
-        grades = [str(f'{grade:02}') for grade in selected]
+        window_size = 12  # include all grades
+    selected, weights = select_and_weight_adapters(target_grade=target_grade,
+                                                    window_size=window_size,
+                                                    weight_method=weight_method,
+                                                    weight_balance=weight_balance)
+    grades = [str(f'{grade:02}') for grade in selected]
     adapters = [adapter_path_format.format(grade) for grade in grades]
     assert len(adapters) == len(grades), "Adapters, grades, and weights must have the same length"
     return adapters, grades, weights
@@ -26,7 +26,7 @@ def select_and_weight_adapters(
     target_grade,
     window_size,
     weight_method,
-):
+    weight_balance):
     """
     Sliding-window selection and weighting for models numbered 2..12 (inclusive).
 
@@ -67,40 +67,41 @@ def select_and_weight_adapters(
     selected = list(range(lo, hi + 1))
 
     # Weights
-    n = len(selected)
-    if weight_method == "uniform":
-        weights = [1.0] * n
-    elif weight_method == "proximity":
-        # Inverse-distance raw weights, target gets highest value
-        raw = [1.0 / (1.0 + abs(g - target)) for g in selected]
-        s = sum(raw)
-        if s == 0:
-            # Fallback, though this cannot happen with the formula above
+    if weight_balance == "average":
+        n = len(selected)
+        if weight_method == "uniform":
             weights = [1.0] * n
+        elif weight_method == "proximity":
+            # Inverse-distance raw weights, target gets highest value
+            raw = [1.0 / (1.0 + abs(g - target)) for g in selected]
+            s = sum(raw)
+            if s == 0:
+                # Fallback, though this cannot happen with the formula above
+                weights = [1.0] * n
+            else:
+                scale = n / s  # ensures average == 1
+                weights = [round(w * scale, 2) for w in raw]
         else:
-            scale = n / s  # ensures average == 1
-            weights = [round(w * scale, 2) for w in raw]
+            raise ValueError("weight_method must be 'uniform' or 'proximity'.")
+    elif weight_balance == "sum":
+        if weight_method == "uniform":
+            weights = [n / len(selected) for n in [1.0] * len(selected)]
+        elif weight_method == "proximity":
+            weights = [1.0 / (1.0 + abs(g - target)) for g in selected]
+            weights = [w / sum(weights) for w in weights]
+        else:
+            raise ValueError("weight_method must be 'uniform' or 'proximity'.")
     else:
-        raise ValueError("weight_method must be 'uniform' or 'proximity'.")
+        raise ValueError("weight_balance must be 'average' or 'sum'.")
 
     return selected, weights
 
-
-def generate_weights(weight_method, merge_method, grades):
-    if weight_method == "uniform":
-        if merge_method in {"ties", "ties_svd", "dare_ties", "dare_ties_svd"}:
-            weights = [1.0 for _ in grades]
-        else:
-            weights = [1.0 / len(grades) for _ in grades]
-            assert abs(sum(weights) - 1.0) < 1e-6, "Weights must sum to 1.0 for linear merging methods"
-    else:
-        raise NotImplementedError("Custom weight methods not implemented yet")
-    return weights
 
 def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
          merge_method="dare_ties",
          target_grade="all",
          weight_method="uniform",
+         weight_balance="average",
          density=None,
          majority_sign_method="total",
          output="/scratch/wlacroix/.cache/llama_factory",
@@ -113,7 +114,8 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
                                                 adapter_path_format=adapter_path_format,
                                                 weight_method=weight_method,
                                                 merge_method=merge_method,
-                                                window_size=window_size)
+                                                window_size=window_size,
+                                                weight_balance=weight_balance)
 
     print(f"model: {model}")
     print(f"target_grade: {target_grade}")
@@ -175,38 +177,3 @@ def merge_adapters(model="/scratch/common_models/Llama-3.2-3B-Instruct-greedy",
 if __name__ == "__main__":
     fire.Fire(merge_adapters)
 
-
-
-
-"""    # merge adapters can happen in-place, even iterating through merge methods and parameters
-    # if merge_method == "debug":
-    #     print("Debug merging mode: iterating through multiple merge methods")
-    #     #merge_methods = {"svd", "linear", "ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"}
-    #     debug_methods = {"linear", "ties", "dare_ties", "dare_linear", "magnitude_prune"} # no SVD variants for debug, no CAT
-        
-    #     for method in debug_methods:
-    #         merged_adapter_name = f"{project_version}_debug_{method}"
-    #         weights = generate_weights(weight_method, method, grades)
-    #         print(f"Merging adapters into new adapter: {merged_adapter_name}\n\tgrades:{grades} \n\tmethod: {method}\n\tweights: {weights}\n\tdensity: {density}\n\tmajority_sign_method: {majority_sign_method}")
-    #         # set default density if needed
-    #         if method in {"ties", "ties_svd", "dare_ties", "dare_linear", "dare_ties_svd", "dare_linear_svd", "magnitude_prune", "magnitude_prune_svd"} and density is None:
-    #             density = 0.5  # default density for these methods
-    #         else:
-    #             pass  # density remains None or as provided
-
-    #         # set majority_sign_method only for relevant methods
-    #         if method in {"ties", "dare_ties", "dare_ties_svd"}:
-    #             majority_sign_method = majority_sign_method
-    #         else:
-    #             majority_sign_method = None  # not used for other methods
-    #         try:
-    #             model.add_weighted_adapter(adapters=grades, weights=weights, combination_type=method, adapter_name=merged_adapter_name, density=density)
-    #             print(f"Merged debug adapter: {merged_adapter_name}")
-    #             print(model.peft_config.keys())
-    #             model.delete_adapter(merged_adapter_name)
-    #             print(f"Deleted debug merged adapter: {merged_adapter_name}\n")
-    #         except Exception as e:
-    #             print(f"Failed to merge adapters with method {method}: {e}\n")
-    #             print(f"Skipping deletion of failed merged adapter: {merged_adapter_name}\n")
-    #             print(model.peft_config.keys())
-    #     return  # exit after debug merging"""

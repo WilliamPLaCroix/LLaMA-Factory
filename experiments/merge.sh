@@ -78,6 +78,7 @@ for GRADE in "${GRADES[@]}"; do
       --merge_method "${MERGE_METHOD}" \
       --target_grade "${TARGET_GRADE}" \
       --weight_method "${WEIGHT_METHOD}" \
+      --weight_balance "sum" \
       --project_version "${PROJECT_VERSION}" \
       > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}_merge.log" 2>&1
     # ----------- end per-grade merging -----------
