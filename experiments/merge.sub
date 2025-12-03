@@ -1,10 +1,10 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/merge.sh
-arguments       = $(window_size) $(weight_method)
-log             = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).log
-output          = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).out
-error           = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method).err
+arguments       = $(window_size) $(weight_method) $(weight_balance)
+log             = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).log
+output          = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).out
+error           = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).err
 
 # If all files are on the server, otherwise set to YES
 #should_transfer_files   = NO
@@ -19,15 +19,25 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 
-queue window_size, weight_method from (
-1, uniform
-1, proximity
-2, uniform
-2, proximity
-3, uniform
-3, proximity
-4, uniform
-4, proximity
-5, uniform
-5, proximity
+queue window_size, weight_method, weight_balance from (
+1, uniform, sum
+1, proximity, sum
+2, uniform, sum
+2, proximity, sum
+3, uniform, sum
+3, proximity, sum
+4, uniform, sum
+4, proximity, sum
+5, uniform, sum
+5, proximity, sum
+1, uniform, average
+1, proximity, average
+2, uniform, average
+2, proximity, average
+3, uniform, average
+3, proximity, average
+4, uniform, average
+4, proximity, average
+5, uniform, average
+5, proximity, average
 )

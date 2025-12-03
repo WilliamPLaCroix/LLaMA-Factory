@@ -2,7 +2,7 @@
 # ---------------- User knobs ----------------
 #MERGE_METHOD="${1:?merge method required: debug|svd|linear|ties|ties_svd|dare_ties|dare_linear|dare_ties_svd|dare_linear_svd|magnitude_prune|magnitude_prune_svd}"
 
-MERGE_METHOD="dare_ties"
+MERGE_METHOD="linear" # "dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
 ITERATION="8"
@@ -10,7 +10,7 @@ ITERATION="8"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
 WEIGHT_METHOD="${2:?weight method required: uniform|proximity}"
-WEIGHT_BALANCE="sum"  # sum|average
+WEIGHT_BALANCE="${3:?weight balance required: sum|average}"
 
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
 PROJECT_VERSION="v3"                 # used in WANDB_PROJECT  
