@@ -160,7 +160,7 @@ if __name__ == "__main__":
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
         max_samples=1000,  # Limit samples for faster testing
-        save_path="../logs/ppl/"
+        save_path="../logs/ppl"
     )
     
     print("\nPerplexity Matrix:")
