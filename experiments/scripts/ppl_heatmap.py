@@ -21,7 +21,8 @@ def test_cross_grade_perplexity(
     
     Assumes dataset naming convention like: grade_2, grade_3, ..., grade_12
     """
-    grades = list(range(2, 13))  # Grades 2-12
+    # grades = list(range(2, 13))  # Grades 2-12
+    grades = list(range(2, 4))  # Grades 2-3 for quick testing
     n_grades = len(grades)
     
     # Initialize perplexity matrix
@@ -37,8 +38,8 @@ def test_cross_grade_perplexity(
     for i, test_grade in enumerate(grades):
         for j, train_grade in enumerate(grades):
             print(f"\nTesting model trained on grade {train_grade} dataset against grade {test_grade} dataset...")
-            adapter_name_or_path = f"v3_grade{train_grade:02}-adapter"
-            dataset_name = f"cleaned_grade{test_grade:02}_train"
+            adapter_name_or_path = f"/scratch/wlacroix/.cache/llama_factory/v3_grade{train_grade:02}-adapter"
+            dataset_name = f"cleaned_grade{test_grade:02}_validation"
             
             try:
                 # Calculate perplexity
@@ -156,7 +157,7 @@ if __name__ == "__main__":
     matrix, df = test_cross_grade_perplexity(
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
-        max_samples=64,  # Limit samples for faster testing
+        max_samples=1000,  # Limit samples for faster testing
         save_path="../logs/ppl/"
     )
     
