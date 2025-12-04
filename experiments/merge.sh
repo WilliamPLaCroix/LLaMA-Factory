@@ -122,7 +122,6 @@ for GRADE in "${GRADES[@]}"; do
     export WANDB_RUN_GROUP="merged"
     ### export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     export WANDB_NAME="ots_${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
-    # export WANDB_NAME="${MERGE_METHOD}_g@${TARGET_GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
