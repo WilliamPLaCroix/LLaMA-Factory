@@ -61,6 +61,8 @@ def test_cross_grade_perplexity(
             except Exception as e:
                 print(f"Error testing grade {train_grade} -> grade {test_grade}: {e}")
                 ppl_matrix[i, j] = np.nan
+                # exit(1)
+                sys.exit(1)
     
     # Save the matrix
     np.save(f"{save_path}/perplexity_matrix.npy", ppl_matrix)
