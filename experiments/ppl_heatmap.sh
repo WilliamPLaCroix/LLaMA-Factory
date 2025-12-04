@@ -22,7 +22,7 @@ echo "Starting Main Experiment Workflow!"
 
 echo "Calculating PPL Heatmap"
 #export CUDA_LAUNCH_BLOCKING=1
-python3 scripts/ppl_heatmap.py \
+python3 experiments/scripts/ppl_heatmap.py \
 > experiments/logs/ppl_heatmap.log  2>&1
 
 echo "Main Experiment Workflow Completed!"
