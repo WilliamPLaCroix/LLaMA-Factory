@@ -6,7 +6,7 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from scripts.stat_utils.cal_ppl import calculate_ppl
+from cal_ppl import calculate_ppl
 
 def test_cross_grade_perplexity(
     model_name_or_path: str,
