@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
 import json
 import os
 import sys
@@ -64,76 +64,96 @@ def test_cross_grade_perplexity(
     # Save the matrix
     np.save(f"{save_path}/perplexity_matrix.npy", ppl_matrix)
     
+    # Create DataFrame and save
+    grade_labels = [f"Grade {g}" for g in grades]
+    df = pd.DataFrame(
+        ppl_matrix,
+        index=grade_labels,
+        columns=grade_labels
+    )
+    
+    # Save DataFrame
+    df.to_csv(f"{save_path}/perplexity_matrix.csv")
+    df.to_pickle(f"{save_path}/perplexity_matrix.pkl")  # Preserves data types
+    
     # Also save as JSON for readability
     matrix_dict = {
         "grades": grades,
         "matrix": ppl_matrix.tolist(),
+        "dataframe": df.to_dict(),  # Add DataFrame representation
         "description": "Perplexity matrix where matrix[i][j] is the perplexity of model trained on grade j tested on grade i dataset"
     }
     
     with open(f"{save_path}/perplexity_matrix.json", "w", encoding='utf-8') as f:
         json.dump(matrix_dict, f, indent=2)
     
-    # Create heatmap
-    create_perplexity_heatmap(ppl_matrix, grades, save_path)
+    # Create heatmap (now returns DataFrame)
+    df_result = create_perplexity_heatmap(ppl_matrix, grades, save_path)
     
-    return ppl_matrix
+    return ppl_matrix, df_result
+
 
 def create_perplexity_heatmap(ppl_matrix, grades, save_path):
-    """Create and save a heatmap of the perplexity matrix."""
+    """Create and save a heatmap of the perplexity matrix using pandas DataFrame plotting."""
     
-    plt.figure(figsize=(12, 10))
-    
-    # Create heatmap
-    mask = np.isnan(ppl_matrix)  # Mask NaN values
-    
-    sns.heatmap(
+    # Convert to pandas DataFrame with proper labels
+    grade_labels = [f"Grade {g}" for g in grades]
+    df = pd.DataFrame(
         ppl_matrix,
-        annot=True,
-        fmt='.2f',
-        cmap='RdYlBu_r',  # Red for high perplexity, blue for low
-        xticklabels=[f"Grade {g}" for g in grades],
-        yticklabels=[f"Grade {g}" for g in grades],
-        cbar_kws={'label': 'Perplexity'},
-        mask=mask
+        index=grade_labels,  # Test grades (Y-axis)
+        columns=grade_labels  # Training grades (X-axis)
     )
     
+    # Create heatmap using pandas style plotting
+    fig, ax = plt.subplots(figsize=(12, 10))
+    
+    # Use pandas styler for heatmap-like visualization
+    cax = ax.matshow(df.values, cmap='RdYlBu_r')
+    
+    # Set ticks and labels
+    ax.set_xticks(range(len(df.columns)))
+    ax.set_yticks(range(len(df.index)))
+    ax.set_xticklabels(df.columns, rotation=45)
+    ax.set_yticklabels(df.index)
+    
+    # Move x-axis ticks to bottom
+    ax.xaxis.set_ticks_position('bottom')
+    
+    # Add text annotations
+    for (i, j), val in np.ndenumerate(df.values):
+        if not pd.isna(val):
+            ax.text(j, i, f'{val:.2f}', ha='center', va='center', 
+                   color='black', fontweight='bold', fontsize=9)
+    
+    # Add colorbar
+    cbar = fig.colorbar(cax)
+    cbar.set_label('Perplexity', rotation=270, labelpad=15)
+    
+    # Set labels and title
     plt.title('Cross-Grade Perplexity Matrix\n(Model trained on X-axis grade, tested on Y-axis grade)',
               fontsize=14, pad=20)
     plt.xlabel('Training Dataset Grade', fontsize=12)
     plt.ylabel('Test Dataset Grade', fontsize=12)
-    plt.xticks(rotation=45)
-    plt.yticks(rotation=0)
     
     plt.tight_layout()
     plt.savefig(f"{save_path}/perplexity_heatmap.png", dpi=300, bbox_inches='tight')
     plt.savefig(f"{save_path}/perplexity_heatmap.pdf", bbox_inches='tight')
     plt.show()
     
+    # Save the DataFrame as CSV for easy inspection
+    df.to_csv(f"{save_path}/perplexity_matrix.csv")
+    
     print(f"Heatmap saved to {save_path}/perplexity_heatmap.png and .pdf")
-
-def load_and_plot_existing_matrix(matrix_path, save_path="./results"):
-    """Load an existing perplexity matrix and create heatmap."""
+    print(f"DataFrame saved to {save_path}/perplexity_matrix.csv")
     
-    if matrix_path.endswith('.npy'):
-        ppl_matrix = np.load(matrix_path)
-        grades = list(range(2, 2 + ppl_matrix.shape[0]))
-    elif matrix_path.endswith('.json'):
-        with open(matrix_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        ppl_matrix = np.array(data['matrix'])
-        grades = data['grades']
-    else:
-        raise ValueError("Matrix file must be .npy or .json")
-    
-    create_perplexity_heatmap(ppl_matrix, grades, save_path)
+    return df
 
 if __name__ == "__main__":
     # Example usage
     model_path = "/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
     
     # Run the cross-grade perplexity test
-    matrix = test_cross_grade_perplexity(
+    matrix, df = test_cross_grade_perplexity(
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
         max_samples=64,  # Limit samples for faster testing
