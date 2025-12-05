@@ -39,7 +39,7 @@ def test_cross_grade_perplexity(
         for j, train_grade in enumerate(grades):
             print(f"\nTesting model trained on grade {train_grade} dataset against grade {test_grade} dataset...")
             adapter_name_or_path = f"/scratch/wlacroix/.cache/llama_factory/v3_grade{train_grade:02}-adapter"
-            dataset_name = f"cleaned_grade{test_grade:02}"
+            dataset_name = f"cleaned-grade{test_grade:02}"
             
             # Calculate perplexity
             avg_ppl = calculate_ppl(
