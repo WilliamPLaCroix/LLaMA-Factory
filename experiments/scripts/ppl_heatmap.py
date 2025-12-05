@@ -10,7 +10,7 @@ from cal_ppl import calculate_ppl
 
 def test_cross_grade_perplexity(
     model_name_or_path: str,
-    template: str = "llama3",
+    template: str = "default",
     batch_size: int = 32,
     cutoff_len: int = 2048,
     max_samples: int = None,
@@ -21,8 +21,8 @@ def test_cross_grade_perplexity(
     
     Assumes dataset naming convention like: grade_2, grade_3, ..., grade_12
     """
-    grades = list(range(2, 13))  # Grades 2-12
-    # grades = list(range(2, 4))  # Grades 2-3 for quick testing
+    # grades = list(range(2, 13))  # Grades 2-12
+    grades = list(range(2, 4))  # Grades 2-3 for quick testing
     n_grades = len(grades)
     
     # Initialize perplexity matrix
@@ -39,7 +39,7 @@ def test_cross_grade_perplexity(
         for j, train_grade in enumerate(grades):
             print(f"\nTesting model trained on grade {train_grade} dataset against grade {test_grade} dataset...")
             adapter_name_or_path = f"/scratch/wlacroix/.cache/llama_factory/v3_grade{train_grade:02}-adapter"
-            dataset_name = f"cleaned_grade{test_grade:02}_validation"
+            dataset_name = f"cleaned_grade{test_grade:02}"
             
             try:
                 # Calculate perplexity
@@ -53,6 +53,7 @@ def test_cross_grade_perplexity(
                     template=template,
                     cutoff_len=cutoff_len,
                     max_samples=max_samples,
+                    stage="pt",
                 )
                 
                 ppl_matrix[i, j] = avg_ppl
@@ -111,7 +112,7 @@ def create_perplexity_heatmap(ppl_matrix, grades, save_path):
     fig, ax = plt.subplots(figsize=(12, 10))
     
     # Use pandas styler for heatmap-like visualization
-    cax = ax.matshow(df.values, cmap='RdYlBu_r')
+    cax = ax.matshow(df.values, cmap='Reds')
     
     # Set ticks and labels
     ax.set_xticks(range(len(df.columns)))
@@ -159,7 +160,7 @@ if __name__ == "__main__":
     matrix, df = test_cross_grade_perplexity(
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
-        max_samples=1000,  # Limit samples for faster testing
+        max_samples=64,  # Limit samples for faster testing
         save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl"
     )
     
