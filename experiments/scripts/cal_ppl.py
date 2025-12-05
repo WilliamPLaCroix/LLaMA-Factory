@@ -78,7 +78,6 @@ def calculate_ppl(
             stage=stage,
             model_name_or_path=model_name_or_path,
             dataset="williamplacroix/graded_wikilarge",
-            dataset_config_name=dataset,
             dataset_dir=dataset_dir,
             template=template,
             cutoff_len=cutoff_len,
@@ -88,7 +87,6 @@ def calculate_ppl(
             output_dir="dummy_dir",
             overwrite_cache=True,
             do_train=True,
-            response_only=False,
         )
     )
     tokenizer_module = load_tokenizer(model_args)
@@ -97,7 +95,7 @@ def calculate_ppl(
 
     if stage == "pt":
         hf_data = load_dataset(data_args.dataset,
-                                data_args.dataset_config_name,
+                                dataset,
                                 split="validation",)
         if max_samples is not None:
             hf_data = hf_data.select(range(max_samples))
