@@ -21,8 +21,8 @@ def test_cross_grade_perplexity(
     
     Assumes dataset naming convention like: grade_2, grade_3, ..., grade_12
     """
-    # grades = list(range(2, 13))  # Grades 2-12
-    grades = list(range(2, 4))  # Grades 2-3 for quick testing
+    grades = list(range(2, 13))  # Grades 2-12
+    # grades = list(range(2, 4))  # Grades 2-3 for quick testing
     n_grades = len(grades)
     
     # Initialize perplexity matrix
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     matrix, df = test_cross_grade_perplexity(
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
-        max_samples=64,  # Limit samples for faster testing
+        max_samples=1000,  # Limit samples for faster testing
         save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl"
     )
     
