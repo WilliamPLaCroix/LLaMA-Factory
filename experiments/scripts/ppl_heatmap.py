@@ -164,7 +164,7 @@ if __name__ == "__main__":
     matrix, df = test_cross_grade_perplexity(
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
-        max_samples=1000,  # Limit samples for faster testing
+        max_samples=None,  # Limit samples for faster testing
         save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl"
     )
     
