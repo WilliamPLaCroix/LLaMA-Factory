@@ -41,29 +41,23 @@ def test_cross_grade_perplexity(
             adapter_name_or_path = f"/scratch/wlacroix/.cache/llama_factory/v3_grade{train_grade:02}-adapter"
             dataset_name = f"cleaned_grade{test_grade:02}"
             
-            try:
-                # Calculate perplexity
-                avg_ppl = calculate_ppl(
-                    model_name_or_path=model_name_or_path,
-                    adapter_name_or_path=adapter_name_or_path,
-                    save_name=f"ppl_train_{train_grade}_test_{test_grade}.json",
-                    save_path=save_path,
-                    batch_size=batch_size,
-                    dataset=dataset_name,
-                    template=template,
-                    cutoff_len=cutoff_len,
-                    max_samples=max_samples,
-                    stage="pt",
-                )
+            # Calculate perplexity
+            avg_ppl = calculate_ppl(
+                model_name_or_path=model_name_or_path,
+                adapter_name_or_path=adapter_name_or_path,
+                save_name=f"ppl_train_{train_grade}_test_{test_grade}.json",
+                save_path=save_path,
+                batch_size=batch_size,
+                dataset=dataset_name,
+                template=template,
+                cutoff_len=cutoff_len,
+                max_samples=max_samples,
+                stage="pt",
+            )
+            
+            ppl_matrix[i, j] = avg_ppl
+            print(f"Grade {train_grade} -> Grade {test_grade}: PPL = {avg_ppl:.2f}")
                 
-                ppl_matrix[i, j] = avg_ppl
-                print(f"Grade {train_grade} -> Grade {test_grade}: PPL = {avg_ppl:.2f}")
-                
-            except Exception as e:
-                print(f"Error testing grade {train_grade} -> grade {test_grade}: {e}")
-                ppl_matrix[i, j] = np.nan
-                # exit(1)
-                sys.exit(1)
     
     # Save the matrix
     np.save(f"{save_path}/perplexity_matrix.npy", ppl_matrix)
