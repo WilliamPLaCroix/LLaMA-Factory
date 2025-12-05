@@ -15,6 +15,7 @@
 import json
 from dataclasses import dataclass
 from typing import Any, Literal, Optional
+from datasets import load_dataset
 
 import fire
 import torch
@@ -76,7 +77,8 @@ def calculate_ppl(
         dict(
             stage=stage,
             model_name_or_path=model_name_or_path,
-            dataset=dataset,
+            dataset="williamplacroix/graded_wikilarge",
+            dataset_config_name=dataset,
             dataset_dir=dataset_dir,
             template=template,
             cutoff_len=cutoff_len,
@@ -86,12 +88,23 @@ def calculate_ppl(
             output_dir="dummy_dir",
             overwrite_cache=True,
             do_train=True,
+            response_only=False,
         )
     )
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
-    trainset = get_dataset(template, model_args, data_args, training_args, stage, **tokenizer_module)["train_dataset"]
+
+    if stage == "pt":
+        hf_data = load_dataset(data_args.dataset,
+                                data_args.dataset_config_name,
+                                split="validation",)
+        if max_samples is not None:
+            hf_data = hf_data.select(range(max_samples))
+        trainset = [item.get('output', '') for item in hf_data]
+    else:
+        trainset = get_dataset(template, model_args, data_args, training_args, stage, **tokenizer_module)["train_dataset"]
+    
     model = load_model(tokenizer, model_args, finetuning_args, is_trainable=False)
     print("Base model loaded...")
 
