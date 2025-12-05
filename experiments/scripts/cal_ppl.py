@@ -103,11 +103,15 @@ def calculate_ppl(
                                 split="validation",)
         if max_samples is not None:
             hf_data = hf_data.select(range(max_samples))
+
         text_data = [item.get('output', '') for item in hf_data]
         def tokenize_function(text):
-            return tokenizer(text, truncation=True, max_length=cutoff_len, return_tensors="pt")
-        
-        trainset = [tokenize_function(text)["input_ids"].squeeze(0) for text in text_data]
+            tokenized = tokenizer(text, truncation=True, max_length=cutoff_len)
+            return {
+                "input_ids": tokenized["input_ids"],
+                "attention_mask": tokenized["attention_mask"]
+                    }
+        trainset = [tokenize_function(text) for text in text_data]
     else:
         trainset = get_dataset(template, model_args, data_args, training_args, stage, **tokenizer_module)["train_dataset"]
     
