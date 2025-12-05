@@ -95,13 +95,15 @@ def calculate_ppl(
 
     if stage == "pt":
         print("Loading dataset for perplexity calculation...")
+        print(f"Dataset: {data_args.dataset}, Split: validation", type(data_args.dataset))
+        print("Subset:", dataset, type(dataset))
+        print("Split: validation")
         hf_data = load_dataset(data_args.dataset,
                                 dataset,
                                 split="validation",)
         if max_samples is not None:
             hf_data = hf_data.select(range(max_samples))
         trainset = [item.get('output', '') for item in hf_data]
-        print(f"Loaded {len(trainset)} samples for perplexity calculation.")
     else:
         trainset = get_dataset(template, model_args, data_args, training_args, stage, **tokenizer_module)["train_dataset"]
     
