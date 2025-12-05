@@ -95,10 +95,10 @@ def calculate_ppl(
 
     if stage == "pt":
         print("Loading dataset for perplexity calculation...")
-        print(f"Dataset: {data_args.dataset}, Split: validation", type(data_args.dataset))
+        print(f"Dataset: {data_args.dataset[0]}", type(data_args.dataset))
         print("Subset:", dataset, type(dataset))
         print("Split: validation")
-        hf_data = load_dataset(data_args.dataset,
+        hf_data = load_dataset(data_args.dataset[0],
                                 dataset,
                                 split="validation",)
         if max_samples is not None:
