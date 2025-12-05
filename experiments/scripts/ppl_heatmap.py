@@ -58,7 +58,7 @@ def test_cross_grade_perplexity(
             ppl_matrix[i, j] = avg_ppl
             print(f"Grade {train_grade} -> Grade {test_grade}: PPL = {avg_ppl:.2f}")
                 
-    
+    ppl_matrix = normalize_matrix(ppl_matrix)
     # Save the matrix
     np.save(f"{save_path}/perplexity_matrix.npy", ppl_matrix)
     
@@ -86,10 +86,20 @@ def test_cross_grade_perplexity(
         json.dump(matrix_dict, f, indent=2)
     
     # Create heatmap (now returns DataFrame)
+
+    
     df_result = create_perplexity_heatmap(ppl_matrix, grades, save_path)
     
     return ppl_matrix, df_result
 
+def normalize_matrix(input_matrix):
+    norm_matrix = np.zeros_like(input_matrix)
+    for i in range(input_matrix.shape[0]):
+        row = input_matrix[i, :]
+        min_val = np.nanmin(row)
+        max_val = np.nanmax(row)
+        norm_matrix[i, :] = (row - min_val) / (max_val - min_val)
+    return norm_matrix
 
 def create_perplexity_heatmap(ppl_matrix, grades, save_path):
     """Create and save a heatmap of the perplexity matrix using pandas DataFrame plotting."""
