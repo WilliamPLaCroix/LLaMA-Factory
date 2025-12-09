@@ -349,7 +349,7 @@ if __name__ == "__main__":
     model_path = "/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 
     for checkpoint in ["best", "last"]:
-        for dataset_split in ["train", "val", "test"]:
+        for dataset_split in ["train", "validation", "test"]:
             print(f"\nCalculating perplexity for {dataset_split} split of the base model...")
 
             matrix, df = test_cross_grade_perplexity(
