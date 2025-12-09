@@ -65,8 +65,8 @@ def test_cross_grade_perplexity(
     # Iterate through all grade combinations
     for i, test_grade in enumerate(grades):
         for j, train_grade in enumerate(grades):
-            print(f"\nTesting model trained on grade {checkpoint} {train_grade} dataset against grade {test_grade} dataset...")
-            adapter_name_or_path = adapter_mapping[train_grade][checkpoint]
+            print(f"\nTesting {checkpoint} model trained on grade {train_grade} dataset against grade {test_grade} dataset...")
+            adapter_name_or_path = adapter_mapping[str(train_grade)][checkpoint]
             dataset_name = f"cleaned-grade{test_grade:02}"
             
             # Calculate perplexity
