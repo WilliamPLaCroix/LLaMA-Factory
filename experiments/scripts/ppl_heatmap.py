@@ -290,13 +290,13 @@ if __name__ == "__main__":
     model_path = "/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
     
     # Run the cross-grade perplexity test
-    matrix, df = test_cross_grade_perplexity(
-        model_name_or_path=model_path,
-        batch_size=32,  # Adjust based on your GPU memory
-        max_samples=None,  # Limit samples for faster testing
-        save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
-        test_name="graded_adapters"
-    )
+    # matrix, df = test_cross_grade_perplexity(
+    #     model_name_or_path=model_path,
+    #     batch_size=32,  # Adjust based on your GPU memory
+    #     max_samples=None,  # Limit samples for faster testing
+    #     save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
+    #     test_name="graded_adapters"
+    # )
 
     matrix, df = test_base_model_perplexity(
         model_name_or_path=model_path,
