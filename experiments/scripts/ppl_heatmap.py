@@ -14,7 +14,8 @@ def test_cross_grade_perplexity(
     batch_size: int = 32,
     cutoff_len: int = 2048,
     max_samples: int = None,
-    save_path: str = "./results"
+    save_path: str = "./results",
+    test_name: str = "graded_adapters",
 ):
     """
     Test perplexity across different grade datasets and create a heatmap.
@@ -58,9 +59,10 @@ def test_cross_grade_perplexity(
             ppl_matrix[i, j] = avg_ppl
             print(f"Grade {train_grade} -> Grade {test_grade}: PPL = {avg_ppl:.2f}")
                 
-    ppl_matrix = normalize_matrix(ppl_matrix)
+    normed_matrix = normalize_matrix(ppl_matrix)
     # Save the matrix
     np.save(f"{save_path}/perplexity_matrix.npy", ppl_matrix)
+    np.save(f"{save_path}/normalized_perplexity_matrix.npy", normed_matrix)
     
     # Create DataFrame and save
     grade_labels = [f"Grade {g}" for g in grades]
@@ -88,7 +90,8 @@ def test_cross_grade_perplexity(
     # Create heatmap (now returns DataFrame)
 
     
-    df_result = create_perplexity_heatmap(ppl_matrix, grades, save_path)
+    df_result = create_perplexity_heatmap(ppl_matrix, grades, save_path, save_name="absolute_perplexity_heatmap", test_name=test_name)
+    normed_result = create_perplexity_heatmap(normed_matrix, grades, save_path, save_name="normalized_perplexity_heatmap", test_name=test_name)
     
     return ppl_matrix, df_result
 
@@ -101,7 +104,7 @@ def normalize_matrix(input_matrix):
         norm_matrix[i, :] = (row - min_val) / (max_val - min_val)
     return norm_matrix
 
-def create_perplexity_heatmap(ppl_matrix, grades, save_path):
+def create_perplexity_heatmap(ppl_matrix, grades, save_path, save_name="perplexity_heatmap", test_name="graded_adapters"):
     """Create and save a heatmap of the perplexity matrix using pandas DataFrame plotting."""
     
     # Convert to pandas DataFrame with proper labels
@@ -144,15 +147,14 @@ def create_perplexity_heatmap(ppl_matrix, grades, save_path):
     plt.ylabel('Test Dataset Grade', fontsize=12)
     
     plt.tight_layout()
-    plt.savefig(f"{save_path}/perplexity_heatmap.png", dpi=300, bbox_inches='tight')
-    plt.savefig(f"{save_path}/perplexity_heatmap.pdf", bbox_inches='tight')
+    plt.savefig(f"{save_path}/{test_name}_{save_name}.png", dpi=300, bbox_inches='tight')
     plt.show()
     
     # Save the DataFrame as CSV for easy inspection
     df.to_csv(f"{save_path}/perplexity_matrix.csv")
     
-    print(f"Heatmap saved to {save_path}/perplexity_heatmap.png and .pdf")
-    print(f"DataFrame saved to {save_path}/perplexity_matrix.csv")
+    print(f"Heatmap saved to {save_path}/{test_name}_{save_name}.png")
+    print(f"DataFrame saved to {save_path}/{test_name}_{save_name}.csv")
     
     return df
 
@@ -165,7 +167,8 @@ if __name__ == "__main__":
         model_name_or_path=model_path,
         batch_size=32,  # Adjust based on your GPU memory
         max_samples=None,  # Limit samples for faster testing
-        save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl"
+        save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
+        test_name="graded_adapters"
     )
     
     print("\nPerplexity Matrix:")
