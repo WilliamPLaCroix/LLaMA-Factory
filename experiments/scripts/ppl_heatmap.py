@@ -95,6 +95,79 @@ def test_cross_grade_perplexity(
     
     return ppl_matrix, df_result
 
+def test_base_model_perplexity(
+    model_name_or_path: str,
+    template: str = "default",
+    batch_size: int = 32,
+    cutoff_len: int = 2048,
+    max_samples: int = None,
+    save_path: str = "./results",
+    test_name: str = "shared_baseline",
+):
+    """
+    Test perplexity across different grade datasets and create a heatmap.
+    
+    Assumes dataset naming convention like: grade_2, grade_3, ..., grade_12
+    """
+    grades = list(range(2, 13))  # Grades 2-12
+    # grades = list(range(2, 4))  # Grades 2-3 for quick testing
+    n_grades = len(grades)
+    
+    # Initialize perplexity matrix
+    ppl_matrix = np.zeros((n_grades))
+    
+    # Create results directory
+    os.makedirs(save_path, exist_ok=True)
+    
+    print(f"Testing {n_grades} grades against each other...")
+    print(f"Grades: {grades}")
+    
+    # Iterate through all grade combinations
+    for i, test_grade in enumerate(grades):
+        print(f"\nTesting model {test_name} dataset against grade {test_grade} dataset...")
+        if test_name == "shared_baseline":
+            adapter_name_or_path = "/scratch/wlacroix/.cache/llama_factory/v3_baseline-adapter"
+        else:
+            adapter_name_or_path = None
+        dataset_name = f"cleaned-grade{test_grade:02}"
+        
+        # Calculate perplexity
+        avg_ppl = calculate_ppl(
+            model_name_or_path=model_name_or_path,
+            adapter_name_or_path=adapter_name_or_path,
+            save_name=f"ppl_{test_name}_test_{test_grade}.json",
+            save_path=save_path,
+            batch_size=batch_size,
+            dataset=dataset_name,
+            template=template,
+            cutoff_len=cutoff_len,
+            max_samples=max_samples,
+            stage="pt",
+        )
+        
+        ppl_matrix[i] = avg_ppl
+        print(f"Shared baseline -> Grade {test_grade}: PPL = {avg_ppl:.2f}")
+                
+    # Save the matrix
+    np.save(f"{save_path}/{test_name}_perplexity_matrix.npy", ppl_matrix)
+    
+    # Create DataFrame and save
+    grade_labels = [f"Grade {g}" for g in grades]
+    df = pd.DataFrame(
+        ppl_matrix,
+        index=grade_labels,
+        columns=[test_name]
+    )
+
+    # Save DataFrame
+    df.to_csv(f"{save_path}/{test_name}_perplexity_matrix.csv")
+    df.to_pickle(f"{save_path}/{test_name}_perplexity_matrix.pkl")  # Preserves data types
+    
+    # Create heatmap (now returns DataFrame)
+    df_result = create_baseline_perplexity_heatmap(ppl_matrix, grades, save_path, save_name="absolute_perplexity_heatmap", test_name=test_name)
+     
+    return ppl_matrix, df_result
+
 def normalize_matrix(input_matrix):
     norm_matrix = np.zeros_like(input_matrix)
     for i in range(input_matrix.shape[0]):
@@ -103,6 +176,60 @@ def normalize_matrix(input_matrix):
         max_val = np.nanmax(row)
         norm_matrix[i, :] = (row - min_val) / (max_val - min_val)
     return norm_matrix
+
+def create_baseline_perplexity_heatmap(ppl_matrix, grades, save_path, save_name="perplexity_heatmap", test_name="baseline"):
+    """Create and save a heatmap of the perplexity matrix using pandas DataFrame plotting."""
+    
+    # Convert to pandas DataFrame with proper labels
+    grade_labels = [f"Grade {g}" for g in grades]
+    df = pd.DataFrame(
+        ppl_matrix,
+        index=grade_labels,  # Test grades (Y-axis)
+        columns=[test_name]
+    )
+    
+    # Create heatmap using pandas style plotting
+    fig, ax = plt.subplots(figsize=(12, 10))
+    
+    # Use pandas styler for heatmap-like visualization
+    cax = ax.matshow(df.values, cmap='Reds')
+    
+    # Set ticks and labels
+    ax.set_xticks(range(len(df.columns)))
+    ax.set_yticks(range(len(df.index)))
+    ax.set_xticklabels(df.columns, rotation=45)
+    ax.set_yticklabels(df.index)
+    
+    # Move x-axis ticks to bottom
+    ax.xaxis.set_ticks_position('bottom')
+    
+    # Add text annotations
+    for (i, j), val in np.ndenumerate(df.values):
+        if not pd.isna(val):
+            ax.text(j, i, f'{val:.2f}', ha='center', va='center', 
+                   color='black', fontweight='bold', fontsize=9)
+    
+    # Add colorbar
+    cbar = fig.colorbar(cax)
+    cbar.set_label('Perplexity', rotation=270, labelpad=15)
+    
+    # Set labels and title
+    plt.title(f'{test_name} Perplexity Matrix\n(tested on Y-axis grade)',
+              fontsize=14, pad=20)
+    plt.xlabel(test_name, fontsize=12)
+    plt.ylabel('Test Dataset Grade', fontsize=12)
+    
+    plt.tight_layout()
+    plt.savefig(f"{save_path}/{test_name}_{save_name}.png", dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    # Save the DataFrame as CSV for easy inspection
+    df.to_csv(f"{save_path}/{test_name}_perplexity_matrix.csv")
+    
+    print(f"Heatmap saved to {save_path}/{test_name}_{save_name}.png")
+    print(f"DataFrame saved to {save_path}/{test_name}_{save_name}.csv")
+    
+    return df
 
 def create_perplexity_heatmap(ppl_matrix, grades, save_path, save_name="perplexity_heatmap", test_name="graded_adapters"):
     """Create and save a heatmap of the perplexity matrix using pandas DataFrame plotting."""
@@ -169,6 +296,22 @@ if __name__ == "__main__":
         max_samples=None,  # Limit samples for faster testing
         save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
         test_name="graded_adapters"
+    )
+
+    matrix, df = test_base_model_perplexity(
+        model_name_or_path=model_path,
+        batch_size=32,  # Adjust based on your GPU memory
+        max_samples=None,  # Limit samples for faster testing
+        save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
+        test_name="shared_baseline"
+    )
+
+    matrix, df = test_base_model_perplexity(
+        model_name_or_path=model_path,
+        batch_size=32,  # Adjust based on your GPU memory
+        max_samples=None,  # Limit samples for faster testing
+        save_path="/nethome/wlacroix/LLaMA-Factory/experiments/logs/ppl",
+        test_name="off_the_shelf"
     )
     
     print("\nPerplexity Matrix:")
