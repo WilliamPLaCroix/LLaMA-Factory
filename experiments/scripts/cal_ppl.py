@@ -67,6 +67,7 @@ def calculate_ppl(
     cutoff_len: int = 2048,
     max_samples: Optional[int] = None,
     train_on_prompt: bool = False,
+    split="validation",
 ):
     r"""Calculate the ppl on the dataset of the pre-trained models.
 
@@ -74,8 +75,7 @@ def calculate_ppl(
     python cal_ppl.py --model_name_or_path path_to_model --dataset alpaca_en_demo --save_name ppl.json
     """
     model_args, data_args, training_args, finetuning_args, _ = get_train_args(
-        dict(
-            stage=stage,
+        dict(stage=stage,
             model_name_or_path=model_name_or_path,
             dataset="williamplacroix/graded_wikilarge",
             dataset_dir=dataset_dir,
@@ -86,9 +86,8 @@ def calculate_ppl(
             preprocessing_num_workers=16,
             output_dir="dummy_dir",
             overwrite_cache=True,
-            do_train=True,
-        )
-    )
+            do_train=True,)
+            )
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
     template = get_template_and_fix_tokenizer(tokenizer, data_args)
@@ -100,7 +99,7 @@ def calculate_ppl(
         print("Split: validation")
         hf_data = load_dataset(data_args.dataset[0],
                                 dataset,
-                                split="validation",)
+                                split=split)
         if max_samples is not None:
             hf_data = hf_data.select(range(max_samples))
 
