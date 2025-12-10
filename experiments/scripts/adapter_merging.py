@@ -65,6 +65,8 @@ def select_and_weight_adapters(
     lo = max(2, target - window_size)
     hi = min(12, target + window_size)
     selected = list(range(lo, hi + 1))
+    # 'broken' window includes grades +- but no target grade
+
 
     # Weights
     if weight_balance == "average":
@@ -91,6 +93,9 @@ def select_and_weight_adapters(
             weights = [w / sum(weights) for w in weights]
         else:
             raise ValueError("weight_method must be 'uniform' or 'proximity'.")
+    elif weight_balance == "broken":
+        selected.remove(target)
+        weights = [1.0] * len(selected)
     else:
         raise ValueError("weight_balance must be 'average' or 'sum'.")
 

@@ -20,12 +20,11 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 
 
 queue window_size, weight_method, weight_balance from (
-1, uniform, average
-1, proximity, average
-2, uniform, average
-2, proximity, average
-5, uniform, average
-5, proximity, average
+1, uniform, broken
+2, uniform, broken
+3, uniform, broken
+4, uniform, broken
+5, uniform, broken
 )
 
 # queue window_size, weight_method, weight_balance from (
