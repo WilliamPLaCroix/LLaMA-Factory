@@ -5,7 +5,7 @@
 MERGE_METHOD="dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="9"
+ITERATION="10"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
@@ -165,7 +165,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_eval.log" 2>&1
+      > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
