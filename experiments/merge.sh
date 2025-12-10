@@ -5,7 +5,7 @@
 MERGE_METHOD="dare_ties"
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="8"
+ITERATION="9"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
@@ -21,8 +21,7 @@ source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
 REPO="/nethome/wlacroix/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
 CACHE="/scratch/wlacroix/.cache/llama_factory"
-### RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}-${ITERATION}"
-RUN_KEY="${PROJECT_VERSION}_ots-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}-${ITERATION}"
+RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}-${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
 
@@ -82,14 +81,13 @@ for GRADE in "${GRADES[@]}"; do
       --weight_method "${WEIGHT_METHOD}" \
       --weight_balance "${WEIGHT_BALANCE}" \
       --project_version "${PROJECT_VERSION}" \
-      > "${LOG_DIR}/ots_merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_merge.log" 2>&1
+      > "${LOG_DIR}/merge@${MERGE_METHOD}_grade${TARGET_GRADE}_ws@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_merge.log" 2>&1
     # ----------- end per-grade merging -----------
     echo "staring run at $(date)"
     run_start_time=$(date +%s)
     
     
-    ### OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
-    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_ots_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
+    OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     # mkdir -p "${OUT_ADAPTER}"
 
     ID_DIR="${HOME}/.llf_wandb_ids"
@@ -120,8 +118,7 @@ for GRADE in "${GRADES[@]}"; do
     # Switch to shared inference W&B config
     export WANDB_RUN_ID="${INFER_WANDB_RUN_ID}"
     export WANDB_RUN_GROUP="merged"
-    ### export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
-    export WANDB_NAME="ots_${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
+    export WANDB_NAME="${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     # echo the specific inference arguments
     echo "[infer]   grade: ${GRADE}"
     grade_start_time=$(date +%s)
@@ -168,7 +165,7 @@ for GRADE in "${GRADES[@]}"; do
       --do_sample False \
       --report_to wandb \
       --run_name "${WANDB_NAME}" \
-      > "${LOG_DIR}/ots_${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_eval.log" 2>&1
+      > "${LOG_DIR}/${MERGE_METHOD}_g@${GRADE}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}_eval.log" 2>&1
     # -------------- INFERENCE END --------------
 
     echo "[infer] completed grade ${GRADE} into run ${WANDB_RUN_ID}"
