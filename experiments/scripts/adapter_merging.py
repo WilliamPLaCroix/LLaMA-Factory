@@ -65,7 +65,6 @@ def select_and_weight_adapters(
     lo = max(2, target - window_size)
     hi = min(12, target + window_size)
     selected = list(range(lo, hi + 1))
-    # 'broken' window includes grades +- but no target grade
 
 
     # Weights
@@ -76,6 +75,34 @@ def select_and_weight_adapters(
         elif weight_method == "proximity":
             # Inverse-distance raw weights, target gets highest value
             raw = [1.0 / (1.0 + abs(g - target)) for g in selected]
+            s = sum(raw)
+            if s == 0:
+                # Fallback, though this cannot happen with the formula above
+                weights = [1.0] * n
+            else:
+                scale = n / s  # ensures average == 1
+                weights = [round(w * scale, 2) for w in raw]
+        elif weight_method == "proximity-squared":
+            # Inverse-distance-squared raw weights, target gets highest value
+            raw = [1.0 / ((1.0 + abs(g - target)) ** 2) for g in selected]
+            s = sum(raw)
+            if s == 0:
+                # Fallback, though this cannot happen with the formula above
+                weights = [1.0] * n
+            else:
+                scale = n / s  # ensures average == 1
+                weights = [round(w * scale, 2) for w in raw]
+        elif weight_method == "proximity-cubed":
+            raw = [1.0 / ((1.0 + abs(g - target)) ** 3) for g in selected]
+            s = sum(raw)
+            if s == 0:
+                # Fallback, though this cannot happen with the formula above
+                weights = [1.0] * n
+            else:
+                scale = n / s  # ensures average == 1
+                weights = [round(w * scale, 2) for w in raw]
+        elif weight_method == "proximity-flatter":
+            raw = [1.0 / (1.0 + abs(g - target)/4) for g in selected]
             s = sum(raw)
             if s == 0:
                 # Fallback, though this cannot happen with the formula above
@@ -94,10 +121,28 @@ def select_and_weight_adapters(
         else:
             raise ValueError("weight_method must be 'uniform' or 'proximity'.")
     elif weight_balance == "broken":
+        # 'broken' window includes grades +- but no target grade
         selected.remove(target)
         weights = [1.0] * len(selected)
-    else:
-        raise ValueError("weight_balance must be 'average' or 'sum'.")
+    elif weight_balance == "downshifted-1":
+        # downshifted window lowers the grade window by 1
+        target -= 1
+        lo = max(2, target - window_size)
+        hi = min(12, target + window_size)
+        selected = list(range(lo, hi + 1))
+        weights = [1.0] * len(selected)
+    elif weight_balance == "downshifted-2":
+        # downshifted window lowers the grade window by 1
+        target -= 2
+        lo = max(2, target - window_size)
+        hi = min(12, target + window_size)
+        selected = list(range(lo, hi + 1))
+        weights = [1.0] * len(selected)
+
+    # Fallback to at least the target adapter if none selected
+    if len(selected) == 0 or len(weights) == 0:
+        selected = [max(target, 2)]
+        weights = [1.0]
 
     return selected, weights
 
