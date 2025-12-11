@@ -110,6 +110,9 @@ def select_and_weight_adapters(
         hi = min(12, target + window_size)
         selected = list(range(lo, hi + 1))
         weights = [1.0] * len(selected)
+        if len(selected) == 0 or len(weights) == 0:
+            selected = [max(target, 2)]
+            weights = [1.0]
     elif weight_balance == "downshifted-2":
         # downshifted window lowers the grade window by 1
         target -= 2
@@ -117,11 +120,33 @@ def select_and_weight_adapters(
         hi = min(12, target + window_size)
         selected = list(range(lo, hi + 1))
         weights = [1.0] * len(selected)
+        if len(selected) == 0 or len(weights) == 0:
+            selected = [max(target, 2)]
+            weights = [1.0]
+    elif weight_balance == "upshifted-1":
+        # downshifted window lowers the grade window by 1
+        target += 1
+        lo = max(2, target - window_size)
+        hi = min(12, target + window_size)
+        selected = list(range(lo, hi + 1))
+        weights = [1.0] * len(selected)
+        if len(selected) == 0 or len(weights) == 0:
+            selected = [min(target, 12)]
+            weights = [1.0]
+    elif weight_balance == "upshifted-2":
+        # downshifted window lowers the grade window by 1
+        target += 2
+        lo = max(2, target - window_size)
+        hi = min(12, target + window_size)
+        selected = list(range(lo, hi + 1))
+        weights = [1.0] * len(selected)
+        if len(selected) == 0 or len(weights) == 0:
+            selected = [min(target, 12)]
+            weights = [1.0]
+    
 
     # Fallback to at least the target adapter if none selected
-    if len(selected) == 0 or len(weights) == 0:
-        selected = [max(target, 2)]
-        weights = [1.0]
+
 
     return selected, weights
 
