@@ -66,7 +66,6 @@ def select_and_weight_adapters(
     hi = min(12, target + window_size)
     selected = list(range(lo, hi + 1))
 
-
     # Weights
     if weight_balance == "average":
         n = len(selected)
@@ -91,7 +90,7 @@ def select_and_weight_adapters(
             scale = n / sum(raw)  # ensures average == 1
             weights = [round(w * scale, 2) for w in raw]
         else:
-            raise ValueError("weight_method must be 'uniform' or 'proximity'.")
+            raise ValueError("weight_method must be in {'uniform', 'proximity', 'proximity-squared', 'proximity-cubed', 'proximity-flatter'}.")
     elif weight_balance == "sum":
         if weight_method == "uniform":
             weights = [n / len(selected) for n in [1.0] * len(selected)]
