@@ -20,15 +20,27 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 
 
 queue window_size, weight_method, weight_balance from (
-1, uniform, upshifted-1
-2, uniform, upshifted-1
-3, uniform, upshifted-1
-4, uniform, upshifted-1
-5, uniform, upshifted-1
-2, uniform, upshifted-2
-3, uniform, upshifted-2
-4, uniform, upshifted-2
-5, uniform, upshifted-2
+2, halved, average
+3, halved, average
+4, halved, average
+5, halved, average
+2, doubled, average
+3, doubled, average
+4, doubled, average
+5, doubled, average
+2, tripled, average
+3, tripled, average
+4, tripled, average
+5, tripled, average
+10, random-1, average
+10, random-2, average
+10, random-3, average
+11, random-1, average
+11, random-2, average
+11, random-3, average
+12, random-1, average
+12, random-2, average
+12, random-3, average
 )
 
 # queue window_size, weight_method, weight_balance from (

@@ -2,6 +2,7 @@ import argparse
 from transformers import AutoModelForCausalLM
 from peft import PeftModel
 import fire
+import numpy as np
 
 
 def select_adapters(target_grade="all",
@@ -71,6 +72,21 @@ def select_and_weight_adapters(
         n = len(selected)
         if weight_method == "uniform":
             weights = [1.0] * n
+        elif weight_method == "doubled":
+            weights = [2.0] * n
+        elif weight_method == "tripled":
+            weights = [3.0] * n
+        elif weight_method == "halved":
+            weights = [0.5] * n
+        elif weight_method == "random-1":
+            # random weights that average to 1
+            weights = [round(w,2).item() for w in np.random.dirichlet(np.ones(n),size=1)[0]*n]
+        elif weight_method == "random-2":
+            # random weights that average to 1
+            weights = [round(w*2,2).item() for w in np.random.dirichlet(np.ones(n),size=1)[0]*n]
+        elif weight_method == "random-3":
+            # random weights that average to 1
+            weights = [round(w*3,2).item() for w in np.random.dirichlet(np.ones(n),size=1)[0]*n]
         elif weight_method == "proximity":
             # Inverse-distance raw weights, target gets highest value
             raw = [1.0 / (1.0 + abs(g - target)) for g in selected]
