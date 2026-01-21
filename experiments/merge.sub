@@ -18,30 +18,34 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +WantGPUHomeMounted     = true
 +MaxWallTime = 604800
 
-
 queue window_size, weight_method, weight_balance, merge_method from (
-5, uniform, average, linear
-1, halved, average, dare_ties
-1, doubled, average, dare_ties
-1, tripled, average, dare_ties
-1, downshifted-2, average, dare_ties
-1, upshifted-2, average, dare_ties
-1, proximity-flatter, average, dare_ties
-5, proximity-flatter, average, dare_ties
-1, proximity, average, dare_ties
-1, proximity-squared, average, dare_ties
-5, proximity-squared, average, dare_ties
-1, proximity-cubed, average, dare_ties
-5, proximity-cubed, average, dare_ties
-1-copies, uniform, average, dare_ties
-2-copies, uniform, average, dare_ties
-3-copies, uniform, average, dare_ties
-4-copies, uniform, average, dare_ties
-5-copies, uniform, average, dare_ties
-6-copies, uniform, average, dare_ties
-7-copies, uniform, average, dare_ties
-8-copies, uniform, average, dare_ties
-9-copies, uniform, average, dare_ties
-10-copies, uniform, average, dare_ties
-11-copies, uniform, average, dare_ties
+1, uniform, downshifted-2, dare_ties
+1, uniform, upshifted-2, dare_ties
 )
+
+# queue window_size, weight_method, weight_balance, merge_method from (
+# 5, uniform, average, linear
+# 1, halved, average, dare_ties
+# 1, doubled, average, dare_ties
+# 1, tripled, average, dare_ties
+# 1, uniform, downshifted-2, dare_ties
+# 1, uniform, upshifted-2, dare_ties
+# 1, proximity-flatter, average, dare_ties
+# 5, proximity-flatter, average, dare_ties
+# 1, proximity, average, dare_ties
+# 1, proximity-squared, average, dare_ties
+# 5, proximity-squared, average, dare_ties
+# 1, proximity-cubed, average, dare_ties
+# 5, proximity-cubed, average, dare_ties
+# 1-copies, uniform, average, dare_ties
+# 2-copies, uniform, average, dare_ties
+# 3-copies, uniform, average, dare_ties
+# 4-copies, uniform, average, dare_ties
+# 5-copies, uniform, average, dare_ties
+# 6-copies, uniform, average, dare_ties
+# 7-copies, uniform, average, dare_ties
+# 8-copies, uniform, average, dare_ties
+# 9-copies, uniform, average, dare_ties
+# 10-copies, uniform, average, dare_ties
+# 11-copies, uniform, average, dare_ties
+# )
