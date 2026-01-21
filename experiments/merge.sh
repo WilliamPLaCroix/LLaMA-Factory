@@ -14,7 +14,7 @@ WEIGHT_BALANCE="${3:?weight balance required: sum|average}"
 MERGE_METHOD="${4:?merge method required: dare_ties|linear}"
 
 MODEL_VARIATION="cleaned"              # fixed for baseline runs
-PROJECT_VERSION="v3.2"                 # used in WANDB_PROJECT  
+PROJECT_VERSION="v3"                 # used in WANDB_PROJECT  
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
@@ -70,13 +70,13 @@ for GRADE in "${GRADES[@]}"; do
     echo "----- Starting grade ${GRADE} -----"
     echo "Begin Merger"
     # ----------- begin per-grade merging -----------
+    # --project_version "${PROJECT_VERSION}" \
     python3 experiments/scripts/adapter_merging.py \
       --model "${BASE_MODEL}" \
       --density "${DENSITY}" \
       --majority_sign_method "${MAJ_SIGN}" \
       --output "${CACHE}" \
       --window_size "${WINDOW_SIZE}" \
-      --project_version "${PROJECT_VERSION}" \
       --merge_method "${MERGE_METHOD}" \
       --target_grade "${TARGET_GRADE}" \
       --weight_method "${WEIGHT_METHOD}" \
@@ -108,7 +108,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
     # ---------------- Core W&B env ----------------
-    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}"
+    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}.2" ### TODO CHANGE BACK "Thesis_Phase_${PROJECT_VERSION}", we need to hack in the .2 for now
     [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
     export WANDB_DIR="${LOG_DIR}"
     export WANDB_RESUME=allow
