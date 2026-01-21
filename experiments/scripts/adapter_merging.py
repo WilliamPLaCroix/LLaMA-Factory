@@ -59,8 +59,14 @@ def select_and_weight_adapters(
 
     if not (2 <= target <= 12):
         raise ValueError("target_grade must be in [2, 12].")
-    if window_size < 0:
-        raise ValueError("window_size must be >= 0.")
+    
+    if len(str(window_size).split('_')) > 1:
+        n = int(str(window_size).split('_')[0])
+        selected = [target] * n
+        weights = [1.0] * n
+        return selected, weights
+    elif window_size < 0:
+        raise ValueError("window_size must be non-negative.")
 
     # Compute clipped window
     lo = max(2, target - window_size)

@@ -1,7 +1,7 @@
 universe        = vanilla
 initialdir      = /nethome/wlacroix/LLaMA-Factory/
 executable      = /nethome/wlacroix/LLaMA-Factory/experiments/merge.sh
-arguments       = $(window_size) $(weight_method) $(weight_balance)
+arguments       = $(window_size) $(weight_method) $(weight_balance) $(merge_method)
 log             = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).log
 output          = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).out
 error           = /scratch/wlacroix/logs/merged/merge_$(window_size)_$(weight_method)_$(weight_balance).err
@@ -19,49 +19,29 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 
-queue window_size, weight_method, weight_balance from (
-2, halved, average
-3, halved, average
-4, halved, average
-5, halved, average
-2, doubled, average
-3, doubled, average
-4, doubled, average
-5, doubled, average
-2, tripled, average
-3, tripled, average
-4, tripled, average
-5, tripled, average
-10, random-1, average
-10, random-2, average
-10, random-3, average
-11, random-1, average
-11, random-2, average
-11, random-3, average
-12, random-1, average
-12, random-2, average
-12, random-3, average
+queue window_size, weight_method, weight_balance, merge_method from (
+5, uniform, average, linear
+1, halved, average, dare_ties
+1, doubled, average, dare_ties
+1, tripled, average, dare_ties
+1, downshifted-2, average, dare_ties
+1, upshifted-2, average, dare_ties
+1, proximity-flatter, average, dare_ties
+5, proximity-flatter, average, dare_ties
+1, proximity, average, dare_ties
+1, proximity-squared, average, dare_ties
+5, proximity-squared, average, dare_ties
+1, proximity-cubed, average, dare_ties
+5, proximity-cubed, average, dare_ties
+1-copies, uniform, average, dare_ties
+2-copies, uniform, average, dare_ties
+3-copies, uniform, average, dare_ties
+4-copies, uniform, average, dare_ties
+5-copies, uniform, average, dare_ties
+6-copies, uniform, average, dare_ties
+7-copies, uniform, average, dare_ties
+8-copies, uniform, average, dare_ties
+9-copies, uniform, average, dare_ties
+10-copies, uniform, average, dare_ties
+11-copies, uniform, average, dare_ties
 )
-
-# queue window_size, weight_method, weight_balance from (
-# 1, uniform, sum
-# 1, proximity, sum
-# 2, uniform, sum
-# 2, proximity, sum
-# 3, uniform, sum
-# 3, proximity, sum
-# 4, uniform, sum
-# 4, proximity, sum
-# 5, uniform, sum
-# 5, proximity, sum
-# 1, uniform, average
-# 1, proximity, average
-# 2, uniform, average
-# 2, proximity, average
-# 3, uniform, average
-# 3, proximity, average
-# 4, uniform, average
-# 4, proximity, average
-# 5, uniform, average
-# 5, proximity, average
-# )
