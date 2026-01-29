@@ -5,7 +5,7 @@
 
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="13"
+ITERATION="14"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
@@ -18,10 +18,10 @@ PROJECT_VERSION="v3"                 # used in WANDB_PROJECT
 ENTITY=""                              # optional W&B entity
 
 # ---------------- Paths & env ----------------
-source /nethome/wlacroix/LLaMA-Factory/experiments/scripts/rename_gpus.sh
-REPO="/nethome/wlacroix/LLaMA-Factory"
+source /nethome/${USER}/LLaMA-Factory/experiments/scripts/rename_gpus.sh
+REPO="/nethome/${USER}/LLaMA-Factory"
 BASE_MODEL="/scratch/common_models/Llama-3.2-3B-Instruct-greedy"
-CACHE="/scratch/wlacroix/.cache/llama_factory"
+CACHE="/scratch/${USER}/.cache/llama_factory"
 RUN_KEY="${PROJECT_VERSION}-${MERGE_METHOD}_ws@${WINDOW_SIZE}_w@${WEIGHT_METHOD}-${WEIGHT_BALANCE}-${ITERATION}"
 LOG_DIR="${REPO}/experiments/logs/merged"
 CFG_DIR="${REPO}/experiments/configs"
@@ -29,8 +29,8 @@ CFG_DIR="${REPO}/experiments/configs"
 mkdir -p "${LOG_DIR}" "${LOG_DIR}/generated_predictions"
 
 # --------------- System info ---------------
-source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
-conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
+source /nethome/${USER}/miniconda3/etc/profile.d/conda.sh
+conda activate /nethome/${USER}/miniconda3/envs/llama_factory_v2
 cd "$REPO"
 
 # if ! python -c "import bert_score" >/dev/null 2>&1; then
@@ -42,6 +42,38 @@ echo "Conda: $CONDA_DEFAULT_ENV"; which python
 nvidia-smi || true; nvcc --version || true
 
 set -euo pipefail
+
+# -------- temp + wandb routing (HPC/HTCondor safe) --------
+# Prefer Condor per-job scratch if present; otherwise use your quota-backed /scratch
+if [ -n "${_CONDOR_SCRATCH_DIR:-}" ] && [ -d "${_CONDOR_SCRATCH_DIR:-}" ]; then
+  export JOB_SCRATCH="${_CONDOR_SCRATCH_DIR}"
+else
+  # fall back: unique-ish directory on shared scratch
+  export JOB_SCRATCH="/scratch/${USER}/condor_tmp/${CLUSTER:-noCluster}.${PROCESS:-noProcess}.$(date +%s)"
+  mkdir -p "${JOB_SCRATCH}"
+fi
+
+# Route all tempfile users away from /tmp
+export TMPDIR="${JOB_SCRATCH}/tmp"
+export TMP="${TMPDIR}"
+export TEMP="${TMPDIR}"
+mkdir -p "${TMPDIR}"
+
+# Route caches (optional but often reduces /tmp/home churn)
+export HF_HOME="/scratch/${USER}/.cache/huggingface"
+export TRANSFORMERS_CACHE="${HF_HOME}"
+export HF_DATASETS_CACHE="/scratch/${USER}/.cache/huggingface/datasets"
+export XDG_CACHE_HOME="/scratch/${USER}/.cache"
+
+# Route W&B off /tmp and off /nethome
+export WANDB_DIR="${JOB_SCRATCH}/wandb"
+export WANDB_CACHE_DIR="/scratch/${USER}/.cache/wandb"
+export WANDB_CONFIG_DIR="/scratch/${USER}/.config/wandb"
+mkdir -p "${WANDB_DIR}" "${WANDB_CACHE_DIR}" "${WANDB_CONFIG_DIR}"
+
+echo "[routing] host=$(hostname) JOB_SCRATCH=${JOB_SCRATCH} TMPDIR=${TMPDIR} WANDB_DIR=${WANDB_DIR}"
+# ---------------------------------------------------------
+
 
 echo "Starting adapter merging at $(date)"
 total_start_time=$(date +%s)
@@ -91,7 +123,7 @@ for GRADE in "${GRADES[@]}"; do
     OUT_ADAPTER="${CACHE}/${PROJECT_VERSION}_merge@${MERGE_METHOD}_grade@${TARGET_GRADE}_window@${WINDOW_SIZE}_weight@${WEIGHT_METHOD}-${WEIGHT_BALANCE}"
     # mkdir -p "${OUT_ADAPTER}"
 
-    ID_DIR="${HOME}/.llf_wandb_ids"
+    ID_DIR="/scratch/${USER}/.llf_wandb_ids"
     mkdir -p "${ID_DIR}"
     
     # Shared inference run ID (consistent across all grades)
@@ -110,7 +142,6 @@ for GRADE in "${GRADES[@]}"; do
     # ---------------- Core W&B env ----------------
     export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}.2" ### TODO CHANGE BACK "Thesis_Phase_${PROJECT_VERSION}", we need to hack in the .2 for now
     [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
-    export WANDB_DIR="${LOG_DIR}"
     export WANDB_RESUME=allow
     export WANDB_ENABLE_SERVICE=true
     export WANDB_HTTP_TIMEOUT=300
