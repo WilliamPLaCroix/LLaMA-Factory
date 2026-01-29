@@ -5,7 +5,7 @@
 
 DENSITY=None
 MAJ_SIGN="total"
-ITERATION="14"
+ITERATION="15"
 # TARGET_GRADE="all"
 
 WINDOW_SIZE="${1:?window size required: all|integer >=1}"
@@ -140,7 +140,7 @@ for GRADE in "${GRADES[@]}"; do
     echo "Thesis_Phase_${PROJECT_VERSION}" > "${OUT_ADAPTER}/wandb_project.txt"
 
     # ---------------- Core W&B env ----------------
-    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}.2" ### TODO CHANGE BACK "Thesis_Phase_${PROJECT_VERSION}", we need to hack in the .2 for now
+    export WANDB_PROJECT="Thesis_Phase_${PROJECT_VERSION}.3" ### TODO CHANGE BACK "Thesis_Phase_${PROJECT_VERSION}", we need to hack in the .2 for now
     [[ -n "${ENTITY}" ]] && export WANDB_ENTITY="${ENTITY}"
     export WANDB_RESUME=allow
     export WANDB_ENABLE_SERVICE=true
