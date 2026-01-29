@@ -19,5 +19,5 @@ requirements            = (GPUs_GlobalMemoryMb >= 64000)
 +MaxWallTime = 604800
 
 queue window_size, weight_method, weight_balance, merge_method from (
-1, proximity, average, linear
+1, uniform, average, linear
 )
