@@ -22,8 +22,8 @@ queue window_size, weight_method, weight_balance, merge_method from (
 2, proximity, average, linear
 3, proximity, average, linear
 4, proximity, average, linear
+1, uniform, average, linear
 2, uniform, average, linear
 3, uniform, average, linear
 4, uniform, average, linear
-5, uniform, average, linear
 )
